@@ -1,20 +1,33 @@
 "use client";
 import { useState } from "react";
 
-const URL = "http://localhost:3000/api/pusher/";
-
-export default function SendForm() {
+export default function SendForm({
+  userId,
+  setUserId,
+}: {
+  userId: string | null;
+  setUserId: (value: string) => void;
+}) {
   const [message, setMessage] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-      },
-      body: JSON.stringify(message),
-    });
+
+    if (!userId) {
+      setUserId(message);
+      document.cookie = "user_id=" + message;
+    } else {
+      fetch("/api/pusher/message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+        body: JSON.stringify({
+          message,
+          user_id: userId,
+        }),
+      });
+    }
 
     // fetch(URL)
     //   .then((response) => response.json())
@@ -24,7 +37,7 @@ export default function SendForm() {
   };
 
   const handleGetInfoClick = () => {
-    fetch(URL)
+    fetch("/api/pusher/message")
       .then((response) => response.json())
       .then((result) => console.log(result));
   };

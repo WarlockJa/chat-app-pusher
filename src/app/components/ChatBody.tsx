@@ -1,44 +1,26 @@
 "use client";
-import Pusher from "pusher-js";
+import { pusherClient } from "@/lib/pusher";
 import { useEffect, useState } from "react";
 
-const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-  forceTLS: true,
-  //   channelAuthorization: {
-  //     transport: "ajax",
-  //     endpoint: "http://localhost:3000/api/pusher/auth",
-  //   },
-  //   userAuthentication: {
-  //     endpoint: "http://localhost:3000/api/pusher/auth",
-  //     transport: "ajax",
-  //     params: {},
-  //     headers: {},
-  //   },
-});
-
-if (!document.cookie.match("(^|;) ?user_id=([^;]*)(;|$)")) {
-  // Primitive authorization! This 'user_id' cookie is read by your authorization endpoint,
-  // and used as the user_id in the subscription to the 'presence-quickstart'
-  // channel. This is then displayed to all users in the user list.
-  // In your production app, you should use a secure authorization system.
-  document.cookie = "user_id=" + prompt("Your initials:");
-}
-
-export default function ChatBody() {
+export default function ChatBody({ userId }: { userId: string | null }) {
   const [messages, setMessages] = useState<string[]>([]);
-  //   const [users, setUsers] = useState<string[]>([]);
+
+  useEffect(() => {
+    userId
+      ? setMessages([`Welcome to chat ${userId}`])
+      : setMessages(["Please enter your name"]);
+  }, [userId]);
 
   useEffect(() => {
     // const channel = pusher.subscribe("presence-quickstart");
-    const channel = pusher.subscribe("my-channel");
+    const channel = pusherClient.subscribe("presence-chat");
     channel.bind("message", function (data: { message: string }) {
       setMessages([...messages, data.message]);
     });
 
-    channel.bind("pusher:subscription_succeeded", () => console.log(channel));
+    // channel.bind("pusher:subscription_succeeded", () => console.log(channel));
 
-    return () => pusher.unsubscribe("my-channel");
+    return () => pusherClient.unsubscribe("presence-chat");
   }, [messages]);
 
   const chatContent = messages.map((msg, index) => (
@@ -48,7 +30,7 @@ export default function ChatBody() {
   ));
 
   return (
-    <div>
+    <div className="chat__body">
       <ul className="chat-display">{chatContent}</ul>
     </div>
   );
