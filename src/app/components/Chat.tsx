@@ -5,18 +5,6 @@ import SendForm from "./SendForm";
 import "./chat.scss";
 import ChatRooms from "./ChatRooms";
 
-const TEST = [
-  {
-    name: "Room 1",
-  },
-  {
-    name: "Room 2",
-  },
-  {
-    name: "Room 3",
-  },
-];
-
 function readCookie(name: string) {
   const cookieString = document.cookie;
   const cookies = cookieString.split("; ");
@@ -38,7 +26,7 @@ export default function Chat() {
   }, []);
   return (
     <div className="chat">
-      <ChatRooms rooms={TEST} />
+      <ChatRooms userId={userId} />
       <div className="chat__wrapper">
         <ChatBody userId={userId} />
         <SendForm userId={userId} setUserId={setUserId} />

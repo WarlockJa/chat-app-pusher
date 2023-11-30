@@ -37,7 +37,7 @@ export default function SendForm({
   };
 
   const handleGetInfoClick = () => {
-    fetch("/api/pusher/message")
+    fetch("/api/pusher/channels")
       .then((response) => response.json())
       .then((result) => console.log(result));
   };
