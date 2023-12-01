@@ -21,7 +21,15 @@ export default function ChatBody({ userId }: { userId: string | null }) {
       }),
     })
       .then((response) => response.json())
-      .then((result) => console.log(result));
+      .then(
+        (result) =>
+          result
+            ? setMessages([
+                ...result.messages.messages.map((message) => message.text),
+              ])
+            : console.log("")
+        // console.log(result)
+      );
     setMessages([`Welcome to chat ${userId}`]);
   }, [userId]);
 

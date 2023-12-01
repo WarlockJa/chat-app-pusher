@@ -52,11 +52,10 @@ export async function PUT(req: Request) {
           name: userId,
         },
         data: {
-          messages: message,
+          messages: { push: [{ text: message, author: userId }] },
         },
       });
     } else {
-      console.log("test");
       result = await prisma.channel.create({
         data: {
           name: userId,
