@@ -38,6 +38,10 @@ export async function POST(req: Request) {
   pusherServer.trigger(`presence-${user_id}`, "message", {
     message: data.message,
   });
+  // TEST
+  // pusherServer.trigger(`presence-temp`, "message", {
+  //   message: data.message,
+  // });
 
   return NextResponse.json({ message }, { statusText: "OK", status: 200 });
 }

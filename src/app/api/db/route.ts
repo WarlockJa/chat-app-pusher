@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../prisma/prisma";
-import { Prisma } from "@prisma/client";
 
 // fetching data from DB
 export async function POST(req: Request) {
@@ -19,13 +18,12 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ messages }, { status: 200 });
+    return NextResponse.json(messages, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(error, { status: 500 });
   }
 }
 
-// TODO DB NO WORK! MAKE WORK!
 // writing to DB
 export async function PUT(req: Request) {
   const { message, userId } = await req.json();

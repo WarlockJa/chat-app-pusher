@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 
+// TODO convert to server component with server action?
 export default function SendForm({
   userId,
   setUserId,

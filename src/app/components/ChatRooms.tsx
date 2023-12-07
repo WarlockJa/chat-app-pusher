@@ -21,16 +21,23 @@ export default function ChatRooms({ userId }: { userId: string | null }) {
   useEffect(() => {
     if (!userId) return;
 
-    console.log("Rooms useEffect");
     // system channel is for admin console notifications
     const channelSystem = pusherClient.subscribe(
       "presence-system"
     ) as PresenceChannel;
 
     channelSystem.bind("pusher:subscription_succeeded", () => getRoomsList());
-    channelSystem.bind("pusher:member_removed", () => getRoomsList());
-    channelSystem.bind("pusher:member_added", () => getRoomsList());
-  }, [rooms, userId]);
+    channelSystem.bind("pusher:member_removed", () => {
+      console.log(`System Removed`);
+      getRoomsList();
+    });
+    channelSystem.bind("pusher:member_added", () => {
+      console.log(`System Added`);
+      getRoomsList();
+    });
+
+    return () => pusherClient.unsubscribe("presence-system");
+  }, [rooms.length, userId]);
 
   return (
     <ul className="chat__rooms">

@@ -20,6 +20,8 @@ function readCookie(name: string) {
 }
 
 export default function Chat() {
+  // user_id as a cookie for testing purposes
+  // in production replace with authenticated user data
   const [userId, setUserId] = useState<string | null>("");
   useEffect(() => {
     setUserId(readCookie("user_id"));
