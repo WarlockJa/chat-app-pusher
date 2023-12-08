@@ -10,6 +10,7 @@ interface IChannelsResult {
 export default function ChatRooms({ userId }: { userId: string | null }) {
   const [rooms, setRooms] = useState<string[]>([]);
 
+  // GET room list request
   const getRoomsList = () => {
     fetch("/api/pusher/channels")
       .then((response) => response.json())
@@ -18,6 +19,11 @@ export default function ChatRooms({ userId }: { userId: string | null }) {
       );
   };
 
+  // TODO
+  // switching to the new room
+  const handleRoomSwitch = () => {};
+
+  // subscribing to presence-system channel events
   useEffect(() => {
     if (!userId) return;
 
@@ -49,7 +55,9 @@ export default function ChatRooms({ userId }: { userId: string | null }) {
               item !== "presence-system" && item !== `presence-${userId}`
           )
           .map((room) => (
-            <li key={room}>{room.slice(9)}</li>
+            <li key={room} onClick={handleRoomSwitch}>
+              {room.slice(9)}
+            </li>
           ))
       }
     </ul>
