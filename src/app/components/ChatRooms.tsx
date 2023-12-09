@@ -21,7 +21,9 @@ export default function ChatRooms({ userId }: { userId: string | null }) {
 
   // TODO
   // switching to the new room
-  const handleRoomSwitch = () => {};
+  const handleRoomSwitch = () => {
+    //
+  };
 
   // subscribing to presence-system channel events
   useEffect(() => {
