@@ -1,27 +1,53 @@
 "use client";
 import { pusherClient } from "@/lib/pusher";
+import { useAtom } from "jotai";
 import { PresenceChannel } from "pusher-js";
 import React, { useEffect, useState } from "react";
+import { activeRoomAtom, roomsListAtom, userIdAtom } from "./Chat";
+import { useGetRoomsList } from "../hooks/useGetRoomsList";
 
+// interface IChatRoomsProps {
+//   userId: string | null;
+//   activeRoom: string;
+//   setActiveRoom: (activeRoom: string) => void;
+// }
 interface IChannelsResult {
   channels: { [roomName: string]: {} };
 }
 
-export default function ChatRooms({ userId }: { userId: string | null }) {
-  const [rooms, setRooms] = useState<string[]>([]);
+const getRoomsList = (callback: (rooms: string[]) => void) => {
+  fetch("/api/pusher/channels")
+    .then((response) => response.json())
+    .then((result: IChannelsResult) => {
+      callback(Object.keys(result.channels));
+    });
+};
 
-  // GET room list request
-  const getRoomsList = () => {
-    fetch("/api/pusher/channels")
-      .then((response) => response.json())
-      .then((result: IChannelsResult) =>
-        setRooms(Object.keys(result.channels))
-      );
+// export default function ChatRooms(props: IChatRoomsProps) {
+export default function ChatRooms() {
+  const [channelSystem, setChannelSystem] = useState<PresenceChannel>();
+  // jotai state data
+  const [userId] = useAtom(userIdAtom);
+  const [activeRoom, setActiveRoom] = useAtom(activeRoomAtom);
+  const [roomsList, setRoomsList] = useAtom(roomsListAtom);
+
+  // switching to the new room
+  const handleRoomSwitch = (room: string) => {
+    console.log(room);
+    if (activeRoom === room) return;
+    setActiveRoom(room);
   };
 
-  // TODO
-  // switching to the new room
-  const handleRoomSwitch = () => {};
+  // useEffect(() => {
+  //   // system channel is for admin console notifications
+  //   setChannelSystem(
+  //     pusherClient.subscribe("presence-system") as PresenceChannel
+  //   );
+
+  //   getRoomsList(setRoomsList);
+
+  //   return () => pusherClient.unsubscribe("presence-system");
+  // }, []);
 
   // subscribing to presence-system channel events
   useEffect(() => {
@@ -32,30 +58,41 @@ export default function ChatRooms({ userId }: { userId: string | null }) {
       "presence-system"
     ) as PresenceChannel;
 
-    channelSystem.bind("pusher:subscription_succeeded", () => getRoomsList());
+    channelSystem.bind("pusher:subscription_succeeded", () => {
+      // console.log("system subscribtion");
+      getRoomsList(setRoomsList);
+    });
     channelSystem.bind("pusher:member_removed", () => {
       console.log(`System Removed`);
-      getRoomsList();
+      getRoomsList(setRoomsList);
     });
     channelSystem.bind("pusher:member_added", () => {
       console.log(`System Added`);
-      getRoomsList();
+      getRoomsList(setRoomsList);
     });
 
-    return () => pusherClient.unsubscribe("presence-system");
-  }, [rooms.length, userId]);
+    return () => {
+      pusherClient.unsubscribe("presence-system");
+      // console.log("Rooms unsubscribed");
+    };
+  }, [roomsList.length, userId]);
 
   return (
     <ul className="chat__rooms">
       {
         // hiding rooms system and userId from the list
-        rooms
-          .filter(
-            (item) =>
-              item !== "presence-system" && item !== `presence-${userId}`
-          )
+        roomsList
+          // TEST
+          // .filter(
+          //   (item) =>
+          //     item !== "presence-system" && item !== `presence-${userId}`
+          // )
           .map((room) => (
-            <li key={room} onClick={handleRoomSwitch}>
+            <li
+              className="chat__rooms--room"
+              key={room}
+              onClick={() => handleRoomSwitch(room)}
+            >
               {room.slice(9)}
             </li>
           ))

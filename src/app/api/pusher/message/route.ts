@@ -21,27 +21,25 @@ import { pusherServer } from "@/lib/pusher";
 
 interface IPostData {
   message: string;
-  user_id: string;
+  activeRoom: string;
 }
 
 export async function POST(req: Request) {
   const data: IPostData = await req.json();
-  const { message, user_id } = data;
+  const { message, activeRoom } = data;
+
+  if (!message) return NextResponse.json({}, { status: 201 });
 
   // vaidating request
-  if (!message || !user_id)
+  if (!activeRoom)
     return NextResponse.json(
       {},
       { status: 400, statusText: "Socket id and channel name required" }
     );
 
-  pusherServer.trigger(`presence-${user_id}`, "message", {
+  pusherServer.trigger(activeRoom, "message", {
     message: data.message,
   });
-  // TEST
-  // pusherServer.trigger(`presence-temp`, "message", {
-  //   message: data.message,
-  // });
 
   return NextResponse.json({ message }, { statusText: "OK", status: 200 });
 }

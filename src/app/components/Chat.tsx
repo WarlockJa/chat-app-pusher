@@ -1,9 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ChatBody from "./ChatBody";
 import SendForm from "./SendForm";
 import "./chat.scss";
 import ChatRooms from "./ChatRooms";
+import { pusherClient } from "@/lib/pusher";
+import { atom, useAtom } from "jotai";
 
 function readCookie(name: string) {
   const cookieString = document.cookie;
@@ -19,19 +21,40 @@ function readCookie(name: string) {
   return null; // Cookie not found
 }
 
+export interface IChatData {
+  roomId: string;
+  messages: {
+    author: string;
+    text: string;
+  }[];
+}
+
+export const userIdAtom = atom<string | null>(null); // replace with IdToken data in production
+export const activeRoomAtom = atom("");
+export const roomsListAtom = atom<string[]>([]);
+export const chatDataAtom = atom<IChatData[]>([]);
+
 export default function Chat() {
-  // user_id as a cookie for testing purposes
-  // in production replace with authenticated user data
-  const [userId, setUserId] = useState<string | null>("");
+  const [, setUserId] = useAtom(userIdAtom);
+  const [, setActiveRoom] = useAtom(activeRoomAtom);
+
   useEffect(() => {
-    setUserId(readCookie("user_id"));
+    const cookieUser = readCookie("user_id");
+    setUserId(cookieUser);
+    setActiveRoom(`presence-${cookieUser}`);
+
+    return () => {
+      console.log("Cleanup");
+      pusherClient.disconnect();
+    };
   }, []);
+
   return (
     <div className="chat">
-      <ChatRooms userId={userId} />
+      <ChatRooms />
       <div className="chat__wrapper">
-        <ChatBody userId={userId} />
-        <SendForm userId={userId} setUserId={setUserId} />
+        <ChatBody />
+        <SendForm />
       </div>
     </div>
   );

@@ -1,21 +1,22 @@
 "use client";
+import { useAtom } from "jotai";
 import { useState } from "react";
+import { activeRoomAtom, userIdAtom } from "./Chat";
 
-// TODO convert to server component with server action?
-export default function SendForm({
-  userId,
-  setUserId,
-}: {
-  userId: string | null;
-  setUserId: (value: string) => void;
-}) {
+export default function SendForm() {
   const [message, setMessage] = useState<string>("");
+  // jotai state data
+  const [userId, setUserId] = useAtom(userIdAtom);
+  const [activeRoom, setActiveRoom] = useAtom(activeRoomAtom);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!userId) {
+      // TODO validate input
+      // writing new user_id to a cookie
       setUserId(message);
+      setActiveRoom(`presence-${message}`);
       document.cookie = "user_id=" + message;
     } else {
       fetch("/api/pusher/message", {
@@ -25,7 +26,19 @@ export default function SendForm({
         },
         body: JSON.stringify({
           message,
-          user_id: userId,
+          activeRoom,
+        }),
+      });
+
+      fetch("/api/db", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+        body: JSON.stringify({
+          message,
+          userId,
+          activeRoom,
         }),
       });
     }

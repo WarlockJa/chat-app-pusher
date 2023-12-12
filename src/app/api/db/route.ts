@@ -3,7 +3,8 @@ import { prisma } from "../../../../prisma/prisma";
 
 // fetching data from DB
 export async function POST(req: Request) {
-  const { userId } = await req.json();
+  // TODO validate data
+  const { userId, activeRoom } = await req.json();
 
   if (!userId)
     return NextResponse.json(
@@ -11,10 +12,13 @@ export async function POST(req: Request) {
       { status: 400, statusText: "User ID required" }
     );
 
+  // if no room provided active room is the user channel
+  const room = activeRoom ? activeRoom.slice(9) : userId;
+
   try {
     const messages = await prisma.channel.findFirst({
       where: {
-        name: userId,
+        name: room,
       },
     });
 
@@ -26,7 +30,7 @@ export async function POST(req: Request) {
 
 // writing to DB
 export async function PUT(req: Request) {
-  const { message, userId } = await req.json();
+  const { message, userId, activeRoom } = await req.json();
 
   if (!message) return NextResponse.json({}, { status: 201 });
 
@@ -36,10 +40,13 @@ export async function PUT(req: Request) {
       { status: 400, statusText: "User ID required" }
     );
 
+  // if no room provided active room is the user channel
+  const room = activeRoom ? activeRoom.slice(9) : userId;
+
   try {
     const channel = await prisma.channel.findFirst({
       where: {
-        name: userId,
+        name: room,
       },
     });
 
@@ -47,7 +54,7 @@ export async function PUT(req: Request) {
     if (channel) {
       result = await prisma.channel.update({
         where: {
-          name: userId,
+          name: room,
         },
         data: {
           messages: { push: [{ text: message, author: userId }] },
@@ -56,7 +63,7 @@ export async function PUT(req: Request) {
     } else {
       result = await prisma.channel.create({
         data: {
-          name: userId,
+          name: room,
           messages: [
             {
               author: userId,
