@@ -4,7 +4,6 @@ import { useAtom } from "jotai";
 import { PresenceChannel } from "pusher-js";
 import React, { useEffect, useState } from "react";
 import { activeRoomAtom, roomsListAtom, userIdAtom } from "./Chat";
-import { useGetRoomsList } from "../hooks/useGetRoomsList";
 
 // interface IChatRoomsProps {
 //   userId: string | null;
