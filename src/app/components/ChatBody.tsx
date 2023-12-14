@@ -1,22 +1,23 @@
 "use client";
+import { activeRoomAtom, userIdAtom } from "@/lib/localState";
 import { pusherClient } from "@/lib/pusher";
 import type { channel } from "@prisma/client";
 import { useAtom } from "jotai";
 import { PresenceChannel } from "pusher-js";
 import { useEffect, useState } from "react";
-import { activeRoomAtom, userIdAtom } from "./Chat";
 
 export default function ChatBody() {
-  const [messages, setMessages] = useState<string[]>([
-    "Please enter your name",
-  ]);
+  const [messages, setMessages] = useState<string[]>(["Loading..."]);
   // jotai state data
   const [userId] = useAtom(userIdAtom);
   const [activeRoom] = useAtom(activeRoomAtom);
 
   // loading room messages history from DB
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      setMessages(["Please enter your name"]);
+      return;
+    }
 
     fetch("/api/db", {
       method: "POST",
@@ -33,18 +34,17 @@ export default function ChatBody() {
         result?.messages
           ? setMessages(() => [
               ...result.messages.map((message) => message.text),
-              `Welcome to chat ${userId}`,
+              `Welcome to chat ${userId.user_name}`,
             ])
-          : setMessages([`Welcome to chat ${userId}`]);
+          : setMessages([`Welcome to chat ${userId.user_name}`]);
       });
-  }, [userId, activeRoom]);
+  }, [activeRoom]);
 
   useEffect(() => {
-    if (!userId || !activeRoom) return;
-    console.log("Messages useEffect");
+    if (!userId?.user_id || !activeRoom) return;
     // subscribing to the presence channel with the name based on the userId
-    const channel = pusherClient.subscribe(
-      // `presence-${userId}`
+    console.log("ChatBody - subscribed");
+    const channel = pusherClient(userId.user_id).subscribe(
       activeRoom
     ) as PresenceChannel;
 
@@ -64,10 +64,11 @@ export default function ChatBody() {
 
     // return () => pusherClient.unsubscribe(`presence-${userId}`);
     return () => {
+      if (!userId.user_id) return;
       console.log("Cleanup " + activeRoom);
-      pusherClient.unsubscribe(activeRoom);
+      pusherClient(userId.user_id).unsubscribe(activeRoom);
     };
-  }, [userId, messages, activeRoom]);
+  }, [messages, activeRoom]);
 
   const chatContent = messages.map((msg, index) => (
     <li key={index} className="post__text">

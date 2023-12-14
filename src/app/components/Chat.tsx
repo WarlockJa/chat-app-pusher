@@ -5,53 +5,66 @@ import SendForm from "./SendForm";
 import "./chat.scss";
 import ChatRooms from "./ChatRooms";
 import { pusherClient } from "@/lib/pusher";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
+import { IUserLocalStorageData, readLocalStorage } from "@/util/localStorageRW";
+import NoUserPlug from "./NoUserPlug";
+import { IUserId, activeRoomAtom, userIdAtom } from "@/lib/localState";
 
-function readCookie(name: string) {
-  const cookieString = document.cookie;
-  const cookies = cookieString.split("; ");
-
-  for (const cookie of cookies) {
-    const [cookieName, cookieValue] = cookie.split("=");
-    if (cookieName === name) {
-      return cookieValue;
-    }
-  }
-
-  return null; // Cookie not found
+interface IChatProps extends IUserId {
+  storage_uuid: string;
 }
 
-export interface IChatData {
-  roomId: string;
-  messages: {
-    author: string;
-    text: string;
-  }[];
-}
-
-export const userIdAtom = atom<string | null>(null); // replace with IdToken data in production
-export const activeRoomAtom = atom("");
-export const roomsListAtom = atom<string[]>([]);
-export const chatDataAtom = atom<IChatData[]>([]);
-
-export default function Chat() {
-  const [, setUserId] = useAtom(userIdAtom);
+export default function Chat({
+  user_id,
+  user_name,
+  user_admin,
+  storage_uuid = process.env.NEXT_PUBLIC_LOCAL_STORAGE_UUID!,
+}: IChatProps) {
+  // jotai store data
+  const [userId, setUserId] = useAtom(userIdAtom);
   const [, setActiveRoom] = useAtom(activeRoomAtom);
 
+  // TEST
+  console.log("Chat rerender", userId);
+
   useEffect(() => {
-    const cookieUser = readCookie("user_id");
-    setUserId(cookieUser);
-    setActiveRoom(`presence-${cookieUser}`);
+    if (user_id) {
+      // saving to state passed user Id Token
+      setUserId({
+        user_id,
+        user_name: user_name ? user_name : user_id,
+        user_admin,
+      });
+      setActiveRoom(`presence-${user_id}`);
+    } else {
+      // checking localStorage for saved credentials
+      const localStorageUser: IUserLocalStorageData =
+        readLocalStorage(storage_uuid);
+
+      // no data found
+      if (!localStorageUser) return;
+
+      // saving data from localStorage to state
+      // TODO replace
+      // setUserId(localStorageUser);
+      localStorageUser.user_name === "WJ"
+        ? setUserId({ ...localStorageUser, user_admin: true })
+        : setUserId(localStorageUser);
+      setActiveRoom(`presence-${localStorageUser.user_id}`);
+    }
 
     return () => {
+      if (!userId?.user_id) return;
       console.log("Cleanup");
-      pusherClient.disconnect();
+      pusherClient(userId.user_id).disconnect();
     };
   }, []);
 
-  return (
+  return !userId?.user_id ? (
+    <NoUserPlug storage_uuid={storage_uuid} />
+  ) : (
     <div className="chat">
-      <ChatRooms />
+      {userId.user_admin ? <ChatRooms /> : null}
       <div className="chat__wrapper">
         <ChatBody />
         <SendForm />

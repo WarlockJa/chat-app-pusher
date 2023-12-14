@@ -9,9 +9,8 @@ export const pusherServer = new PusherServer({
   useTLS: true,
 });
 
-export const pusherClient = new PusherClient(
-  process.env.NEXT_PUBLIC_PUSHER_KEY!,
-  {
+export const pusherClient = (user_id: string) =>
+  new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
     cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     authEndpoint: "/api/pusher/auth",
     authTransport: "ajax",
@@ -19,6 +18,8 @@ export const pusherClient = new PusherClient(
       headers: {
         "Content-Type": "application/json",
       },
+      params: {
+        user_id,
+      },
     },
-  }
-);
+  });

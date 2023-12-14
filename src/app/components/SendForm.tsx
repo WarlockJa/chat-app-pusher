@@ -1,51 +1,42 @@
 "use client";
+import { activeRoomAtom, userIdAtom } from "@/lib/localState";
 import { useAtom } from "jotai";
 import { useState } from "react";
-import { activeRoomAtom, userIdAtom } from "./Chat";
 
 export default function SendForm() {
   const [message, setMessage] = useState<string>("");
   // jotai state data
-  const [userId, setUserId] = useAtom(userIdAtom);
-  const [activeRoom, setActiveRoom] = useAtom(activeRoomAtom);
+  const [userId] = useAtom(userIdAtom);
+  const [activeRoom] = useAtom(activeRoomAtom);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!userId) {
-      // TODO validate input
-      // writing new user_id to a cookie
-      setUserId(message);
-      setActiveRoom(`presence-${message}`);
-      document.cookie = "user_id=" + message;
-    } else {
-      fetch("/api/pusher/message", {
-        method: "POST",
-        headers: {
-          "Content-Type": "Application/json",
-        },
-        body: JSON.stringify({
-          message,
-          activeRoom,
-        }),
-      });
+    // triggering "message" event for Pusher
+    fetch("/api/pusher/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify({
+        message,
+        activeRoom,
+      }),
+    });
 
-      fetch("/api/db", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "Application/json",
-        },
-        body: JSON.stringify({
-          message,
-          userId,
-          activeRoom,
-        }),
-      });
-    }
-
-    // fetch(URL)
-    //   .then((response) => response.json())
-    //   .then((result) => console.log(result));
+    // TODO change message data
+    // writing message to DB
+    fetch("/api/db", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify({
+        message,
+        userId,
+        activeRoom,
+      }),
+    });
 
     setMessage("");
   };

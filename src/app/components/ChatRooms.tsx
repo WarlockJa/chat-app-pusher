@@ -1,9 +1,9 @@
 "use client";
+import { activeRoomAtom, roomsListAtom, userIdAtom } from "@/lib/localState";
 import { pusherClient } from "@/lib/pusher";
 import { useAtom } from "jotai";
 import { PresenceChannel } from "pusher-js";
-import React, { useEffect, useState } from "react";
-import { activeRoomAtom, roomsListAtom, userIdAtom } from "./Chat";
+import React, { useEffect } from "react";
 
 // interface IChatRoomsProps {
 //   userId: string | null;
@@ -24,7 +24,6 @@ const getRoomsList = (callback: (rooms: string[]) => void) => {
 
 // export default function ChatRooms(props: IChatRoomsProps) {
 export default function ChatRooms() {
-  const [channelSystem, setChannelSystem] = useState<PresenceChannel>();
   // jotai state data
   const [userId] = useAtom(userIdAtom);
   const [activeRoom, setActiveRoom] = useAtom(activeRoomAtom);
@@ -32,7 +31,6 @@ export default function ChatRooms() {
 
   // switching to the new room
   const handleRoomSwitch = (room: string) => {
-    console.log(room);
     if (activeRoom === room) return;
     setActiveRoom(room);
   };
@@ -50,10 +48,11 @@ export default function ChatRooms() {
 
   // subscribing to presence-system channel events
   useEffect(() => {
-    if (!userId) return;
+    if (!userId.user_id) return;
 
     // system channel is for admin console notifications
-    const channelSystem = pusherClient.subscribe(
+    console.log("ChatRooms - subscribed");
+    const channelSystem = pusherClient(userId.user_id).subscribe(
       "presence-system"
     ) as PresenceChannel;
 
@@ -71,10 +70,11 @@ export default function ChatRooms() {
     });
 
     return () => {
-      pusherClient.unsubscribe("presence-system");
-      // console.log("Rooms unsubscribed");
+      if (!userId.user_id) return;
+      console.log("Cleanup system");
+      pusherClient(userId.user_id).unsubscribe("presence-system");
     };
-  }, [roomsList.length, userId]);
+  }, [roomsList.length]);
 
   return (
     <ul className="chat__rooms">
