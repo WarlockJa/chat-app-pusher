@@ -1,5 +1,5 @@
 "use client";
-import { activeRoomAtom, userIdAtom } from "@/lib/localState";
+import { activeRoomAtom, roomsListAtom, userIdAtom } from "@/lib/localState";
 import { useAtom } from "jotai";
 import { useState } from "react";
 
@@ -8,6 +8,8 @@ export default function SendForm() {
   // jotai state data
   const [userId] = useAtom(userIdAtom);
   const [activeRoom] = useAtom(activeRoomAtom);
+  // TEST
+  const [roomsList, setRoomsList] = useAtom(roomsListAtom);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,7 +46,11 @@ export default function SendForm() {
   const handleGetInfoClick = () => {
     fetch("/api/pusher/channels")
       .then((response) => response.json())
-      .then((result) => console.log(result));
+      .then((result) =>
+        roomsList.length === 0
+          ? setRoomsList(Object.keys(result.channels))
+          : setRoomsList([])
+      );
   };
 
   return (

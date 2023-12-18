@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const data = await req.text();
 
-  // console.log(data);
+  console.log(data);
 
   const [socket_id, channel_name, user_id] = data
     .split("&")
@@ -15,10 +15,12 @@ export async function POST(req: NextRequest) {
   if (!socket_id || !channel_name || !user_id)
     return NextResponse.json(
       {},
-      { status: 400, statusText: "Socket id and channel name required" }
+      {
+        status: 400,
+        statusText: "Socket id, user id, and channel name required",
+      }
     );
 
-  // TODO think of making names unique by adding UUID
   const presenceData = { user_id };
   const authResponse = pusherServer.authorizeChannel(
     socket_id,

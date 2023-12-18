@@ -9,6 +9,7 @@ import { useAtom } from "jotai";
 import { IUserLocalStorageData, readLocalStorage } from "@/util/localStorageRW";
 import NoUserPlug from "./NoUserPlug";
 import { IUserId, activeRoomAtom, userIdAtom } from "@/lib/localState";
+import TestElement from "./TestElement";
 
 interface IChatProps extends IUserId {
   storage_uuid: string;
@@ -48,7 +49,7 @@ export default function Chat({
       // TODO replace
       // setUserId(localStorageUser);
       localStorageUser.user_name === "WJ"
-        ? setUserId({ ...localStorageUser, user_admin: true })
+        ? setUserId({ ...localStorageUser, user_admin: false })
         : setUserId(localStorageUser);
       setActiveRoom(`presence-${localStorageUser.user_id}`);
     }
@@ -59,6 +60,8 @@ export default function Chat({
       pusherClient(userId.user_id).disconnect();
     };
   }, []);
+
+  return <TestElement />;
 
   return !userId?.user_id ? (
     <NoUserPlug storage_uuid={storage_uuid} />
