@@ -19,7 +19,7 @@ export default function Chat({
   user_id,
   user_name,
   user_admin,
-  storage_uuid = process.env.NEXT_PUBLIC_LOCAL_STORAGE_UUID!,
+  storage_uuid,
 }: IChatProps) {
   // jotai store data
   const [userId, setUserId] = useAtom(userIdAtom);
