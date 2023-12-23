@@ -1,14 +1,14 @@
+"use client";
 import { useAtom } from "jotai";
 import "./chat.scss";
 import { writeLocalStorage } from "@/util/localStorageRW";
-import { activeRoomAtom, userChannelAtom, userIdAtom } from "@/lib/localState";
-import { pusherClient } from "@/lib/pusher";
-import { PresenceChannel } from "pusher-js";
+import { roomsListAtom, userIdAtom } from "@/lib/localState";
 
+// gathering anonymous user data and saving it to state and localStorage
 export default function NoUserPlug({ storage_uuid }: { storage_uuid: string }) {
   const [, setUserId] = useAtom(userIdAtom);
-  const [, setActiveRoom] = useAtom(activeRoomAtom);
-  const [userChannel, setUserChannel] = useAtom(userChannelAtom);
+  // roomsList state to assing default rooms for the user
+  const [, setRoomsList] = useAtom(roomsListAtom);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,21 +18,18 @@ export default function NoUserPlug({ storage_uuid }: { storage_uuid: string }) {
 
     if (!user_name) return;
 
+    // generating random user_id
     const user_id = crypto.randomUUID();
 
-    // TODO testing only
+    // TODO replace TEST
     // setUserId({ user_id, user_name });
-    setUserId({ user_id: user_name, user_name });
-    // creating userChannel connection
-    // setUserChannel(pusherClient(user_id));
-    const tempChannel = pusherClient(user_name);
-    setUserChannel(tempChannel);
-    // subscribing to presence-system
-    // tempChannel.subscribe("presence-system") as PresenceChannel;
+    // assigning default rooms for the user
+    // setRoomsList(['presence-system', `presence-${user_id}`])
+    // TEST
+    setUserId({ user_id: user_name, user_name, user_admin: false });
+    setRoomsList(["presence-system", `presence-${user_name}`]);
 
-    // setActiveRoom(`presence-${user_id}`);
-    setActiveRoom(`presence-${user_name}`);
-
+    // saving anonymous data to localStorage
     writeLocalStorage({
       user_id,
       user_name,

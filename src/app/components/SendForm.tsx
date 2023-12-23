@@ -28,17 +28,17 @@ export default function SendForm() {
 
     // TODO change message data
     // writing message to DB
-    fetch("/api/db", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "Application/json",
-      },
-      body: JSON.stringify({
-        message,
-        userId,
-        activeRoom,
-      }),
-    });
+    // fetch("/api/db", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "Application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     message,
+    //     userId,
+    //     activeRoom,
+    //   }),
+    // });
 
     setMessage("");
   };

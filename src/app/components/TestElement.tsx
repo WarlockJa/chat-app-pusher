@@ -46,7 +46,7 @@ export default function TestElement() {
 
     const channel = pusher.subscribe(`presence-WJ`) as PresenceChannel;
 
-    channel.bind("message", function (data: { message: string }) {
+    channel.bind("message", function (data: IMessageData) {
       // adding message to the state
       setMessages((prev) => [...prev, data.message]);
     });

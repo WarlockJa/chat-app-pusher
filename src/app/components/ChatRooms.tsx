@@ -1,8 +1,8 @@
 "use client";
 import {
   activeRoomAtom,
+  pusherAtom,
   roomsListAtom,
-  userChannelAtom,
   userIdAtom,
 } from "@/lib/localState";
 import { useAtom } from "jotai";
@@ -32,7 +32,7 @@ export default function ChatRooms() {
   const [userId] = useAtom(userIdAtom);
   const [activeRoom, setActiveRoom] = useAtom(activeRoomAtom);
   const [roomsList, setRoomsList] = useAtom(roomsListAtom);
-  const [userChannel] = useAtom(userChannelAtom);
+  const [pusher] = useAtom(pusherAtom);
 
   // switching to the new room
   const handleRoomSwitch = (room: string) => {
@@ -40,56 +40,42 @@ export default function ChatRooms() {
     setActiveRoom(room);
   };
 
-  // useEffect(() => {
-  //   // system channel is for admin console notifications
-  //   setChannelSystem(
-  //     pusherClient.subscribe("presence-system") as PresenceChannel
-  //   );
-
-  //   getRoomsList(setRoomsList);
-
-  //   return () => pusherClient.unsubscribe("presence-system");
-  // }, []);
-
   // subscribing to presence-system channel events
   useEffect(() => {
-    if (!userChannel) return;
+    if (!pusher) return;
 
     // system channel is for admin console notifications
     console.log("ChatRooms - useEffect");
-    // const channelSystem = pusherClient(userId.user_id).subscribe(
-    //   "presence-system"
-    // ) as PresenceChannel;
-    userChannel.subscribe("presence-system") as PresenceChannel;
+    const channelSystem = pusher.subscribe(
+      "presence-system"
+    ) as PresenceChannel;
+    // subscribing to user channel
+    const userChannel = pusher.subscribe(`presence-${userId.user_id}`);
+    userChannel.bind("message", (data: IMessageData) => {
+      // TODO add message to chataData state
+    });
 
     // binding admin to presence-system channel events
     if (userId.user_admin) {
-      userChannel.bind("pusher:subscription_succeeded", () => {
-        // console.log("system subscribtion");
+      channelSystem.bind("pusher:subscription_succeeded", () => {
         getRoomsList(setRoomsList);
-        // fetch("/api/pusher/channels")
-        //   .then((response) => response.json())
-        //   .then((result: IChannelsResult) => {
-        //     console.log("system subscribtion");
-        //     setRoomsList(Object.keys(result.channels));
-        //   });
       });
-      userChannel.bind("pusher:member_removed", () => {
+      channelSystem.bind("pusher:member_removed", () => {
         console.log(`System Removed`);
         getRoomsList(setRoomsList);
       });
-      userChannel.bind("pusher:member_added", () => {
+      channelSystem.bind("pusher:member_added", () => {
         console.log(`System Added`);
         getRoomsList(setRoomsList);
       });
     }
 
     return () => {
-      if (!userChannel) return;
+      if (!pusher) return;
       console.log("Cleanup system");
-      userChannel.unsubscribe("presence-system");
+      pusher.unsubscribe("presence-system");
     };
-  }, [userChannel, roomsList.length]);
+  }, [pusher]);
 
   return (
     <ul className="chat__rooms">
