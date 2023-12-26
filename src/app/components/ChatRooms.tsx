@@ -1,11 +1,6 @@
-"use client";
-import {
-  activeRoomAtom,
-  pusherAtom,
-  roomsListAtom,
-  userIdAtom,
-} from "@/lib/localState";
-import { useAtom } from "jotai";
+import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import { usePusherContext } from "@/context/PusherProvider";
+import { useUserIdContext } from "@/context/UserIdProvider";
 import { PresenceChannel } from "pusher-js";
 import React, { useEffect } from "react";
 
@@ -26,13 +21,12 @@ const getRoomsList = (callback: (rooms: string[]) => void) => {
     });
 };
 
-// export default function ChatRooms(props: IChatRoomsProps) {
 export default function ChatRooms() {
-  // jotai state data
-  const [userId] = useAtom(userIdAtom);
-  const [activeRoom, setActiveRoom] = useAtom(activeRoomAtom);
-  const [roomsList, setRoomsList] = useAtom(roomsListAtom);
-  const [pusher] = useAtom(pusherAtom);
+  // context data
+  const { userId } = useUserIdContext();
+  const { activeRoom, setActiveRoom, roomsList, setRoomsList } =
+    useChatRoomsContext();
+  const { pusher } = usePusherContext();
 
   // switching to the new room
   const handleRoomSwitch = (room: string) => {
@@ -43,6 +37,8 @@ export default function ChatRooms() {
   // subscribing to presence-system channel events
   useEffect(() => {
     if (!pusher) return;
+    // TODO just running build
+    if (!userId?.user_id) return;
 
     // system channel is for admin console notifications
     console.log("ChatRooms - useEffect");

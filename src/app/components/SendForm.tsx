@@ -1,15 +1,11 @@
-"use client";
-import { activeRoomAtom, roomsListAtom, userIdAtom } from "@/lib/localState";
-import { useAtom } from "jotai";
+import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import { useUserIdContext } from "@/context/UserIdProvider";
 import { useState } from "react";
 
 export default function SendForm() {
   const [message, setMessage] = useState<string>("");
-  // jotai state data
-  const [userId] = useAtom(userIdAtom);
-  const [activeRoom] = useAtom(activeRoomAtom);
-  // TEST
-  const [roomsList, setRoomsList] = useAtom(roomsListAtom);
+  const { userId } = useUserIdContext();
+  const { activeRoom, roomsList, setRoomsList } = useChatRoomsContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

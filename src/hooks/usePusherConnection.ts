@@ -1,21 +1,24 @@
-import { userIdAtom } from "@/lib/localState";
+import { usePusherContext } from "@/context/PusherProvider";
+import { useUserIdContext } from "@/context/UserIdProvider";
 import { pusherClient } from "@/lib/pusher";
-import { useAtom } from "jotai";
-import Pusher from "pusher-js/types/src/core/pusher";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // establishing pusher connection
 // if no user data present pusher connection is not initiated and
 // anonymous user data awaited to be filled in NoUserPlug
 export default function usePusherConnection() {
-  const [pusher, setPusher] = useState<Pusher | null>(null);
-  const [userId] = useAtom(userIdAtom);
+  // const [userId] = useAtom(userIdAtom);
+  const { userId } = useUserIdContext();
+  const { pusher, setPusher } = usePusherContext();
 
   useEffect(() => {
     // processing change of authenticated user data from the parent
-    if (pusher) pusher.disconnect();
+    if (pusher) {
+      pusher.disconnect();
+      setPusher(null);
+    }
 
-    if (!userId.user_id) return;
+    if (!userId?.user_id) return;
 
     // TODO replace TEST
     // establishing pusher connection
@@ -31,7 +34,5 @@ export default function usePusherConnection() {
       console.log("Exit chat Cleanup");
       pusher.disconnect();
     };
-  }, [userId.user_id]);
-
-  return { pusher };
+  }, [userId?.user_id]);
 }

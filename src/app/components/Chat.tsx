@@ -1,20 +1,14 @@
-"use client";
 import ChatBody from "./ChatBody";
 import SendForm from "./SendForm";
 import "./chat.scss";
 import ChatRooms from "./ChatRooms";
-import NoUserPlug from "./NoUserPlug";
-import { IUserId } from "@/lib/localState";
-import LoadingPlug from "./LoadingPlug";
+import NoUserPlug from "./plugs/NoUserPlug";
+import LoadingPlug from "./plugs/LoadingPlug";
 import usePusherConnection from "@/hooks/usePusherConnection";
 import useUserId from "@/hooks/useUserId";
 import useChatData from "@/hooks/useChatData";
 import useSubscriptions from "@/hooks/useSubscriptions";
-
-interface IChatProps extends IUserId {
-  storage_uuid: string;
-}
-
+import { usePusherContext } from "@/context/PusherProvider";
 export default function Chat({
   user_id,
   user_name,
@@ -22,27 +16,32 @@ export default function Chat({
   storage_uuid,
 }: IChatProps) {
   // populating state with user data
-  const { loading } = useUserId({
+  const { loadingUserId } = useUserId({
     storage_uuid,
     user_id,
     user_name,
     user_admin,
   });
+
   // initiating pusher connection
-  const { pusher } = usePusherConnection();
+  usePusherConnection();
+  const pusher = usePusherContext();
   // managing channel subscriptions
-  const {} = useSubscriptions();
+  useSubscriptions();
   // fetching db data
-  const { chatData } = useChatData();
+  useChatData();
 
   // return <TestElement />;
 
-  if (!loading) return <LoadingPlug />;
+  // showing loading screen while processing userId
+  if (loadingUserId) return <LoadingPlug />;
 
-  if (!pusher) return <NoUserPlug storage_uuid={storage_uuid} />;
+  // show local authentication element for anonymous user
+  if (!pusher) return <NoUserPlug storage_uuid={storage_uuid!} />;
 
   return (
     <div className="chat">
+      <ChatBody />
       {/* <ChatRooms /> */}
       {/* <div className="chat__wrapper">
         <ChatBody />

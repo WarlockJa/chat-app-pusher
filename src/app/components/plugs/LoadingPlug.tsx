@@ -1,4 +1,4 @@
-import "./chat.scss";
+import "../chat.scss";
 
 export default function LoadingPlug() {
   // TODO add loading animation

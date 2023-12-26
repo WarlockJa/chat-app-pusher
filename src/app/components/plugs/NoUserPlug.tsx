@@ -1,14 +1,25 @@
-"use client";
-import { useAtom } from "jotai";
-import "./chat.scss";
+import "../chat.scss";
 import { writeLocalStorage } from "@/util/localStorageRW";
-import { roomsListAtom, userIdAtom } from "@/lib/localState";
+import { useUserIdContext } from "@/context/UserIdProvider";
+import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 
 // gathering anonymous user data and saving it to state and localStorage
-export default function NoUserPlug({ storage_uuid }: { storage_uuid: string }) {
-  const [, setUserId] = useAtom(userIdAtom);
+export default function NoUserPlug({
+  storage_uuid,
+}: {
+  storage_uuid?: string;
+}) {
+  // throwing error if neither authenticated user data(user_id)
+  // nor localStorage name(storage_uuid) for anonymous user provided
+  if (!storage_uuid)
+    throw new Error(
+      "No data provided. For authenticated user specify user_id. For anonymous user access specify storage_uuid"
+    );
+
+  // reading UserId context
+  const { setUserId } = useUserIdContext();
   // roomsList state to assing default rooms for the user
-  const [, setRoomsList] = useAtom(roomsListAtom);
+  const { setRoomsList } = useChatRoomsContext();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,10 +42,15 @@ export default function NoUserPlug({ storage_uuid }: { storage_uuid: string }) {
 
     // saving anonymous data to localStorage
     writeLocalStorage({
-      user_id,
+      user_id: user_name,
       user_name,
       storage_uuid,
     });
+    // writeLocalStorage({
+    //   user_id,
+    //   user_name,
+    //   storage_uuid,
+    // });
   };
 
   return (

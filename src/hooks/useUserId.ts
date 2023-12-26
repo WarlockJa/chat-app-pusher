@@ -1,7 +1,6 @@
-"use client";
-import { IUserId, roomsListAtom, userIdAtom } from "@/lib/localState";
+import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import { useUserIdContext } from "@/context/UserIdProvider";
 import { readLocalStorage } from "@/util/localStorageRW";
-import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 
 // populating state with user data from the parent for authenticated user
@@ -12,19 +11,13 @@ export default function useUserId({
   user_name,
   user_admin,
   storage_uuid,
-}: {
-  user_id?: string;
-  user_name?: string;
-  user_admin?: boolean;
-  storage_uuid: string;
-}) {
-  // using jotai atom for user data storage in order to accomodate
+}: IChatProps) {
   // anonymous user scenario processed in NoUserPlug
-  const [userId, setUserId] = useAtom(userIdAtom);
-  // roomsList state to assing default rooms for the user
-  const [, setRoomsList] = useAtom(roomsListAtom);
+  const { setUserId } = useUserIdContext();
   // loading state during accessing localStorage
-  const [loading, setLoading] = useState(true);
+  const [loadingUserId, setLoadingUserId] = useState(true);
+  // chat rooms context
+  const { setRoomsList, setActiveRoom } = useChatRoomsContext();
 
   useEffect(() => {
     // saving user data to state
@@ -38,7 +31,14 @@ export default function useUserId({
       setUserId(userData);
       // assigning default rooms for the user
       setRoomsList(["presence-system", `presence-${user_id}`]);
+      setActiveRoom(`presence-${user_id}`);
     } else {
+      // throwing error if neither authenticated user data(user_id)
+      // nor localStorage name(storage_uuid) for anonymous user provided
+      if (!storage_uuid)
+        throw new Error(
+          "No data provided. For authenticated user specify user_id. For anonymous user access specify storage_uuid"
+        );
       // user is not authenticated. Checking localStorage for temporary user data
       const localStorageUser: IUserLocalStorageData =
         readLocalStorage(storage_uuid);
@@ -59,15 +59,16 @@ export default function useUserId({
           "presence-system",
           `presence-${localStorageUser.user_id}`,
         ]);
+        setActiveRoom(`presence-${localStorageUser.user_id}`);
       }
       // else
       // user data is not provided and not found in localStorage.
       // Anonymous user data will be collected in NoUserPlug.
-
-      // disabling loading flag so NoUserPlug can be displayed
-      setLoading(false);
     }
+
+    // disabling loading flag so NoUserPlug can be displayed
+    setLoadingUserId(false);
   }, [user_id, user_name, user_admin, storage_uuid]);
 
-  return { userId, loading };
+  return { loadingUserId };
 }

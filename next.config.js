@@ -1,7 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // TODO delete
-  reactStrictMode: false,
-};
+const nextConfig = {};
 
 module.exports = nextConfig;

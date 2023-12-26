@@ -1,16 +1,17 @@
-import { roomsListAtom, userIdAtom } from "@/lib/localState";
-import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import usePusherConnection from "./usePusherConnection";
 import { PresenceChannel } from "pusher-js";
+import { usePusherContext } from "@/context/PusherProvider";
+import { useUserIdContext } from "@/context/UserIdProvider";
+import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 
 export default function useSubscriptions() {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // pusher connection instance
-  const { pusher } = usePusherConnection();
+  const { pusher } = usePusherContext();
   // state data
-  const [userId] = useAtom(userIdAtom);
-  const [roomsList, setRoomsList] = useAtom(roomsListAtom);
+  // const [userId] = useAtom(userIdAtom);
+  const { userId } = useUserIdContext();
+  const { roomsList } = useChatRoomsContext();
 
   // cleanup subscriptions function
   const handleUnsubscribeAllChannels = () => {
@@ -20,8 +21,7 @@ export default function useSubscriptions() {
 
   useEffect(() => {
     // processing user logout
-    if (!userId.user_id) {
-      setRoomsList([]);
+    if (!userId?.user_id) {
       handleUnsubscribeAllChannels();
     }
     // failsafe check for pusher instance
@@ -39,7 +39,7 @@ export default function useSubscriptions() {
         setSubscriptions((prev) => [...prev, newChannel]);
       }
     });
-    // unsubscribing from all channels removed from roomsList
+    // unsubscribing from channels removed from roomsList
     subscriptions.forEach((channel) => {
       // found channel that exists in subscriptions but not in roomsList
       if (roomsList.findIndex((room) => room === channel.name) === -1) {
@@ -52,7 +52,7 @@ export default function useSubscriptions() {
     });
 
     return () => handleUnsubscribeAllChannels();
-  }, [roomsList.length, userId.user_id]);
+  }, [roomsList.length, userId?.user_id]);
 
   return { subscriptions };
 }
