@@ -41,12 +41,11 @@ export default function Chat({
 
   return (
     <div className="chat">
-      <ChatBody />
       {/* <ChatRooms /> */}
-      {/* <div className="chat__wrapper">
+      <div className="chat__wrapper">
         <ChatBody />
         <SendForm />
-      </div> */}
+      </div>
     </div>
   );
 }

@@ -14,15 +14,19 @@ export default function useChatData() {
   // // local chat data
   const { chatData, setChatData } = useChatDataContext();
 
+  // handleNewRoom used as a callback for a DB POST request that searches for a room
+  // with roomId and returns messages array or null if room is not found
   const handleNewRoom = ({
     roomId,
     messages,
   }: {
     roomId: string;
-    messages: Message[];
+    messages: Message[] | null;
   }) => {
     setChatData((prev: IChatData[] | null) =>
-      prev ? [...prev, { roomId, messages }] : [{ roomId, messages }]
+      prev
+        ? [...prev, { roomId, messages: messages ? messages : [] }]
+        : [{ roomId, messages: messages ? messages : [] }]
     );
   };
 

@@ -29,7 +29,7 @@ export default function fetchRoomMessages({
     }),
   })
     .then((response) => response.json())
-    .then((result: channel) => {
-      callback({ roomId: room, messages: result?.messages });
-    });
+    .then((result: channel) =>
+      callback({ roomId: room, messages: result?.messages })
+    );
 }

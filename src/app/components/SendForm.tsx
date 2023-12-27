@@ -24,17 +24,17 @@ export default function SendForm() {
 
     // TODO change message data
     // writing message to DB
-    // fetch("/api/db", {
-    //   method: "PUT",
-    //   headers: {
-    //     "Content-Type": "Application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     message,
-    //     userId,
-    //     activeRoom,
-    //   }),
-    // });
+    fetch("/api/db", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify({
+        message,
+        userId,
+        room: activeRoom,
+      }),
+    });
 
     setMessage("");
   };
@@ -47,6 +47,21 @@ export default function SendForm() {
           ? setRoomsList(Object.keys(result.channels))
           : setRoomsList([])
       );
+  };
+
+  const handleTest = () => {
+    fetch("/api/db", {
+      method: "POST",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify({
+        userId: "WJ",
+        room: "presence-WJ",
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => console.log(result));
   };
 
   return (
@@ -62,6 +77,7 @@ export default function SendForm() {
         <button type="submit">Send</button>
       </form>
       <button onClick={() => handleGetInfoClick()}>Get Info</button>
+      <button onClick={() => handleTest()}>TEST</button>
     </div>
   );
 }
