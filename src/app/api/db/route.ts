@@ -39,14 +39,22 @@ export async function POST(req: Request) {
     const reqBody = await req.json();
     const data = schemaPOST.parse(reqBody);
 
-    const messages = await prisma.channel.findFirst({
-      where: {
-        name: data.room,
-      },
+    return NextResponse.json("Fuck this", {
+      status: 200,
+      statusText: "Seriously",
     });
+    // const messages = await prisma.channel.findFirst({
+    //   where: {
+    //     name: data.room,
+    //   },
+    // });
 
-    return NextResponse.json(messages, { status: 200 });
+    // return NextResponse.json(messages, { status: 200 });
   } catch (error) {
+    return NextResponse.json(error, {
+      status: 400,
+      statusText: "Again seriously",
+    });
     // checking if error is a zod validation error
     return error instanceof z.ZodError
       ? NextResponse.json(error, { status: 400 })

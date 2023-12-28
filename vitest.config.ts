@@ -10,6 +10,7 @@ export default defineConfig({
   },
   plugins: [react()],
   test: {
+    silent: false,
     environment: "jsdom",
     mockReset: true,
     coverage: {

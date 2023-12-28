@@ -2,17 +2,15 @@ import { pusherServer } from "@/lib/pusher";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const result = await pusherServer.get({ path: "/channels" });
-  if (result.status === 200) {
-    const data = await result.json();
-    return NextResponse.json(data, {
+  try {
+    const response = await pusherServer.get({ path: "/channels" });
+    const result = await response.json();
+    console.log(result);
+    return NextResponse.json(result, {
       statusText: "OK",
       status: 200,
     });
-  } else {
-    return NextResponse.json(
-      { message: result },
-      { statusText: "error", status: 500 }
-    );
+  } catch (error) {
+    return NextResponse.json(error, { statusText: "error", status: 500 });
   }
 }

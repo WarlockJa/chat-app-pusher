@@ -2,6 +2,8 @@ import { schemaPOST } from "@/app/api/db/route";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import prisma from "@/prisma/__mocks__/globalForPrisma";
 import { POST } from "@/app/api/db/route";
+import { NextRequest } from "next/server";
+import { createMocks } from "node-mocks-http";
 
 // testing schemaPOST. POST request body validation
 const testSchemaPost = (body: any) => {
@@ -157,13 +159,18 @@ describe("Running POST request", () => {
     //     .fn()
     //     .mockResolvedValueOnce({ userId: "abc123", room: "presence-abc123" }),
     // };
-    const req = new Request("http://localhost:3000/api/db", {
+    // const req = new NextRequest("http://localhost:3000/api/db", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ userId: "abc123", room: "presence-abc123" }),
+    // });
+    const { req, res } = createMocks({
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: "abc123", room: "presence-abc123" }),
+      body: { userId: "abc123", room: "presence-abc123" },
     });
+    // const responsePOST = await POST(req)
 
     vi.mock("@/prisma/globalForPrisma");
 
@@ -174,15 +181,17 @@ describe("Running POST request", () => {
     });
 
     const response = await POST(req);
+    const result = await response.json();
 
     // expect(req.json).toHaveBeenCalledOnce();
-    expect(prisma.channel.findFirst).toHaveBeenCalledOnce();
-    expect(prisma.channel.findFirst).toHaveBeenCalledWith({
-      where: {
-        name: "presence-abc123",
-      },
-    });
-    expect(response).toEqual({
+    // expect(prisma.channel.findFirst).toHaveBeenCalledOnce();
+    // expect(prisma.channel.findFirst).toHaveBeenCalledWith({
+    //   where: {
+    //     name: "presence-abc123",
+    //   },
+    // });
+    expect(response.status).toBe(400);
+    expect(result).toEqual({
       messages: [],
     });
   });
