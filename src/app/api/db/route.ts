@@ -1,4 +1,4 @@
-import { prisma } from "@/prisma/globalForPrisma";
+import { prisma } from "@/lib/globalForPrisma";
 import { regexAlphanumeric } from "@/util/regExes";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -33,28 +33,18 @@ export const schemaPOST = z
   .strict(); // do not allow unrecognized keys
 // fetching a chat room data from DB
 export async function POST(req: Request) {
-  console.log(req);
-
   try {
     const reqBody = await req.json();
     const data = schemaPOST.parse(reqBody);
 
-    return NextResponse.json("Fuck this", {
-      status: 200,
-      statusText: "Seriously",
+    const messages = await prisma.channel.findFirst({
+      where: {
+        name: data.room,
+      },
     });
-    // const messages = await prisma.channel.findFirst({
-    //   where: {
-    //     name: data.room,
-    //   },
-    // });
 
-    // return NextResponse.json(messages, { status: 200 });
+    return NextResponse.json(messages, { status: 200 });
   } catch (error) {
-    return NextResponse.json(error, {
-      status: 400,
-      statusText: "Again seriously",
-    });
     // checking if error is a zod validation error
     return error instanceof z.ZodError
       ? NextResponse.json(error, { status: 400 })

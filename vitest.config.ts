@@ -16,5 +16,10 @@ export default defineConfig({
     coverage: {
       provider: "v8",
     },
+    poolOptions: {
+      vmThreads: {
+        useAtomics: true,
+      },
+    },
   },
 });

@@ -30,7 +30,6 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "jsdom": "^23.0.1",
-    "node-mocks-http": "^1.14.0",
     "prisma": "^5.7.1",
     "typescript": "^5",
     "vitest": "^1.1.0",

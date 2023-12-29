@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { beforeEach } from "node:test";
+import { beforeEach } from "vitest";
 import { mockReset, mockDeep } from "vitest-mock-extended";
 
 beforeEach(() => {
@@ -7,4 +7,4 @@ beforeEach(() => {
 });
 
 const prisma = mockDeep<PrismaClient>();
-export default prisma;
+export { prisma };
