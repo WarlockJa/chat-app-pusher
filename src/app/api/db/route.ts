@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/globalForPrisma";
-import { regexAlphanumeric } from "@/util/regExes";
+import { regexAlphanumericWithDash } from "@/util/regExes";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -13,10 +13,9 @@ export const schemaPOST = z
         invalid_type_error: "Required type for userId is string",
       })
       .max(36, { message: "Maximum length for userId is 36" })
-      .regex(regexAlphanumeric, {
+      .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }),
-    // message: z.string().max(400, { message: "Message exceeds 400 characters" }),
     room: z
       .string({
         required_error: "ActiveRoom is required",
@@ -26,7 +25,7 @@ export const schemaPOST = z
         message: "ActiveRoom must start with 'presence-'",
       })
       .max(45)
-      .regex(regexAlphanumeric, {
+      .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }),
   })
@@ -62,7 +61,7 @@ export const schemaPUT = z
         invalid_type_error: "Required type for userId is string",
       })
       .max(36, { message: "Maximum length for userId is 36" })
-      .regex(regexAlphanumeric, {
+      .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }),
     message: z
@@ -78,7 +77,7 @@ export const schemaPUT = z
         message: "ActiveRoom must start with 'presence-'",
       })
       .max(45)
-      .regex(regexAlphanumeric, {
+      .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }),
   })

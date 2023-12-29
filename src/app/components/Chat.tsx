@@ -37,7 +37,7 @@ export default function Chat({
   if (loadingUserId) return <LoadingPlug />;
 
   // show local authentication element for anonymous user
-  if (!pusher) return <NoUserPlug storage_uuid={storage_uuid!} />;
+  if (!pusher.pusher) return <NoUserPlug storage_uuid={storage_uuid!} />;
 
   return (
     <div className="chat">
