@@ -132,12 +132,13 @@ describe("Validating request body tests", () => {
   });
 });
 
-// testing POST with mocks for MongoDB request
+// testing POST with mocks for NextRequest and Prisma MongoDB call
 describe("Running POST request", () => {
   afterEach(() => {
     vi.resetAllMocks();
   });
 
+  // following (loosely) prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
   vi.mock("@/lib/globalForPrisma", async () => {
     const actual = await vi.importActual("@/lib/__mocks__/globalForPrisma");
     return {
@@ -145,21 +146,7 @@ describe("Running POST request", () => {
     };
   });
 
-  // db successful response on POST
-  // {
-  //   messages: [
-  //     {
-  //       author: 'WJ',
-  //       text: 'TEST',
-  //       timestamp: 2023-12-27T08:32:47.365Z,
-  //       readusers: [Array]
-  //     }
-  //   ],
-  //   id: '658be12f4b51f57271598a61',
-  //   name: 'presence-WJ'
-  // }
-
-  it("should receive valid request body and return JSON response with status code 200", async () => {
+  it("successful call to the DB with an existing document return JSON response with status code 200", async () => {
     // recreating NextRequest
     const nextReq = new NextRequest(
       new Request("http://localhost:3000", {
@@ -169,28 +156,30 @@ describe("Running POST request", () => {
       {}
     );
 
-    // following (loosely) prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
-    const mockResult = {
+    // mock DB data
+    const mockDBResult_findFirst = {
       id: "abcdefghijklmn123456789",
       name: "presence-abc123",
       messages: [],
     };
 
-    const expectedDBCallObject = {
+    const expectedDBCallObject_findFirst = {
       where: {
         name: "presence-abc123",
       },
     };
 
-    prisma.channel.findFirst.mockResolvedValue(mockResult);
+    prisma.channel.findFirst.mockResolvedValue(mockDBResult_findFirst);
 
     const response = await POST(nextReq);
     const result = await response.json();
 
     expect(response.status).toBe(200);
     expect(prisma.channel.findFirst).toHaveBeenCalledOnce();
-    expect(prisma.channel.findFirst).toBeCalledWith(expectedDBCallObject);
-    expect(result).toEqual(mockResult);
+    expect(prisma.channel.findFirst).toBeCalledWith(
+      expectedDBCallObject_findFirst
+    );
+    expect(result).toEqual(mockDBResult_findFirst);
   });
 
   it("should receive valid request body not found in DB and return null response with status code 200", async () => {
@@ -203,24 +192,26 @@ describe("Running POST request", () => {
       {}
     );
 
-    // following (loosely) prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
-    const mockResult = null;
+    // mock DB data
+    const mockDBResult_findFirst = null;
 
-    const expectedDBCallObject = {
+    const expectedDBCallObject_findFirst = {
       where: {
         name: "presence-def123",
       },
     };
 
-    prisma.channel.findFirst.mockResolvedValue(mockResult);
+    prisma.channel.findFirst.mockResolvedValue(mockDBResult_findFirst);
 
     const response = await POST(nextReq);
     const result = await response.json();
 
     expect(response.status).toBe(200);
     expect(prisma.channel.findFirst).toHaveBeenCalledOnce();
-    expect(prisma.channel.findFirst).toBeCalledWith(expectedDBCallObject);
-    expect(result).toEqual(mockResult);
+    expect(prisma.channel.findFirst).toBeCalledWith(
+      expectedDBCallObject_findFirst
+    );
+    expect(result).toEqual(mockDBResult_findFirst);
   });
 
   it("imitating DB down return error response with status code 500", async () => {
@@ -233,10 +224,10 @@ describe("Running POST request", () => {
       {}
     );
 
-    // following (loosely) prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
-    const mockResult = {};
+    // mock DB data
+    const mockDBResult_findFirst = {};
 
-    const expectedDBCallObject = {
+    const expectedDBCallObject_findFirst = {
       where: {
         name: "presence-abc123",
       },
@@ -247,7 +238,9 @@ describe("Running POST request", () => {
 
     expect(response.status).toBe(500);
     expect(prisma.channel.findFirst).toHaveBeenCalledOnce();
-    expect(prisma.channel.findFirst).toBeCalledWith(expectedDBCallObject);
-    expect(result).toEqual(mockResult);
+    expect(prisma.channel.findFirst).toBeCalledWith(
+      expectedDBCallObject_findFirst
+    );
+    expect(result).toEqual(mockDBResult_findFirst);
   });
 });

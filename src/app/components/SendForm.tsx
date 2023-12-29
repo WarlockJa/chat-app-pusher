@@ -9,6 +9,7 @@ export default function SendForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // TODO get types from back-end into front-end somewhow. tRPC?
 
     // triggering "message" event for Pusher
     fetch("/api/pusher/message", {
@@ -31,10 +32,12 @@ export default function SendForm() {
       },
       body: JSON.stringify({
         message,
-        userId,
+        userId: userId?.user_id,
         room: activeRoom,
       }),
-    });
+    })
+      .then((response) => response.json())
+      .then((test) => console.log(test));
 
     setMessage("");
   };

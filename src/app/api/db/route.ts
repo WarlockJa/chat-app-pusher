@@ -95,6 +95,8 @@ export async function PUT(req: Request) {
       },
     });
 
+    console.log(channel);
+
     let result;
     if (channel) {
       result = await prisma.channel.update({
@@ -113,6 +115,7 @@ export async function PUT(req: Request) {
           },
         },
       });
+      console.log(result);
     } else {
       result = await prisma.channel.create({
         data: {
@@ -126,6 +129,7 @@ export async function PUT(req: Request) {
           ],
         },
       });
+      console.log(result);
     }
 
     return NextResponse.json(result, { status: 200 });
