@@ -40,8 +40,9 @@ export default function useUserId({
           "No data provided. For authenticated user specify user_id. For anonymous user access specify storage_uuid"
         );
       // user is not authenticated. Checking localStorage for temporary user data
-      const localStorageUser: IUserLocalStorageData =
-        readLocalStorage(storage_uuid);
+      const localStorageUser: IUserLocalStorageData = readLocalStorage({
+        storage_uuid,
+      });
 
       // localStorage data found
       if (localStorageUser) {
