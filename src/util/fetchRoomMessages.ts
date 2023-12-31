@@ -1,3 +1,4 @@
+"use client";
 import type { Message, channel } from "@prisma/client";
 
 interface IFetchRoomMessagesProps {
@@ -18,6 +19,8 @@ export default function fetchRoomMessages({
   room,
   callback,
 }: IFetchRoomMessagesProps) {
+  if (!userId || !room || !callback) return;
+
   fetch("/api/db", {
     method: "POST",
     headers: {
@@ -28,8 +31,21 @@ export default function fetchRoomMessages({
       room,
     }),
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.ok) return response.json();
+      if (response.status === 400)
+        throw new Error(
+          // `Error fetching room data: ${JSON.stringify(response.json())}`,
+          `Error fetching room data: ${JSON.stringify(response)}`,
+          { cause: "Invalid request data" }
+        );
+      throw new Error(
+        `Error fetching room data: ${JSON.stringify(response.json())}`,
+        { cause: "Error fetching database data" }
+      );
+    })
     .then((result: channel) =>
       callback({ roomId: room, messages: result?.messages })
-    );
+    )
+    .catch((error) => callback(error));
 }

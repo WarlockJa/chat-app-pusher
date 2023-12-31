@@ -3,11 +3,26 @@ import { useEffect, useState } from "react";
 import "./chat.scss";
 import { PresenceChannel } from "pusher-js";
 import { usePusherContext } from "@/context/PusherProvider";
+import fetchRoomMessages from "@/util/fetchRoomMessages";
 
 export default function TestElement() {
   const [messages, setMessages] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
   const { pusher } = usePusherContext();
+
+  // TEST
+  const [test, setTest] = useState();
+  const testError = () => {
+    fetchRoomMessages({
+      userId: "WJ",
+      room: "WJ",
+      callback: (result) => {
+        console.log(result);
+        // @ts-expect-error
+        setTest(result);
+      },
+    });
+  };
 
   //   const [channel, setChannel] = useState(
   //     pusherClient("WJ").subscribe(`presence-WJ`)
@@ -91,6 +106,7 @@ export default function TestElement() {
             />
             <button type="submit">Send</button>
           </form>
+          <button onClick={() => testError()}>TEST</button>
         </div>
       </div>
     </div>
