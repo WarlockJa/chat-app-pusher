@@ -9,7 +9,7 @@ import useUserId from "@/hooks/useUserId";
 import useChatData from "@/hooks/useChatData";
 import useSubscriptions from "@/hooks/useSubscriptions";
 import { usePusherContext } from "@/context/PusherProvider";
-import TestElement from "./TestElement";
+
 export default function Chat({
   user_id,
   user_name,
@@ -32,8 +32,6 @@ export default function Chat({
   // fetching db data
   useChatData();
 
-  // return <TestElement />;
-
   // showing loading screen while processing userId
   if (loadingUserId) return <LoadingPlug />;
 
@@ -42,12 +40,12 @@ export default function Chat({
 
   return (
     <div className="chat">
-      <TestElement />
-      {/* <ChatRooms />
+      {/* <TestElement /> */}
+      <ChatRooms />
       <div className="chat__wrapper">
         <ChatBody />
         <SendForm />
-      </div> */}
+      </div>
     </div>
   );
 }

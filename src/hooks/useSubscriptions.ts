@@ -9,7 +9,6 @@ export default function useSubscriptions() {
   // pusher connection instance
   const { pusher } = usePusherContext();
   // state data
-  // const [userId] = useAtom(userIdAtom);
   const { userId } = useUserIdContext();
   const { roomsList } = useChatRoomsContext();
 
@@ -24,6 +23,7 @@ export default function useSubscriptions() {
     if (!userId?.user_id) {
       handleUnsubscribeAllChannels();
     }
+
     // failsafe check for pusher instance
     // if no pusher instance exists when user_id present
     // meaning there is an issue with Pusher service
@@ -39,6 +39,7 @@ export default function useSubscriptions() {
         setSubscriptions((prev) => [...prev, newChannel]);
       }
     });
+
     // unsubscribing from channels removed from roomsList
     subscriptions.forEach((channel) => {
       // found channel that exists in subscriptions but not in roomsList
