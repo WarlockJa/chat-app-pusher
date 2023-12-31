@@ -27,10 +27,10 @@ export default function Chat({
   // initiating pusher connection
   usePusherConnection();
   const pusher = usePusherContext();
-  // managing channel subscriptions
+  // // managing channel subscriptions
   useSubscriptions();
   // fetching db data
-  useChatData();
+  // useChatData();
 
   // showing loading screen while processing userId
   if (loadingUserId) return <LoadingPlug />;

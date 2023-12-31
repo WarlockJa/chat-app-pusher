@@ -7,7 +7,6 @@ import { useEffect } from "react";
 // if no user data present pusher connection is not initiated and
 // anonymous user data awaited to be filled in NoUserPlug
 export default function usePusherConnection() {
-  // const [userId] = useAtom(userIdAtom);
   const { userId } = useUserIdContext();
   const { pusher, setPusher } = usePusherContext();
 

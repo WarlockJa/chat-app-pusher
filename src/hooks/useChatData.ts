@@ -4,14 +4,17 @@ import fetchRoomMessages from "@/util/fetchRoomMessages";
 import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
 import { useUserIdContext } from "@/context/UserIdProvider";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import { usePusherContext } from "@/context/PusherProvider";
 
+// TODO DELETE after testing
 export default function useChatData() {
+  // pusher instance
+  const { pusher } = usePusherContext();
   // user data from state
-  // const [userId] = useAtom(userIdAtom);
   const { userId } = useUserIdContext();
   // list of rooms
   const { roomsList, activeRoom, setActiveRoom } = useChatRoomsContext();
-  // // local chat data
+  // local chat data
   const { chatData, setChatData } = useChatDataContext();
 
   // handleNewRoom used as a callback for a DB POST request that searches for a room
@@ -36,6 +39,7 @@ export default function useChatData() {
       setChatData(null);
       return;
     }
+    if (!pusher) return;
 
     // fetching messages for channels added to roomsList
     roomsList.forEach((channel) => {
@@ -67,5 +71,5 @@ export default function useChatData() {
         );
       }
     });
-  }, [userId?.user_id, roomsList.length]);
+  }, [userId?.user_id, roomsList.length, pusher]);
 }
