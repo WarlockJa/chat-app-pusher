@@ -93,18 +93,13 @@ export default function useSubscriptions() {
           setChatData((prev) =>
             prev
               ? [
-                  prev?.filter((currentRoom) => currentRoom.roomId !== room),
+                  ...prev.filter((currentRoom) => currentRoom.roomId !== room),
                   addMessage(
                     prev.find((currentRoom) => currentRoom.roomId === room)!,
                     data.message
                   ),
                 ]
-              : [
-                  addMessage(
-                    prev.find((currentRoom) => currentRoom.roomId === room)!,
-                    data.message
-                  ),
-                ]
+              : [addMessage({ roomId: room, messages: [] }, data.message)]
           );
         });
       }
