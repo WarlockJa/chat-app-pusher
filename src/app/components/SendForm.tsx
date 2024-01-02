@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function SendForm() {
   const [message, setMessage] = useState<string>("");
   const { userId } = useUserIdContext();
-  const { activeRoom, roomsList, setRoomsList } = useChatRoomsContext();
+  const { activeRoom } = useChatRoomsContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,31 +42,6 @@ export default function SendForm() {
     setMessage("");
   };
 
-  const handleGetInfoClick = () => {
-    fetch("/api/pusher/channels")
-      .then((response) => response.json())
-      .then((result) =>
-        roomsList.length === 0
-          ? setRoomsList(Object.keys(result.channels))
-          : setRoomsList([])
-      );
-  };
-
-  const handleTest = () => {
-    fetch("/api/db", {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-      },
-      body: JSON.stringify({
-        userId: "WJ",
-        room: "presence-WJ",
-      }),
-    })
-      .then((response) => response.json())
-      .then((result) => console.log(result));
-  };
-
   return (
     <div>
       <form onSubmit={(e) => handleSubmit(e)}>
@@ -79,8 +54,6 @@ export default function SendForm() {
         />
         <button type="submit">Send</button>
       </form>
-      <button onClick={() => handleGetInfoClick()}>Get Info</button>
-      <button onClick={() => handleTest()}>TEST</button>
     </div>
   );
 }

@@ -37,8 +37,11 @@ export default function NoUserPlug({
     // assigning default rooms for the user
     // setRoomsList(['presence-system', `presence-${user_id}`])
     // TEST
-    setUserId({ user_id: user_name, user_name, user_admin: false });
-    setRoomsList(["presence-system", `presence-${user_name}`]);
+    setUserId({ user_id: user_name, user_name, user_admin: true }); // TEST TODO replace with false
+    setRoomsList([
+      { roomName: "presence-system", users: [user_name] },
+      { roomName: `presence-${user_name}`, users: [user_name] },
+    ]);
 
     // saving anonymous data to localStorage
     writeLocalStorage({

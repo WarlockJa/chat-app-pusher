@@ -1,17 +1,5 @@
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 
-interface IChannelsResult {
-  channels: { [roomName: string]: {} };
-}
-
-const getRoomsList = (callback: (rooms: string[]) => void) => {
-  fetch("/api/pusher/channels")
-    .then((response) => response.json())
-    .then((result: IChannelsResult) => {
-      callback(Object.keys(result.channels));
-    });
-};
-
 export default function ChatRooms() {
   // context data
   const { activeRoom, setActiveRoom, roomsList } = useChatRoomsContext();
@@ -35,10 +23,10 @@ export default function ChatRooms() {
           .map((room) => (
             <li
               className="chat__rooms--room"
-              key={room}
-              onClick={() => handleRoomSwitch(room)}
+              key={room.roomName}
+              onClick={() => handleRoomSwitch(room.roomName)}
             >
-              {room.slice(9)}
+              {room.roomName.slice(9)}
             </li>
           ))
       }

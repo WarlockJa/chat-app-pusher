@@ -6,7 +6,6 @@ import NoUserPlug from "./plugs/NoUserPlug";
 import LoadingPlug from "./plugs/LoadingPlug";
 import usePusherConnection from "@/hooks/usePusherConnection";
 import useUserId from "@/hooks/useUserId";
-import useChatData from "@/hooks/useChatData";
 import useSubscriptions from "@/hooks/useSubscriptions";
 import { usePusherContext } from "@/context/PusherProvider";
 
@@ -26,11 +25,10 @@ export default function Chat({
 
   // initiating pusher connection
   usePusherConnection();
-  const pusher = usePusherContext();
-  // // managing channel subscriptions
+  // managing channel subscriptions, fetching db data
   useSubscriptions();
-  // fetching db data
-  // useChatData();
+
+  const pusher = usePusherContext();
 
   // showing loading screen while processing userId
   if (loadingUserId) return <LoadingPlug />;

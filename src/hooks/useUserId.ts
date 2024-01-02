@@ -22,15 +22,19 @@ export default function useUserId({
   useEffect(() => {
     // saving user data to state
     if (user_id) {
+      const userName = user_name ? user_name : user_id;
       // populating user data
       const userData: IUserId = {
         user_id,
-        user_name: user_name ? user_name : user_id,
+        user_name: userName,
         user_admin,
       };
       setUserId(userData);
       // assigning default rooms for the user
-      setRoomsList(["presence-system", `presence-${user_id}`]);
+      setRoomsList([
+        { roomName: "presence-system", users: [userName] },
+        { roomName: `presence-${user_id}`, users: [userName] },
+      ]);
       setActiveRoom(`presence-${user_id}`);
     } else {
       // throwing error if neither authenticated user data(user_id)
@@ -52,13 +56,16 @@ export default function useUserId({
           user_name: localStorageUser.user_name
             ? localStorageUser.user_name
             : localStorageUser.user_id,
-          user_admin: false,
+          user_admin: true, // TEST TODO replace with false
         };
         setUserId(userData);
         // assigning default rooms for the user
         setRoomsList([
-          "presence-system",
-          `presence-${localStorageUser.user_id}`,
+          { roomName: "presence-system", users: [localStorageUser.user_name] },
+          {
+            roomName: `presence-${localStorageUser.user_id}`,
+            users: [localStorageUser.user_name],
+          },
         ]);
         setActiveRoom(`presence-${localStorageUser.user_id}`);
       }
