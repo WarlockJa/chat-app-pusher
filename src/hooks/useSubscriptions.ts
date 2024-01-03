@@ -7,6 +7,7 @@ import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
 import { Message } from "@prisma/client";
 import fetchRoomMessages from "@/util/fetchRoomMessages";
 import { getRoomsList } from "@/util/getRoomsList";
+import { addMessage } from "@/util/addMessage";
 
 export default function useSubscriptions() {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
@@ -41,22 +42,6 @@ export default function useSubscriptions() {
         ? [...prev, { roomId, messages: messages ? messages : [] }]
         : [{ roomId, messages: messages ? messages : [] }]
     );
-  };
-
-  // interface IAddMessageProps {
-  //   room: IChatData;
-  //   message: Message;
-  // }
-
-  const addMessage = (room: IChatData, message: Message): IChatData => {
-    return {
-      roomId: room.roomId,
-      messages: [
-        ...room.messages,
-        message,
-        // { author: "TEST", readusers: [], text: message, timestamp: new Date() },
-      ],
-    };
   };
 
   // fetching new rooms if member_added triggered on presence-system channel from administrator
