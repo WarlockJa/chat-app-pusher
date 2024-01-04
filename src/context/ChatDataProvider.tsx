@@ -1,9 +1,13 @@
 import { Message } from "@prisma/client";
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 
+export type TChatDataStateLiteral = "loading" | "success" | "error";
+
 export interface IChatData {
   roomId: string;
   messages: Message[];
+  state: TChatDataStateLiteral;
+  error?: string;
 }
 
 interface IChatDataContext {
@@ -16,7 +20,7 @@ interface IChatDataContext {
   ) => void;
 }
 
-// make useReducer context? https://react.dev/learn/managing-state
+// TODO make useReducer context? https://react.dev/learn/managing-state
 const ChatDataContext = createContext<IChatDataContext | null>(null);
 
 export function ChatDataProvider({ children }: PropsWithChildren<{}>) {

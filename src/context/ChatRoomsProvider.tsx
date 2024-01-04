@@ -1,7 +1,7 @@
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 
 interface IRoomsList {
-  roomName: string;
+  roomId: string;
   users: string[];
 }
 

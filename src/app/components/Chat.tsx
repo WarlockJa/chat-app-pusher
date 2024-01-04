@@ -6,10 +6,8 @@ import NoUserPlug from "./plugs/NoUserPlug";
 import LoadingPlug from "./plugs/LoadingPlug";
 import usePusherConnection from "@/hooks/usePusherConnection";
 import useUserId from "@/hooks/useUserId";
-import useSubscriptions from "@/hooks/useSubscriptions";
 import { usePusherContext } from "@/context/PusherProvider";
 import { useUserIdContext } from "@/context/UserIdProvider";
-import TestElement from "./TestElement";
 import Initializer from "./Initializer";
 import { ChatRoomsProvider } from "@/context/ChatRoomsProvider";
 import { ChatDataProvider } from "@/context/ChatDataProvider";
@@ -28,13 +26,12 @@ export default function Chat({
     user_admin,
   });
   const { userId } = useUserIdContext();
+  const { pusher } = usePusherContext();
 
   console.log("---------------Chat rerender--------------");
 
   // initiating pusher connection
   usePusherConnection();
-  // // managing channel subscriptions, fetching db data
-  // useSubscriptions();
 
   // showing loading screen while processing userId
   if (loadingUserId) return <LoadingPlug message="Loading user data" />;
@@ -42,11 +39,13 @@ export default function Chat({
   // show local authentication element for anonymous user
   if (!userId) return <NoUserPlug storage_uuid={storage_uuid!} />;
 
+  if (!pusher) return <LoadingPlug message="Establishing Pusher connection" />;
+
   return (
     <ChatRoomsProvider>
       <ChatDataProvider>
         <div className="chat">
-          <Initializer userId={userId} />
+          <Initializer userId={userId} pusher={pusher} />
           {/* <TestElement /> */}
           <ChatRooms />
           <div className="chat__wrapper">

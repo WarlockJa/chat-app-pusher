@@ -23,3 +23,8 @@ interface IUserId {
 interface IChatProps extends IInitUserId {
   storage_uuid?: string;
 }
+
+interface IHookProps {
+  userId: IUserId;
+  pusher: Pusher;
+}

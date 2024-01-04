@@ -26,14 +26,14 @@ export default function ChatRooms() {
           .map((room) => (
             <li
               className={
-                activeRoom === room.roomName
+                activeRoom === room.roomId
                   ? "chat__rooms--room chat__rooms--roomActive"
                   : "chat__rooms--room"
               }
-              key={room.roomName}
-              onClick={() => handleRoomSwitch(room.roomName)}
+              key={room.roomId}
+              onClick={() => handleRoomSwitch(room.roomId)}
             >
-              {room.roomName.slice(9)}
+              {room.roomId.slice(9)}
             </li>
           ))
       }

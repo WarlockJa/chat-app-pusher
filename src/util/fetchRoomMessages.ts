@@ -1,4 +1,5 @@
 "use client";
+import { TChatDataStateLiteral } from "@/context/ChatDataProvider";
 import type { Message, channel } from "@prisma/client";
 
 interface IFetchRoomMessagesProps {
@@ -7,9 +8,11 @@ interface IFetchRoomMessagesProps {
   callback: ({
     roomId,
     messages,
+    state,
   }: {
     roomId: string;
     messages: Message[];
+    state: TChatDataStateLiteral;
   }) => void;
 }
 
@@ -45,7 +48,20 @@ export default function fetchRoomMessages({
       );
     })
     .then((result: channel) =>
-      callback({ roomId: room, messages: result?.messages })
+      callback({ roomId: room, messages: result?.messages, state: "success" })
     )
-    .catch((error) => callback(error));
+    .catch((error) =>
+      callback({
+        roomId: room,
+        messages: [
+          {
+            text: JSON.stringify(error),
+            author: "system",
+            timestamp: new Date(),
+            readusers: [userId],
+          },
+        ],
+        state: "error",
+      })
+    );
 }

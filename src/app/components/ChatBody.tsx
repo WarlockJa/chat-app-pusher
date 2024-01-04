@@ -8,7 +8,12 @@ export default function ChatBody() {
 
   // console.log("ChatBody rerender");
 
-  const chatContent = activeChatData
+  let chatContent;
+  if (activeChatData?.state === "loading") chatContent = "Loading..."; // TODO replace with spinner
+
+  if (activeChatData?.state === "error") chatContent = activeChatData.error;
+
+  chatContent = activeChatData
     ? activeChatData.messages.map((msg, index) => (
         <li key={index} className="post__text">
           {msg.text}
