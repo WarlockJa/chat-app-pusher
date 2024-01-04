@@ -8,12 +8,18 @@ interface IUserLocalStorageData {
   storage_uuid: string;
 }
 
-interface IUserId {
+interface IInitUserId {
   user_id?: string;
   user_name?: string;
   user_admin?: boolean;
 }
 
-interface IChatProps extends IUserId {
+interface IUserId {
+  user_id: string;
+  user_name: string;
+  user_admin: boolean;
+}
+
+interface IChatProps extends IInitUserId {
   storage_uuid?: string;
 }

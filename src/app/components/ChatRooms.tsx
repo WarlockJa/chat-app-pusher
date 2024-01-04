@@ -1,4 +1,5 @@
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import "./chatrooms.scss";
 
 export default function ChatRooms() {
   // context data
@@ -9,6 +10,8 @@ export default function ChatRooms() {
     if (activeRoom === room) return;
     setActiveRoom(room);
   };
+
+  // console.log("ChatRooms rerender");
 
   return (
     <ul className="chat__rooms">
@@ -22,7 +25,11 @@ export default function ChatRooms() {
           // )
           .map((room) => (
             <li
-              className="chat__rooms--room"
+              className={
+                activeRoom === room.roomName
+                  ? "chat__rooms--room chat__rooms--roomActive"
+                  : "chat__rooms--room"
+              }
               key={room.roomName}
               onClick={() => handleRoomSwitch(room.roomName)}
             >

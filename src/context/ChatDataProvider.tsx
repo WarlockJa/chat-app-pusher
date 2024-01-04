@@ -16,6 +16,7 @@ interface IChatDataContext {
   ) => void;
 }
 
+// make useReducer context? https://react.dev/learn/managing-state
 const ChatDataContext = createContext<IChatDataContext | null>(null);
 
 export function ChatDataProvider({ children }: PropsWithChildren<{}>) {

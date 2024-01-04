@@ -6,6 +6,8 @@ export default function ChatBody() {
   const { chatData } = useChatDataContext();
   const activeChatData = chatData?.find((item) => item.roomId === activeRoom);
 
+  // console.log("ChatBody rerender");
+
   const chatContent = activeChatData
     ? activeChatData.messages.map((msg, index) => (
         <li key={index} className="post__text">

@@ -46,12 +46,16 @@ export default function useSubscriptions() {
 
   // fetching new rooms if member_added triggered on presence-system channel from administrator
   // TODO check if true
-  // only provessing adding rooms because even when user leaves administrator is still subscribed
+  // only processing adding rooms because even when user leaves administrator is still subscribed
   const refreshRoomsList = (newRoomsArray: string[]) => {
-    newRoomsArray.forEach((newRoom) => {
-      if (roomsList.findIndex((room) => room.roomName === newRoom) === -1)
-        setRoomsList((prev) => [...prev, { users: [], roomName: newRoom }]);
+    // newRoomsArray.forEach((newRoom) => {
+    //   if (roomsList.findIndex((room) => room.roomName === newRoom) === -1)
+    //     setRoomsList((prev) => [...prev, { users: [], roomName: newRoom }]);
+    // });
+    const result = newRoomsArray.map((item) => {
+      return { users: [], roomName: item };
     });
+    setRoomsList(result);
   };
 
   // TODO uncluster this
@@ -137,13 +141,32 @@ export default function useSubscriptions() {
 
         // member_added and member_removed binds used to update number of users on the channel
         // i.e. allows to monitor if admin/user is present
-        newChannel.bind("pusher:member_added", () => {
-          // update users on the channel number
+        newChannel.bind(
+          "pusher:member_added",
+          (data: { id: string; info: string | undefined }) => {
+            // update users on the channel number
 
-          // updating rooms list on member_added. Not updated on member_removed because administrator is still subscribed
-          if (room.roomName === "presence-system")
-            getRoomsList(refreshRoomsList);
-        });
+            // updating rooms list on member_added. Not updated on member_removed because administrator is still subscribed
+            if (room.roomName === "presence-system") {
+              console.log("RoomsList: ", roomsList);
+              // method .bind preserves the state of the app at the moment of its call
+              // therefore we have to call prev when modifying state inside the .bind
+              setRoomsList((prev) => {
+                return prev.findIndex((room) => room.roomName === data.id) ===
+                  -1
+                  ? [...prev, { users: [], roomName: `presence-${data.id}` }]
+                  : prev;
+              });
+              // if (
+              //   roomsList.findIndex((room) => room.roomName === data.id) === -1
+              // )
+              //   setRoomsList(() => [
+              //     ...roomsList,
+              //     { users: [], roomName: `presence-${data.id}` },
+              //   ]);
+            }
+          }
+        );
 
         newChannel.bind("pusher:member_removed", () => {
           // update users on the channel number

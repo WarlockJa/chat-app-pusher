@@ -1,13 +1,13 @@
 import "../chat.scss";
 
-export default function LoadingPlug() {
+export default function LoadingPlug({ message }: { message: string }) {
   // TODO add loading animation
   return (
     <div className="chat">
       <div className="chat__wrapper">
         <div className="chat__body">
           <ul className="chat-display">
-            <li className="post__text">Loading...</li>
+            <li className="post__text">{message}</li>
           </ul>
         </div>
         <div>

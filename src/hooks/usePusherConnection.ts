@@ -1,7 +1,7 @@
 import { usePusherContext } from "@/context/PusherProvider";
 import { useUserIdContext } from "@/context/UserIdProvider";
 import { pusherClient } from "@/lib/pusher";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // establishing pusher connection
 // if no user data present pusher connection is not initiated and
@@ -19,13 +19,24 @@ export default function usePusherConnection() {
 
     if (!userId?.user_id) return;
 
-    // TODO replace TEST
-    // establishing pusher connection
-    // setPusher(pusherClient(userId.user_id));
-    // TEST
-    userId.user_name === "WJ" || userId.user_name === "Mike"
-      ? setPusher(pusherClient(userId.user_name))
-      : setPusher(pusherClient(userId.user_id));
+    try {
+      // TODO replace TEST
+      // establishing pusher connection
+      // setPusher(pusherClient(userId.user_id));
+      // TEST
+      if (userId.user_name === "WJ" || userId.user_name === "Mike") {
+        const pusherInstance = pusherClient(userId.user_name);
+        setPusher(pusherInstance);
+      } else {
+        const pusherInstance = pusherClient(userId.user_id);
+        console.log(pusherInstance);
+        setPusher(pusherInstance);
+      }
+    } catch (error) {
+      // TODO check for zod of pusher error
+      console.log(error);
+      throw new Error(JSON.stringify(error));
+    }
 
     return () => {
       // cleanup

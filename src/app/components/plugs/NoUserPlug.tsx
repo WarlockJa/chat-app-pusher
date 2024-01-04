@@ -1,7 +1,6 @@
 import "../chat.scss";
 import { writeLocalStorage } from "@/util/localStorageRW";
 import { useUserIdContext } from "@/context/UserIdProvider";
-import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 
 // gathering anonymous user data and saving it to state and localStorage
 export default function NoUserPlug({
@@ -19,7 +18,8 @@ export default function NoUserPlug({
   // reading UserId context
   const { setUserId } = useUserIdContext();
   // roomsList state to assing default rooms for the user
-  const { setRoomsList } = useChatRoomsContext();
+  // TODO delete
+  // const { setRoomsList } = useChatRoomsContext();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,10 +38,11 @@ export default function NoUserPlug({
     // setRoomsList(['presence-system', `presence-${user_id}`])
     // TEST
     setUserId({ user_id: user_name, user_name, user_admin: true }); // TEST TODO replace with false
-    setRoomsList([
-      { roomName: "presence-system", users: [user_name] },
-      { roomName: `presence-${user_name}`, users: [user_name] },
-    ]);
+    // TODO delete
+    // setRoomsList([
+    //   { roomName: "presence-system", users: [user_name] },
+    //   { roomName: `presence-${user_name}`, users: [user_name] },
+    // ]);
 
     // saving anonymous data to localStorage
     writeLocalStorage({

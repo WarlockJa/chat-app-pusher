@@ -1,4 +1,3 @@
-import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useUserIdContext } from "@/context/UserIdProvider";
 import { readLocalStorage } from "@/util/localStorageRW";
 import { useEffect, useState } from "react";
@@ -16,8 +15,8 @@ export default function useUserId({
   const { setUserId } = useUserIdContext();
   // loading state during accessing localStorage
   const [loadingUserId, setLoadingUserId] = useState(true);
-  // chat rooms context
-  const { setRoomsList, setActiveRoom } = useChatRoomsContext();
+  // // chat rooms context
+  // const { setRoomsList, setActiveRoom } = useChatRoomsContext();
 
   useEffect(() => {
     // saving user data to state
@@ -27,15 +26,15 @@ export default function useUserId({
       const userData: IUserId = {
         user_id,
         user_name: userName,
-        user_admin,
+        user_admin: Boolean(user_admin),
       };
       setUserId(userData);
-      // assigning default rooms for the user
-      setRoomsList([
-        { roomName: "presence-system", users: [userName] },
-        { roomName: `presence-${user_id}`, users: [userName] },
-      ]);
-      setActiveRoom(`presence-${user_id}`);
+      // // assigning default rooms for the user
+      // setRoomsList([
+      //   { roomName: "presence-system", users: [userName] },
+      //   { roomName: `presence-${user_id}`, users: [userName] },
+      // ]);
+      // setActiveRoom(`presence-${user_id}`);
     } else {
       // throwing error if neither authenticated user data(user_id)
       // nor localStorage name(storage_uuid) for anonymous user provided
@@ -60,14 +59,14 @@ export default function useUserId({
         };
         setUserId(userData);
         // assigning default rooms for the user
-        setRoomsList([
-          { roomName: "presence-system", users: [localStorageUser.user_name] },
-          {
-            roomName: `presence-${localStorageUser.user_id}`,
-            users: [localStorageUser.user_name],
-          },
-        ]);
-        setActiveRoom(`presence-${localStorageUser.user_id}`);
+        // setRoomsList([
+        //   { roomName: "presence-system", users: [localStorageUser.user_name] },
+        //   {
+        //     roomName: `presence-${localStorageUser.user_id}`,
+        //     users: [localStorageUser.user_name],
+        //   },
+        // ]);
+        // setActiveRoom(`presence-${localStorageUser.user_id}`);
       }
       // else
       // user data is not provided and not found in localStorage.

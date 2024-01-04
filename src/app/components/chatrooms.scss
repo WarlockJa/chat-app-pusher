@@ -1,0 +1,12 @@
+.chat__rooms {
+  list-style: none;
+  border: 1px solid hotpink;
+
+  .chat__rooms--room {
+    cursor: pointer;
+  }
+
+  .chat__rooms--roomActive {
+    color: goldenrod;
+  }
+}

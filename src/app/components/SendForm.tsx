@@ -1,11 +1,11 @@
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
-import { useUserIdContext } from "@/context/UserIdProvider";
 import { useState } from "react";
 
-export default function SendForm() {
+export default function SendForm({ userId }: { userId: IUserId }) {
   const [message, setMessage] = useState<string>("");
-  const { userId } = useUserIdContext();
   const { activeRoom } = useChatRoomsContext();
+
+  // console.log("SendForm rerender");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export default function SendForm() {
       },
       body: JSON.stringify({
         message,
-        userId: userId?.user_id,
+        userId: userId.user_id,
         room: activeRoom,
       }),
     })
