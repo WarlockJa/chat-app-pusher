@@ -15,8 +15,6 @@ export default function useUserId({
   const { setUserId } = useUserIdContext();
   // loading state during accessing localStorage
   const [loadingUserId, setLoadingUserId] = useState(true);
-  // // chat rooms context
-  // const { setRoomsList, setActiveRoom } = useChatRoomsContext();
 
   useEffect(() => {
     // saving user data to state
@@ -29,12 +27,6 @@ export default function useUserId({
         user_admin: Boolean(user_admin),
       };
       setUserId(userData);
-      // // assigning default rooms for the user
-      // setRoomsList([
-      //   { roomName: "presence-system", users: [userName] },
-      //   { roomName: `presence-${user_id}`, users: [userName] },
-      // ]);
-      // setActiveRoom(`presence-${user_id}`);
     } else {
       // throwing error if neither authenticated user data(user_id)
       // nor localStorage name(storage_uuid) for anonymous user provided
@@ -58,15 +50,6 @@ export default function useUserId({
           user_admin: true, // TEST TODO replace with false
         };
         setUserId(userData);
-        // assigning default rooms for the user
-        // setRoomsList([
-        //   { roomName: "presence-system", users: [localStorageUser.user_name] },
-        //   {
-        //     roomName: `presence-${localStorageUser.user_id}`,
-        //     users: [localStorageUser.user_name],
-        //   },
-        // ]);
-        // setActiveRoom(`presence-${localStorageUser.user_id}`);
       }
       // else
       // user data is not provided and not found in localStorage.

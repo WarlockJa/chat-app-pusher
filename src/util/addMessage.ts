@@ -6,5 +6,7 @@ export const addMessage = (room: IChatData, message: Message): IChatData => {
   return {
     roomId: room.roomId,
     messages: [...room.messages, message],
+    state: room.state,
+    error: room.error,
   };
 };

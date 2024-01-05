@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 interface IRoomsList {
   roomId: string;
@@ -16,9 +16,25 @@ interface IChatRoomsContext {
 
 const ChatRoomsContext = createContext<IChatRoomsContext | null>(null);
 
-export function ChatRoomsProvider({ children }: PropsWithChildren<{}>) {
-  const [activeRoom, setActiveRoom] = useState<string>("");
-  const [roomsList, setRoomsList] = useState<IRoomsList[]>([]);
+export function ChatRoomsProvider({
+  children,
+  userId,
+}: {
+  children: React.ReactNode | undefined;
+  userId: IUserId;
+}) {
+  // reading userId from higher level UserIdProvider context.
+  // in this app userId will always be populated when ChatRoomProvider initiated
+  const initialStateActiveRoom = `presence-${userId.user_id}`;
+  const initialStateRoomsList = [
+    { roomId: "presence-system", users: [userId.user_id] },
+    { roomId: `presence-${userId.user_id}`, users: [userId.user_id] },
+  ];
+
+  const [activeRoom, setActiveRoom] = useState<string>(initialStateActiveRoom);
+  const [roomsList, setRoomsList] = useState<IRoomsList[]>(
+    initialStateRoomsList
+  );
 
   return (
     <ChatRoomsContext.Provider

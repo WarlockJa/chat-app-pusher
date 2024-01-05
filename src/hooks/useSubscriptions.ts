@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import { PresenceChannel } from "pusher-js";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
-import {
-  IChatData,
-  TChatDataStateLiteral,
-  useChatDataContext,
-} from "@/context/ChatDataProvider";
-import { Message } from "@prisma/client";
-import fetchRoomMessages from "@/util/fetchRoomMessages";
+import { useChatDataContext } from "@/context/ChatDataProvider";
 import { getRoomsList } from "@/util/getRoomsList";
 import { addMessage } from "@/util/addMessage";
 
+// this hook tracks changes in roomsList and adjusts pusher subscriptions
+// according to access role of the user
 export default function useSubscriptions({ pusher, userId }: IHookProps) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // list of rooms
@@ -28,10 +24,6 @@ export default function useSubscriptions({ pusher, userId }: IHookProps) {
   // TODO check if true
   // only processing adding rooms because even when user leaves administrator is still subscribed
   const refreshRoomsList = (newRoomsArray: string[]) => {
-    // newRoomsArray.forEach((newRoom) => {
-    //   if (roomsList.findIndex((room) => room.roomId === newRoom) === -1)
-    //     setRoomsList((prev) => [...prev, { users: [], roomId: newRoom }]);
-    // });
     const result = newRoomsArray.map((item) => {
       return { users: [userId.user_id], roomId: item };
     });
@@ -106,13 +98,6 @@ export default function useSubscriptions({ pusher, userId }: IHookProps) {
                   ? [...prev, { users: [], roomId: `presence-${data.id}` }]
                   : prev;
               });
-              // if (
-              //   roomsList.findIndex((room) => room.roomId === data.id) === -1
-              // )
-              //   setRoomsList(() => [
-              //     ...roomsList,
-              //     { users: [], roomId: `presence-${data.id}` },
-              //   ]);
             }
           }
         );

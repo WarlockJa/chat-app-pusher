@@ -8,7 +8,7 @@ import fetchRoomMessages from "@/util/fetchRoomMessages";
 import { Message } from "@prisma/client";
 import { useEffect } from "react";
 
-export default function useChatData({ pusher, userId }: IHookProps) {
+export default function useChatData({ userId }: IHookProps) {
   // list of rooms
   const { roomsList } = useChatRoomsContext();
   // local chat data
@@ -25,15 +25,8 @@ export default function useChatData({ pusher, userId }: IHookProps) {
     messages: Message[] | null;
     state: TChatDataStateLiteral;
   }) => {
-    // setChatData((prev: IChatData[] | null) =>
-    //   prev
-    //     ? [
-    //         ...prev,
-    //         { roomId, messages: messages ? messages : [], state: "success" },
-    //       ]
-    //     : [{ roomId, messages: messages ? messages : [], state: "success" }]
-    // );
     setChatData((prev: IChatData[] | null) => {
+      // TEST
       console.log("Previous: ", roomId, " ", prev);
       return prev
         ? [
@@ -47,14 +40,14 @@ export default function useChatData({ pusher, userId }: IHookProps) {
   useEffect(() => {
     const { user_id } = userId;
 
+    console.log(roomsList.length);
     roomsList.forEach((room) => {
       // found room present in roomsList but not in subscriptions
       // TODO check if duplicates fetching from subscriptions
 
       if (
         !chatData ||
-        chatData?.findIndex((chatRoom) => chatRoom.roomId === room.roomId) ===
-          -1
+        chatData.findIndex((chatRoom) => chatRoom.roomId === room.roomId) === -1
       ) {
         setChatData((prev) =>
           prev
@@ -74,18 +67,10 @@ export default function useChatData({ pusher, userId }: IHookProps) {
     // no chat data => nothing to remove
     if (!chatData) return;
     chatData.forEach((chatRoom) => {
-      // // found chat room that exists in chatData but not in roomsList
-      // if (
-      //   roomsList.findIndex((room) => room.roomId === chatRoom.roomId) === -1
-      // ) {
-      //   // changing active room if it is deleted
-      //   if (activeRoom === chatRoom.roomId)
-      //     setActiveRoom(`presence-${userId.user_id}`);
       // removing room from chatData
       setChatData(
         chatData.filter((removeChannel) => chatRoom !== removeChannel)
       );
-      // }
     });
 
     return () => setChatData(null);
