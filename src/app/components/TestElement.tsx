@@ -14,8 +14,8 @@ export default function TestElement() {
   const [test, setTest] = useState();
   const testError = () => {
     fetchRoomMessages({
-      userId: "WJ",
-      room: "WJ",
+      user_id: "WJ",
+      roomId: "WJ",
       callback: (result) => {
         console.log(result);
         // @ts-expect-error
@@ -39,7 +39,7 @@ export default function TestElement() {
     if (!message) return;
 
     // triggering "message" event for Pusher
-    fetch("/api/pusher/message", {
+    fetch("/api/v1/pusher/message", {
       method: "POST",
       headers: {
         "Content-Type": "Application/json",

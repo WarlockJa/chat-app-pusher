@@ -24,7 +24,7 @@ interface IChatProps extends IInitUserId {
   storage_uuid?: string;
 }
 
-interface IHookProps {
-  userId: IUserId;
-  pusher: Pusher;
+interface IRoomsList {
+  roomId: string;
+  users: string[];
 }

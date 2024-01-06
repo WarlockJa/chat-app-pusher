@@ -4,10 +4,17 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import { getRoomsList } from "@/util/getRoomsList";
 import { addMessage } from "@/util/addMessage";
+import Pusher from "pusher-js/types/src/core/pusher";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
-export default function useSubscriptions({ pusher, userId }: IHookProps) {
+export default function useSubscriptions({
+  userId,
+  pusher,
+}: {
+  userId: IUserId;
+  pusher: Pusher;
+}) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // list of rooms
   const { roomsList, setRoomsList } = useChatRoomsContext();
@@ -16,6 +23,7 @@ export default function useSubscriptions({ pusher, userId }: IHookProps) {
 
   // cleanup subscriptions function
   const handleCleanup = () => {
+    console.log("Subscriptions cleanup");
     subscriptions.forEach((channel) => channel.unsubscribe());
     setSubscriptions([]);
   };
@@ -27,6 +35,7 @@ export default function useSubscriptions({ pusher, userId }: IHookProps) {
     const result = newRoomsArray.map((item) => {
       return { users: [userId.user_id], roomId: item };
     });
+    console.log("Fetched roomslist: ", result);
     setRoomsList(result);
   };
 
@@ -87,6 +96,7 @@ export default function useSubscriptions({ pusher, userId }: IHookProps) {
           "pusher:member_added",
           (data: { id: string; info: string | undefined }) => {
             // update users on the channel number
+            console.log("Channel bind");
 
             // updating rooms list on member_added. Not updated on member_removed because administrator is still subscribed
             if (room.roomId === "presence-system") {
@@ -94,6 +104,7 @@ export default function useSubscriptions({ pusher, userId }: IHookProps) {
               // method .bind preserves the state of the app at the moment of its call
               // therefore we have to call prev when modifying state inside the .bind
               setRoomsList((prev) => {
+                console.log(prev);
                 return prev.findIndex((room) => room.roomId === data.id) === -1
                   ? [...prev, { users: [], roomId: `presence-${data.id}` }]
                   : prev;
@@ -111,6 +122,8 @@ export default function useSubscriptions({ pusher, userId }: IHookProps) {
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
+          console.log("Channel name: ", newChannel.name);
+          // TEST
           getRoomsList(refreshRoomsList);
         });
       }

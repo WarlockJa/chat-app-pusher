@@ -25,8 +25,6 @@ export default function ChatWrapper({
   const { userId } = useUserIdContext();
   const { pusher } = usePusherContext();
 
-  console.log("---------------Chat Wrapper rerender--------------");
-
   // initiating pusher connection
   usePusherConnection();
 

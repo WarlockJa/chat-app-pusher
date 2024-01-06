@@ -3,18 +3,7 @@ import { z } from "zod";
 
 export const schemaApiDBPOST = z
   .object({
-    // TODO replace after TEST
-    // userId: z.string().uuid()
-    userId: z
-      .string({
-        required_error: "UserId is required",
-        invalid_type_error: "Required type for userId is string",
-      })
-      .max(36, { message: "Maximum length for userId is 36" })
-      .regex(regexAlphanumericWithDash, {
-        message: "UserId may only contains alphanumerical characters and dash",
-      }),
-    room: z
+    roomId: z
       .string({
         required_error: "ActiveRoom is required",
         invalid_type_error: "Required type for activeRoom is string",

@@ -15,7 +15,7 @@ export const pusherServer = new PusherServer({
 export const pusherClient = (user_id: string) =>
   new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
     cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-    authEndpoint: "/api/pusher/auth",
+    authEndpoint: "/api/v1/pusher/auth",
     authTransport: "ajax",
     auth: {
       headers: {

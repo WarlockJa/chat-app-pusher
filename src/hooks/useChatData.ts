@@ -8,7 +8,7 @@ import fetchRoomMessages from "@/util/fetchRoomMessages";
 import { Message } from "@prisma/client";
 import { useEffect } from "react";
 
-export default function useChatData({ userId }: IHookProps) {
+export default function useChatData({ userId }: { userId: IUserId }) {
   // list of rooms
   const { roomsList } = useChatRoomsContext();
   // local chat data
@@ -25,26 +25,21 @@ export default function useChatData({ userId }: IHookProps) {
     messages: Message[] | null;
     state: TChatDataStateLiteral;
   }) => {
-    setChatData((prev: IChatData[] | null) => {
-      // TEST
-      console.log("Previous: ", roomId, " ", prev);
-      return prev
+    setChatData((prev: IChatData[] | null) =>
+      prev
         ? [
             ...prev.filter((room) => room.roomId !== roomId),
             { roomId, messages: messages ? messages : [], state },
           ]
-        : [{ roomId, messages: messages ? messages : [], state }];
-    });
+        : [{ roomId, messages: messages ? messages : [], state }]
+    );
   };
 
   useEffect(() => {
     const { user_id } = userId;
 
-    console.log(roomsList.length);
     roomsList.forEach((room) => {
       // found room present in roomsList but not in subscriptions
-      // TODO check if duplicates fetching from subscriptions
-
       if (
         !chatData ||
         chatData.findIndex((chatRoom) => chatRoom.roomId === room.roomId) === -1
@@ -56,8 +51,8 @@ export default function useChatData({ userId }: IHookProps) {
         );
         // fetching room data from DB and storing it in chatData
         fetchRoomMessages({
-          userId: user_id,
-          room: room.roomId,
+          user_id: user_id,
+          roomId: room.roomId,
           callback: handleNewRoom,
         });
       }

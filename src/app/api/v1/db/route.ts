@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     const messages = await prisma.channel.findFirst({
       where: {
-        name: data.room,
+        name: data.roomId,
       },
     });
 

@@ -1,37 +1,27 @@
-"use client";
-import { TChatDataStateLiteral } from "@/context/ChatDataProvider";
-import type { Message, channel } from "@prisma/client";
+import { IChatData } from "@/context/ChatDataProvider";
+import type { channel } from "@prisma/client";
 
 interface IFetchRoomMessagesProps {
-  userId: string;
-  room: string;
-  callback: ({
-    roomId,
-    messages,
-    state,
-  }: {
-    roomId: string;
-    messages: Message[];
-    state: TChatDataStateLiteral;
-  }) => void;
+  user_id: string;
+  roomId: string;
+  callback: (newRoomData: IChatData) => void;
 }
 
-// helper function that retreieves array of room messages from DB
+// helper function that retrieves array of room messages from DB
 export default function fetchRoomMessages({
-  userId,
-  room,
+  user_id,
+  roomId,
   callback,
 }: IFetchRoomMessagesProps) {
-  if (!userId || !room || !callback) return;
+  if (!user_id || !roomId || !callback) return;
 
-  fetch("/api/db", {
+  fetch("/api/v1/db", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      userId,
-      room,
+      roomId,
     }),
   })
     .then((response) => {
@@ -48,20 +38,14 @@ export default function fetchRoomMessages({
       );
     })
     .then((result: channel) =>
-      callback({ roomId: room, messages: result?.messages, state: "success" })
+      callback({ roomId: roomId, messages: result?.messages, state: "success" })
     )
     .catch((error) =>
       callback({
-        roomId: room,
-        messages: [
-          {
-            text: JSON.stringify(error),
-            author: "system",
-            timestamp: new Date(),
-            readusers: [userId],
-          },
-        ],
+        roomId: roomId,
+        messages: [],
         state: "error",
+        error: JSON.stringify(error),
       })
     );
 }

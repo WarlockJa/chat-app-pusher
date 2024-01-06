@@ -2,17 +2,17 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useState } from "react";
 
 export default function SendForm({ userId }: { userId: IUserId }) {
-  const [message, setMessage] = useState<string>("");
-  const { activeRoom } = useChatRoomsContext();
-
   // console.log("SendForm rerender");
+
+  const { activeRoom, setActiveRoom } = useChatRoomsContext();
+  const [message, setMessage] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO get types from back-end into front-end somewhow. tRPC?
 
     // triggering "message" event for Pusher
-    fetch("/api/pusher/message", {
+    fetch("/api/v1/pusher/message", {
       method: "POST",
       headers: {
         "Content-Type": "Application/json",
@@ -25,7 +25,7 @@ export default function SendForm({ userId }: { userId: IUserId }) {
 
     // TODO change message data
     // writing message to DB
-    fetch("/api/db", {
+    fetch("/api/v1/db", {
       method: "PUT",
       headers: {
         "Content-Type": "Application/json",
@@ -54,6 +54,15 @@ export default function SendForm({ userId }: { userId: IUserId }) {
         />
         <button type="submit">Send</button>
       </form>
+      <button
+        onClick={() =>
+          activeRoom === "presence-system"
+            ? setActiveRoom("presence-WJ")
+            : setActiveRoom("presence-system")
+        }
+      >
+        TEST
+      </button>
     </div>
   );
 }

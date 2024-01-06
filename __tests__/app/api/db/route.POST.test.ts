@@ -9,7 +9,7 @@ describe("Running POST request", () => {
     vi.resetAllMocks();
   });
 
-  // following (loosely) prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
+  // following prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
   vi.mock("@/lib/globalForPrisma", async () => {
     const actual = await vi.importActual<
       typeof import("@/lib/__mocks__/globalForPrisma")
@@ -24,7 +24,7 @@ describe("Running POST request", () => {
     const nextReq = new NextRequest(
       new Request("http://localhost:3000", {
         method: "POST",
-        body: JSON.stringify({ userId: "abc123", room: "presence-abc123" }),
+        body: JSON.stringify({ room: "presence-abc123" }),
       }),
       {}
     );
@@ -60,7 +60,7 @@ describe("Running POST request", () => {
     const nextReq = new NextRequest(
       new Request("http://localhost:3000", {
         method: "POST",
-        body: JSON.stringify({ userId: "def123", room: "presence-def123" }),
+        body: JSON.stringify({ room: "presence-def123" }),
       }),
       {}
     );
@@ -92,7 +92,7 @@ describe("Running POST request", () => {
     const nextReq = new NextRequest(
       new Request("http://localhost:3000", {
         method: "POST",
-        body: JSON.stringify({ userId: "abc123", room: "presence-abc123" }),
+        body: JSON.stringify({ room: "presence-abc123" }),
       }),
       {}
     );

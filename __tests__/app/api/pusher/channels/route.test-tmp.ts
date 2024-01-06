@@ -1,5 +1,5 @@
 import { Mock, afterEach, describe, expect, it, vi } from "vitest";
-import { GET } from "@/app/api/pusher/channels/route";
+import { GET } from "@/app/api/v1/pusher/channels/route";
 import { pusherServer } from "@/lib/pusher";
 import { PassThrough } from "stream";
 

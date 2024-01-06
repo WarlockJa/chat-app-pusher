@@ -13,30 +13,27 @@ export default function ChatRooms() {
 
   // console.log("ChatRooms rerender");
 
-  return (
-    <ul className="chat__rooms">
-      {
-        // hiding rooms system and userId from the list
-        roomsList
-          // TEST
-          // .filter(
-          //   (item) =>
-          //     item !== "presence-system" && item !== `presence-${userId}`
-          // )
-          .map((room) => (
-            <li
-              className={
-                activeRoom === room.roomId
-                  ? "chat__rooms--room chat__rooms--roomActive"
-                  : "chat__rooms--room"
-              }
-              key={room.roomId}
-              onClick={() => handleRoomSwitch(room.roomId)}
-            >
-              {room.roomId.slice(9)}
-            </li>
-          ))
-      }
-    </ul>
-  );
+  const content = roomsList
+    .sort((a, b) => (a.roomId >= b.roomId ? -1 : 1))
+    // hiding rooms system and userId from the list
+    // TEST
+    // .filter(
+    //   (item) =>
+    //     item !== "presence-system" && item !== `presence-${userId}`
+    // )
+    .map((room) => (
+      <li
+        className={
+          activeRoom === room.roomId
+            ? "chat__rooms--room chat__rooms--roomActive"
+            : "chat__rooms--room"
+        }
+        key={room.roomId}
+        onClick={() => handleRoomSwitch(room.roomId)}
+      >
+        {room.roomId.slice(9)}
+      </li>
+    ));
+
+  return <ul className="chat__rooms">{content}</ul>;
 }

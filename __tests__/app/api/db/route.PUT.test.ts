@@ -9,7 +9,7 @@ describe("Running POST request", () => {
     vi.resetAllMocks();
   });
 
-  // following (loosely) prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
+  // following prisma guide https://www.prisma.io/blog/testing-series-1-8eRB5p0Y8o
   vi.mock("@/lib/globalForPrisma", async () => {
     const actual = await vi.importActual<
       typeof import("@/lib/__mocks__/globalForPrisma")
