@@ -1,4 +1,3 @@
-"use client";
 import { PusherConnectionProvider } from "@/context/PusherProvider";
 import ChatWrapper from "./components/ChatWrapper";
 import styles from "./page.module.css";

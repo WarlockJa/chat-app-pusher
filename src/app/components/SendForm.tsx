@@ -1,3 +1,4 @@
+"use client";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useState } from "react";
 

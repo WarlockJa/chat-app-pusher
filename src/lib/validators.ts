@@ -1,7 +1,7 @@
 import { regexAlphanumericWithDash } from "@/util/regExes";
 import { z } from "zod";
 
-export const schemaApiDBPOST = z
+export const schemaApiDBGET = z
   .object({
     roomId: z
       .string({
@@ -18,7 +18,7 @@ export const schemaApiDBPOST = z
   })
   .strict(); // do not allow unrecognized keys
 
-export const schemaApiDBPUT = z
+export const schemaApiDBPOST = z
   .object({
     // TODO replace after TEST
     // userId: z.string().uuid()

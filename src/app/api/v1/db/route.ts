@@ -1,13 +1,15 @@
 import { prisma } from "@/lib/globalForPrisma";
-import { schemaApiDBPOST, schemaApiDBPUT } from "@/lib/validators";
-import { NextResponse } from "next/server";
+import { schemaApiDBGET, schemaApiDBPOST } from "@/lib/validators";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // fetching a chat room data from DB
-export async function POST(req: Request) {
+export async function GET(req: NextRequest) {
   try {
-    const reqBody = await req.json();
-    const data = schemaApiDBPOST.parse(reqBody);
+    const url = new URL(req.url);
+    const roomId = url.searchParams.get("roomId");
+
+    const data = schemaApiDBGET.parse({ roomId });
 
     const messages = await prisma.channel.findFirst({
       where: {
@@ -25,10 +27,10 @@ export async function POST(req: Request) {
 }
 
 // writing to DB
-export async function PUT(req: Request) {
+export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
-    const data = schemaApiDBPUT.parse(reqBody);
+    const data = schemaApiDBPOST.parse(reqBody);
 
     const channel = await prisma.channel.findFirst({
       where: {

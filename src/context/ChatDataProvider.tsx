@@ -1,3 +1,4 @@
+"use client";
 import { Message } from "@prisma/client";
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 

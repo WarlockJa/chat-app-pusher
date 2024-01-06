@@ -1,5 +1,6 @@
 import { IChatData } from "@/context/ChatDataProvider";
 import type { channel } from "@prisma/client";
+import useSWRImmutable from "swr/immutable";
 
 interface IFetchRoomMessagesProps {
   user_id: string;
@@ -15,15 +16,10 @@ export default function fetchRoomMessages({
 }: IFetchRoomMessagesProps) {
   if (!user_id || !roomId || !callback) return;
 
-  fetch("/api/v1/db", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      roomId,
-    }),
-  })
+  // do I need state if I have this?
+  // const {data} = useSWRImmutable(`/api/v1/db?roomId=${roomId}`)
+
+  fetch(`/api/v1/db?roomId=${roomId}`)
     .then((response) => {
       if (response.ok) return response.json();
       if (response.status === 400)

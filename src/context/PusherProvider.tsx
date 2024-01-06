@@ -1,3 +1,4 @@
+"use client";
 import Pusher from "pusher-js/types/src/core/pusher";
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 
