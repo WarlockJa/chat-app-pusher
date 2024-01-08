@@ -91,6 +91,7 @@ export default function useSubscriptions({
           (data: { id: string; info: string | undefined }) => {
             // update users on the channel number
 
+            console.log(data, room);
             // updating rooms list on member_added. Not updated on member_removed because administrator is still subscribed
             if (room.roomId === "presence-system") {
               // method .bind preserves the state of the app at the moment of its call
@@ -114,12 +115,15 @@ export default function useSubscriptions({
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
           // TEST
-          const allRoomsList = Object.keys(pusher.channels.channels).map(
-            (channel) => {
-              return { users: [userId.user_id], roomId: channel };
-            }
-          );
-          setRoomsList(allRoomsList);
+          const allRoomsList = Object.keys(
+            pusher.channel("presence-system").members.members
+          ).map((member) => {
+            return { users: [userId.user_id], roomId: `presence-${member}` };
+          });
+          setRoomsList([
+            { roomId: "presence-system", users: [userId.user_id] },
+            ...allRoomsList,
+          ]);
           // getRoomsList(refreshRoomsList);
         });
       }
