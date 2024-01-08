@@ -21,7 +21,7 @@ export default function Chat({
       <ChatRooms />
       <div className="chat__wrapper">
         <ChatBody />
-        <SendForm userId={userId} />
+        <SendForm userId={userId} pusher={pusher} />
       </div>
     </div>
   );

@@ -17,7 +17,6 @@ export default function fetchRoomMessages({
   if (!user_id || !roomId || !callback) return;
 
   // TODO do I need state if I have this?
-
   // const {data} = useSWRImmutable(`/api/v1/db?roomId=${roomId}`)
 
   fetch(`/api/v1/db?roomId=${roomId}`)

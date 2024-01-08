@@ -21,13 +21,6 @@ export default function useSubscriptions({
   // local chat data
   const { setChatData } = useChatDataContext();
 
-  // cleanup subscriptions function
-  const handleCleanup = () => {
-    console.log("Subscriptions cleanup");
-    subscriptions.forEach((channel) => channel.unsubscribe());
-    setSubscriptions([]);
-  };
-
   // fetching new rooms if member_added triggered on presence-system channel from administrator
   // TODO check if true
   // only processing adding rooms because even when user leaves administrator is still subscribed
@@ -35,7 +28,7 @@ export default function useSubscriptions({
     const result = newRoomsArray.map((item) => {
       return { users: [userId.user_id], roomId: item };
     });
-    console.log("Fetched roomslist: ", result);
+    console.log(result);
     setRoomsList(result);
   };
 
@@ -50,6 +43,7 @@ export default function useSubscriptions({
         subscriptions.findIndex((channel) => channel.name === room.roomId) ===
         -1
       ) {
+        // TEST
         // subscribing to channel with room name, modifying subscriptions state
         const newChannel = pusher.subscribe(room.roomId) as PresenceChannel;
         setSubscriptions((prev) => [...prev, newChannel]);
@@ -96,15 +90,12 @@ export default function useSubscriptions({
           "pusher:member_added",
           (data: { id: string; info: string | undefined }) => {
             // update users on the channel number
-            console.log("Channel bind");
 
             // updating rooms list on member_added. Not updated on member_removed because administrator is still subscribed
             if (room.roomId === "presence-system") {
-              console.log("RoomsList: ", roomsList);
               // method .bind preserves the state of the app at the moment of its call
               // therefore we have to call prev when modifying state inside the .bind
               setRoomsList((prev) => {
-                console.log(prev);
                 return prev.findIndex((room) => room.roomId === data.id) === -1
                   ? [...prev, { users: [], roomId: `presence-${data.id}` }]
                   : prev;
@@ -122,9 +113,14 @@ export default function useSubscriptions({
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
-          console.log("Channel name: ", newChannel.name);
           // TEST
-          getRoomsList(refreshRoomsList);
+          const allRoomsList = Object.keys(pusher.channels.channels).map(
+            (channel) => {
+              return { users: [userId.user_id], roomId: channel };
+            }
+          );
+          setRoomsList(allRoomsList);
+          // getRoomsList(refreshRoomsList);
         });
       }
     });
@@ -142,7 +138,10 @@ export default function useSubscriptions({
     });
 
     return () => {
-      handleCleanup();
+      console.log("Subscriptions cleanup");
+      // TEST
+      pusher.allChannels().forEach((channel) => channel.unbind_all());
+      setSubscriptions([]);
     };
   }, [roomsList.length]);
 }

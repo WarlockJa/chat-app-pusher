@@ -50,11 +50,11 @@ export default function useChatData({ userId }: { userId: IUserId }) {
             : [{ roomId: room.roomId, messages: [], state: "loading" }]
         );
         // fetching room data from DB and storing it in chatData
-        fetchRoomMessages({
-          user_id: user_id,
-          roomId: room.roomId,
-          callback: handleNewRoom,
-        });
+        // fetchRoomMessages({
+        //   user_id: user_id,
+        //   roomId: room.roomId,
+        //   callback: handleNewRoom,
+        // });
       }
     });
 

@@ -9,8 +9,8 @@ export default function HooksElement({
   userId: IUserId;
   pusher: Pusher;
 }) {
-  useChatData({ userId });
+  // useChatData({ userId });
   useSubscriptions({ pusher, userId });
 
-  return null;
+  return <div></div>;
 }
