@@ -28,7 +28,6 @@ export default function useSubscriptions({
     const result = newRoomsArray.map((item) => {
       return { users: [userId.user_id], roomId: item };
     });
-    console.log(result);
     setRoomsList(result);
   };
 
@@ -91,9 +90,11 @@ export default function useSubscriptions({
           (data: { id: string; info: string | undefined }) => {
             // update users on the channel number
 
-            console.log(data, room);
+            // TODO figure out tracking system channel member_added
+            console.log("Member_added 1: ", data, room);
             // updating rooms list on member_added. Not updated on member_removed because administrator is still subscribed
             if (room.roomId === "presence-system") {
+              console.log("Member_added 2");
               // method .bind preserves the state of the app at the moment of its call
               // therefore we have to call prev when modifying state inside the .bind
               setRoomsList((prev) => {
@@ -114,17 +115,18 @@ export default function useSubscriptions({
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
-          // TEST
-          const allRoomsList = Object.keys(
-            pusher.channel("presence-system").members.members
-          ).map((member) => {
-            return { users: [userId.user_id], roomId: `presence-${member}` };
-          });
-          setRoomsList([
-            { roomId: "presence-system", users: [userId.user_id] },
-            ...allRoomsList,
-          ]);
-          // getRoomsList(refreshRoomsList);
+          // // TEST
+          // const allRoomsList = Object.keys(
+          //   // @ts-ignore
+          //   pusher.channel("presence-system").members.members
+          // ).map((member) => {
+          //   return { users: [userId.user_id], roomId: `presence-${member}` };
+          // });
+          // setRoomsList([
+          //   { roomId: "presence-system", users: [userId.user_id] },
+          //   ...allRoomsList,
+          // ]);
+          getRoomsList(refreshRoomsList);
         });
       }
     });

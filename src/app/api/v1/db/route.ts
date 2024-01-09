@@ -32,13 +32,14 @@ export async function POST(req: Request) {
     const reqBody = await req.json();
     const data = schemaApiDBPOST.parse(reqBody);
 
+    // TODO upsert somehow?
     const channel = await prisma.channel.findFirst({
       where: {
         name: data.room,
       },
     });
 
-    console.log(channel);
+    // console.log(channel);
 
     let result;
     if (channel) {
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
           },
         },
       });
-      console.log(result);
+      // console.log(result);
     } else {
       result = await prisma.channel.create({
         data: {
@@ -72,7 +73,7 @@ export async function POST(req: Request) {
           ],
         },
       });
-      console.log(result);
+      // console.log(result);
     }
 
     return NextResponse.json(result, { status: 200 });
