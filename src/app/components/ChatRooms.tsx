@@ -11,7 +11,7 @@ export default function ChatRooms() {
     setActiveRoom(room);
   };
 
-  // console.log("ChatRooms rerender");
+  console.log("ChatRooms rerender");
 
   const content = roomsList
     .sort((a, b) => (a.roomId >= b.roomId ? -1 : 1))

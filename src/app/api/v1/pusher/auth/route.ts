@@ -6,7 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const data = await req.text();
 
-  console.log(data);
+  // TODO test
+  // console.log(data);
   // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
 
   const [socket_id, channel_name, user_id] = data
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
       presenceData
     );
 
-    console.log(authResponse);
+    // console.log(authResponse);
     // {
     //   channel_data: '{"user_id":"WJ"}',
     //   auth:

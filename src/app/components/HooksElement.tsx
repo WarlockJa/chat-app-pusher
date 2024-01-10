@@ -9,6 +9,7 @@ export default function HooksElement({
   userId: IUserId;
   pusher: Pusher;
 }) {
+  console.log("--------------Hooks rerender");
   // useChatData({ userId });
   useSubscriptions({ pusher, userId });
 

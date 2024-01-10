@@ -64,15 +64,16 @@ export default function SendForm({
       </form>
       <button
         onClick={
-          // () => {
-          // const data = pusher.channel("presence-system");
-          // const members = Object.keys(data.members.members);
-          // console.log(members);
-          // }
-          () =>
-            fetch("/api/v1/pusher/channels", { cache: "no-store" })
-              .then((response) => response.json())
-              .then((result) => console.log(result))
+          () => {
+            const data = pusher.channel("presence-system");
+            // @ts-ignore
+            const members = Object.keys(data.members.members);
+            console.log(members);
+          }
+          // () =>
+          //   fetch("/api/v1/pusher/system")
+          //     .then((response) => response.json())
+          //     .then((result) => console.log(result))
         }
       >
         TEST
