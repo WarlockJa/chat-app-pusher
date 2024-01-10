@@ -1,7 +1,7 @@
 import { usePusherContext } from "@/context/PusherProvider";
 import { useUserIdContext } from "@/context/UserIdProvider";
 import { pusherClient } from "@/lib/pusher";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // establishing pusher connection
 // if no user data present pusher connection is not initiated and

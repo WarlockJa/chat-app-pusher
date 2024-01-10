@@ -4,11 +4,7 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import { addMessage } from "@/util/addMessage";
 import Pusher from "pusher-js/types/src/core/pusher";
-
-// adjusting Pusher interface to work with PresenceChannel instead of Channel
-interface PusherPresence extends Pusher {
-  channel: (name: string) => PresenceChannel;
-}
+import { PusherPresence } from "@/context/PusherProvider";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -37,7 +33,7 @@ export default function useSubscriptions({
         -1
       ) {
         // subscribing to channel with room name, modifying subscriptions state
-        const newChannel = pusher.subscribe(room.roomId) as PresenceChannel;
+        const newChannel = pusher.subscribe(room.roomId);
         setSubscriptions((prev) => [...prev, newChannel]);
 
         // if user is not an administrator no further interactions with presence-system required
@@ -105,8 +101,7 @@ export default function useSubscriptions({
 
         // assigning additional bindings for presence-system for the administrator
         if (room.roomId !== "presence-system") return;
-
-        console.log("Admin test");
+        // past this point only administrator subscriptions
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {

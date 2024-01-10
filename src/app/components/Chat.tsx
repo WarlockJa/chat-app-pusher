@@ -1,8 +1,8 @@
 import ChatBody from "./ChatBody";
 import ChatRooms from "./ChatRooms";
 import SendForm from "./SendForm";
-import Pusher from "pusher-js/types/src/core/pusher";
 import HooksElement from "./HooksElement";
+import { PusherPresence } from "@/context/PusherProvider";
 
 // TODO rename TS everywhere
 export default function Chat({
@@ -10,7 +10,7 @@ export default function Chat({
   pusher,
 }: {
   userId: IUserId;
-  pusher: Pusher;
+  pusher: PusherPresence;
 }) {
   console.log("------------Chat rerender-------------");
 
