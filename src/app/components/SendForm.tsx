@@ -64,12 +64,13 @@ export default function SendForm({
       </form>
       <button
         onClick={
-          () => {
-            const data = pusher.channel("presence-system");
-            // @ts-ignore
-            const members = Object.keys(data.members.members);
-            console.log(members);
-          }
+          () => console.log(userId.user_admin ? "is admin" : "not admin")
+          // () => {
+          //   const data = pusher.channel("presence-system");
+          //   // @ts-ignore
+          //   const members = Object.keys(data.members.members);
+          //   console.log(members);
+          // }
           // () =>
           //   fetch("/api/v1/pusher/system")
           //     .then((response) => response.json())

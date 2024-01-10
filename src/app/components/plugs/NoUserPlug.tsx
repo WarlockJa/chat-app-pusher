@@ -36,8 +36,14 @@ export default function NoUserPlug({
     // setUserId({ user_id, user_name });
     // assigning default rooms for the user
     // setRoomsList(['presence-system', `presence-${user_id}`])
-    // TEST
-    setUserId({ user_id: user_name, user_name, user_admin: true }); // TEST TODO replace with false
+    // TEST TODO replace with actual id
+    // setUserId({ user_id: user_name, user_name, user_admin: false });
+    setUserId({
+      user_id: user_name,
+      user_name,
+      user_admin: user_name === "WJ" || user_name === "Mike" ? true : false,
+    });
+
     // TODO delete
     // setRoomsList([
     //   { roomName: "presence-system", users: [user_name] },

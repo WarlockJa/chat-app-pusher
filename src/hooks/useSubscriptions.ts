@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { PresenceChannel } from "pusher-js";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
-import { getRoomsList } from "@/util/getRoomsList";
 import { addMessage } from "@/util/addMessage";
 import Pusher from "pusher-js/types/src/core/pusher";
+
+// adjusting Pusher interface to work with PresenceChannel instead of Channel
+interface PusherPresence extends Pusher {
+  channel: (name: string) => PresenceChannel;
+}
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -13,7 +17,7 @@ export default function useSubscriptions({
   pusher,
 }: {
   userId: IUserId;
-  pusher: Pusher;
+  pusher: PusherPresence;
 }) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // list of rooms
@@ -102,11 +106,11 @@ export default function useSubscriptions({
         // assigning additional bindings for presence-system for the administrator
         if (room.roomId !== "presence-system") return;
 
+        console.log("Admin test");
+
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
-          // TODO fix types
           const allRoomsList = Object.keys(
-            // @ts-ignore
             pusher.channel("presence-system").members.members
           ).map((member) => {
             return { users: [userId.user_id], roomId: `presence-${member}` };

@@ -47,7 +47,13 @@ export default function useUserId({
           user_name: localStorageUser.user_name
             ? localStorageUser.user_name
             : localStorageUser.user_id,
-          user_admin: true, // TEST TODO replace with false
+          // TEST TODO replace
+          // user_admin: false,
+          user_admin:
+            localStorageUser.user_id === "WJ" ||
+            localStorageUser.user_id === "Mike"
+              ? true
+              : false,
         };
         setUserId(userData);
       }
