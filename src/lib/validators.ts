@@ -60,5 +60,13 @@ export const schemaPusherAuthPOST = z
       .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }), // TODO add .uuid()
+    user_admin: z
+      .string()
+      .toLowerCase()
+      .transform((val) => {
+        const value = JSON.parse(val);
+        return typeof value === "boolean" ? value : false;
+      })
+      .pipe(z.boolean()),
   })
   .strict();

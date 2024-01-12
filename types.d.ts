@@ -28,3 +28,7 @@ interface IRoomsList {
   roomId: string;
   users: string[];
 }
+
+interface IUserInfo {
+  user_admin: boolean;
+}

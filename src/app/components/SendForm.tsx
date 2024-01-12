@@ -1,6 +1,6 @@
 "use client";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
-import Pusher from "pusher-js/types/src/core/pusher";
+import { PusherPresence } from "@/context/PusherProvider";
 import { useState } from "react";
 
 export default function SendForm({
@@ -8,7 +8,7 @@ export default function SendForm({
   pusher,
 }: {
   userId: IUserId;
-  pusher: Pusher;
+  pusher: PusherPresence;
 }) {
   // console.log("SendForm rerender");
 
@@ -64,13 +64,13 @@ export default function SendForm({
       </form>
       <button
         onClick={
-          () => console.log(userId.user_admin ? "is admin" : "not admin")
-          // () => {
-          //   const data = pusher.channel("presence-system");
-          //   // @ts-ignore
-          //   const members = Object.keys(data.members.members);
-          //   console.log(members);
-          // }
+          // () => console.log(userId.user_admin ? "is admin" : "not admin")
+          () => {
+            const data = pusher.channel("presence-system");
+            const members = Object.keys(data.members.members);
+            const me = pusher.channel("presence-system").members.me;
+            console.log(me);
+          }
           // () =>
           //   fetch("/api/v1/pusher/system")
           //     .then((response) => response.json())

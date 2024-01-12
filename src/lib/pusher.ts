@@ -1,3 +1,4 @@
+import { PusherPresence } from "@/context/PusherProvider";
 import PusherServer from "pusher";
 import PusherClient from "pusher-js";
 
@@ -12,7 +13,13 @@ export const pusherServer = new PusherServer({
 // TODO catch pusher service unavailable error
 // currently pusherClient responds with optimisic cache instance
 // maybe catch no response on message send or do a global connection check loop
-export const pusherClient = (user_id: string) =>
+export const pusherClient = ({
+  user_id,
+  user_admin,
+}: {
+  user_id: string;
+  user_admin?: boolean;
+}) =>
   new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
     cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     authEndpoint: "/api/v1/pusher/auth",
@@ -23,6 +30,7 @@ export const pusherClient = (user_id: string) =>
       },
       params: {
         user_id,
+        user_admin,
       },
     },
   });

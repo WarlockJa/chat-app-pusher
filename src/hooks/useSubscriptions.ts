@@ -3,8 +3,21 @@ import { PresenceChannel } from "pusher-js";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import { addMessage } from "@/util/addMessage";
-import Pusher from "pusher-js/types/src/core/pusher";
 import { PusherPresence } from "@/context/PusherProvider";
+
+// const getRoomMembers = ({
+//   pusher,
+//   channel,
+// }: {
+//   pusher: PusherPresence;
+//   channel: string;
+// }) => {
+//   const allRoomsList = Object.keys(pusher.channel(channel).members.members).map(
+//     (member) => {
+//       return { users: [userId.user_id], roomId: `presence-${member}` };
+//     }
+//   );
+// };
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -76,8 +89,11 @@ export default function useSubscriptions({
         // i.e. allows to monitor if admin/user is present
         newChannel.bind(
           "pusher:member_added",
-          (data: { id: string; info: string | undefined }) => {
+          (data: { id: string; info: IUserInfo | undefined }) => {
             // update users on the channel number
+            console.log(data);
+
+            // TODO add chat data flags for users in chat room
 
             // updating rooms list on member_added. Not updated on member_removed because administrator is still subscribed
             if (room.roomId === "presence-system") {

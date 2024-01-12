@@ -1,4 +1,4 @@
-import { usePusherContext } from "@/context/PusherProvider";
+import { PusherPresence, usePusherContext } from "@/context/PusherProvider";
 import { useUserIdContext } from "@/context/UserIdProvider";
 import { pusherClient } from "@/lib/pusher";
 import { useEffect } from "react";
@@ -12,6 +12,7 @@ export default function usePusherConnection() {
 
   useEffect(() => {
     // processing change of authenticated user data from the parent
+    // TODO test if being passed as a rerendering child would break something
     if (pusher) {
       pusher.disconnect();
       setPusher(null);
@@ -21,15 +22,20 @@ export default function usePusherConnection() {
 
     try {
       // TODO replace TEST
+      // TODO fix TS
       // establishing pusher connection
-      // setPusher(pusherClient(userId.user_id));
       // TEST
       if (userId.user_name === "WJ" || userId.user_name === "Mike") {
-        const pusherInstance = pusherClient(userId.user_name);
+        const pusherInstance = pusherClient({
+          user_id: userId.user_name,
+          user_admin: userId.user_admin,
+        }) as PusherPresence;
         setPusher(pusherInstance);
       } else {
-        const pusherInstance = pusherClient(userId.user_id);
-        console.log(pusherInstance);
+        const pusherInstance = pusherClient({
+          user_id: userId.user_id,
+          user_admin: userId.user_admin,
+        }) as PusherPresence;
         setPusher(pusherInstance);
       }
     } catch (error) {
