@@ -1,5 +1,4 @@
 import { PusherPresence } from "@/context/PusherProvider";
-import useChatData from "@/hooks/useChatData";
 import useSubscriptions from "@/hooks/useSubscriptions";
 
 export default function HooksElement({
@@ -9,7 +8,7 @@ export default function HooksElement({
   userId: IUserId;
   pusher: PusherPresence;
 }) {
-  console.log("--------------Hooks rerender");
+  // console.log("--------------Hooks rerender");
   // useChatData({ userId });
   useSubscriptions({ pusher, userId });
 

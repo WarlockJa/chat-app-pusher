@@ -12,7 +12,7 @@ export default function Chat({
   userId: IUserId;
   pusher: PusherPresence;
 }) {
-  console.log("------------Chat rerender-------------");
+  // console.log("------------Chat rerender-------------");
 
   return (
     <div className="chat">

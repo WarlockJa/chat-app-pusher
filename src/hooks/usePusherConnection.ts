@@ -29,12 +29,14 @@ export default function usePusherConnection() {
         const pusherInstance = pusherClient({
           user_id: userId.user_name,
           user_admin: userId.user_admin,
+          user_name: userId.user_name,
         }) as PusherPresence;
         setPusher(pusherInstance);
       } else {
         const pusherInstance = pusherClient({
           user_id: userId.user_id,
           user_admin: userId.user_admin,
+          user_name: userId.user_name,
         }) as PusherPresence;
         setPusher(pusherInstance);
       }

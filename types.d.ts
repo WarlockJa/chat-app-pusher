@@ -24,11 +24,20 @@ interface IChatProps extends IInitUserId {
   storage_uuid?: string;
 }
 
-interface IRoomsList {
-  roomId: string;
-  users: string[];
-}
-
 interface IUserInfo {
   user_admin: boolean;
+  user_name: string;
+}
+
+interface IChatRoom {
+  roomId: string;
+  users: IUserId[];
+}
+
+// pusher.channel("channel-name").members.members
+interface IChannelMembers {
+  [user_id: string]: {
+    user_admin: boolean;
+    user_name: string;
+  };
 }

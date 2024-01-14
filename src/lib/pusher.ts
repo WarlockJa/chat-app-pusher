@@ -1,4 +1,3 @@
-import { PusherPresence } from "@/context/PusherProvider";
 import PusherServer from "pusher";
 import PusherClient from "pusher-js";
 
@@ -16,9 +15,11 @@ export const pusherServer = new PusherServer({
 export const pusherClient = ({
   user_id,
   user_admin,
+  user_name,
 }: {
   user_id: string;
   user_admin?: boolean;
+  user_name?: string;
 }) =>
   new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
     cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
@@ -31,6 +32,7 @@ export const pusherClient = ({
       params: {
         user_id,
         user_admin,
+        user_name: user_name ? user_name : user_id,
       },
     },
   });

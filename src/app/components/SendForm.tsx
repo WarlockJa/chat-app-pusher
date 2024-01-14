@@ -65,16 +65,28 @@ export default function SendForm({
       <button
         onClick={
           // () => console.log(userId.user_admin ? "is admin" : "not admin")
-          () => {
-            const data = pusher.channel("presence-system");
-            const members = Object.keys(data.members.members);
-            const me = pusher.channel("presence-system").members.me;
-            console.log(me);
-          }
+          // () => {
+          //   const data = pusher.channel("presence-system");
+          //   const members = Object.keys(data.members.members);
+          //   const me = pusher.channel("presence-system").members.me;
+          //   console.log(me);
+          // }
           // () =>
           //   fetch("/api/v1/pusher/system")
           //     .then((response) => response.json())
           //     .then((result) => console.log(result))
+          () => {
+            console.log(
+              Object.entries(
+                pusher.channel("presence-system").members
+                  .members as IChannelMembers
+              ).map(([user_id, user_info]) => ({
+                user_id,
+                user_name: user_info.user_name,
+                user_admin: user_info.user_admin,
+              }))
+            );
+          }
         }
       >
         TEST

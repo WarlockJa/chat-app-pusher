@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   // console.log(data);
   // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
 
-  const [socket_id, channel_name, user_id, user_admin] = data
+  const [socket_id, channel_name, user_id, user_admin, user_name] = data
     .split("&")
     .map((str) => str.split("=")[1]);
 
@@ -22,12 +22,14 @@ export async function POST(req: NextRequest) {
       channel_name,
       user_id,
       user_admin,
+      user_name,
     });
 
     const presenceData: PresenceChannelData = {
       user_id: validatedData.user_id,
       user_info: {
         user_admin: validatedData.user_admin,
+        user_name: validatedData.user_name,
       },
     };
     const authResponse = pusherServer.authorizeChannel(

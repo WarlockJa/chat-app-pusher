@@ -1,17 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useReducer, useState } from "react";
 
-interface IRoomsList {
-  roomId: string;
-  users: string[];
-}
+type IChatRoomsProviderActions =
+  | { type: "addRoom"; newRoom: IChatRoom }
+  | { type: "getRoomsList" };
 
 interface IChatRoomsContext {
   activeRoom: string;
-  roomsList: IRoomsList[];
   setActiveRoom: (newActiveRooms: string) => void;
+
+  roomsList: IChatRoom[];
+  // dispatch: (action: IChatRoomsProviderActions) =>
+
   setRoomsList: (
-    newRoomsList: ((prev: IRoomsList[]) => IRoomsList[]) | IRoomsList[]
+    newRoomsList: ((prev: IChatRoom[]) => IChatRoom[]) | IChatRoom[]
   ) => void;
+  // getRoomMembers: (roomId: string) => IUserId[];
 }
 
 const ChatRoomsContext = createContext<IChatRoomsContext | null>(null);
@@ -26,19 +29,55 @@ export function ChatRoomsProvider({
   // reading userId from higher level UserIdProvider context.
   // in this app userId will always be populated when ChatRoomProvider initiated
   const initialStateActiveRoom = `presence-${userId.user_id}`;
-  const initialStateRoomsList = [
-    { roomId: "presence-system", users: [userId.user_id] },
-    { roomId: `presence-${userId.user_id}`, users: [userId.user_id] },
+  const initialStateRoomsList: IChatRoom[] = [
+    {
+      roomId: "presence-system",
+      users: [userId],
+    },
+    {
+      roomId: `presence-${userId.user_id}`,
+      users: [userId],
+    },
   ];
 
+  // TODO add methods to RoomsList context with useReducer to add/remove users, rooms...
+  // https://react.dev/learn/managing-state
   const [activeRoom, setActiveRoom] = useState<string>(initialStateActiveRoom);
-  const [roomsList, setRoomsList] = useState<IRoomsList[]>(
+  const [roomsList, setRoomsList] = useState<IChatRoom[]>(
     initialStateRoomsList
   );
+  // const [roomsList, dispatch] = useReducer(
+  //   roomsListReducer,
+  //   initialStateRoomsList
+  // );
+
+  // function roomsListReducer(
+  //   roomsList: IChatRoom[],
+  //   action: IChatRoomsProviderActions
+  // ) {
+  //   switch (action.type) {
+  //     case "addRoom":
+  //       return [...roomsList, action.newRoom];
+  //     case "getRoomsList":
+  //       return roomsList
+
+  //     default: {
+  //       throw Error('Unknown action: ' + JSON.stringify(action));
+  //     }
+  //   }
+  // }
 
   return (
     <ChatRoomsContext.Provider
-      value={{ activeRoom, setActiveRoom, roomsList, setRoomsList }}
+      value={{
+        activeRoom,
+        setActiveRoom,
+        roomsList,
+        // dispatch
+        // roomsList,
+        setRoomsList,
+        // getRoomMembers,
+      }}
     >
       {children}
     </ChatRoomsContext.Provider>

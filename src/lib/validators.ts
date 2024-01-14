@@ -68,5 +68,7 @@ export const schemaPusherAuthPOST = z
         return typeof value === "boolean" ? value : false;
       })
       .pipe(z.boolean()),
+    // TODO add proper validation
+    user_name: z.string(),
   })
   .strict();
