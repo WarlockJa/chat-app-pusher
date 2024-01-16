@@ -41,3 +41,11 @@ interface IChannelMembers {
     user_name: string;
   };
 }
+
+// pusher.channel("channel-name").members.members.get("user_name")
+type IChannelGetMember = [string, { user_admin: boolean; user_name: string }];
+
+interface ITriggerEventData {
+  id: string;
+  info: IUserInfo;
+}

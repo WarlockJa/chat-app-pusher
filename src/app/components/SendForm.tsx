@@ -78,7 +78,7 @@ export default function SendForm({
           () => {
             console.log(
               Object.entries(
-                pusher.channel("presence-system").members
+                pusher.channel(`presence-${userId.user_id}`).members
                   .members as IChannelMembers
               ).map(([user_id, user_info]) => ({
                 user_id,
