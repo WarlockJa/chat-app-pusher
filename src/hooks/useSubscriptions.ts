@@ -5,20 +5,6 @@ import { useChatDataContext } from "@/context/ChatDataProvider";
 import { addMessage } from "@/util/addMessage";
 import { PusherPresence } from "@/context/PusherProvider";
 
-// const getRoomMembers = ({
-//   pusher,
-//   channel,
-// }: {
-//   pusher: PusherPresence;
-//   channel: string;
-// }) => {
-//   const allRoomsList = Object.keys(pusher.channel(channel).members.members).map(
-//     (member) => {
-//       return { users: [userId.user_id], roomId: `presence-${member}` };
-//     }
-//   );
-// };
-
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
 export default function useSubscriptions({
@@ -29,12 +15,11 @@ export default function useSubscriptions({
   pusher: PusherPresence;
 }) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
-  // list of rooms
-  const { roomsList, setRoomsList } = useChatRoomsContext();
+  // roomsList context and useReducer dispatch methods
+  const { roomsList, dispatch } = useChatRoomsContext();
   // local chat data
   const { setChatData } = useChatDataContext();
 
-  // TODO uncluster this
   useEffect(() => {
     const { user_id, user_admin } = userId;
 
@@ -96,163 +81,61 @@ export default function useSubscriptions({
             user_admin: data.info.user_admin,
           };
 
-          // admin only logic. users are not subscribed to member_added event on presence-system
-          if (room.roomId === "presence-system") {
-            // channel is presence-system a new room must be added based on provided info about the new member
-            // method .bind preserves the state of the app at the moment of its call
-            // therefore we have to call prev when modifying state inside the .bind
-            setRoomsList((prev) => {
-              // is admin already subscribed to new user's channel?
-              if (
-                prev.findIndex(
-                  (member_addedFindIndexRoom) =>
-                    member_addedFindIndexRoom.roomId === `presence-${data.id}`
-                ) === -1
-              ) {
-                // admin is not subscribed to the new user's channel adding a new room
-                // with a default user list of user and admin
-                // the actual users list is to be fetched on subscription_succeded event
-                // on the next iteration of the loop
-                return [
-                  ...prev,
-                  { users: [userId, newUser], roomId: `presence-${data.id}` },
-                ];
-              } else {
-                // admin is already subscribed to the new user's channel
-                // modifying current users list for the room with a new user data
-                // the actual users list is to be fetched on subscription_succeded event
-                // on the next iteration of the loop
-                // return prev.map((member_addedMapRoom) =>
-                //   member_addedMapRoom.roomId === `presence-${data.id}`
-                //     ? {
-                //         ...member_addedMapRoom,
-                //         users: [...member_addedMapRoom.users, newUser],
-                //       }
-                //     : member_addedMapRoom
-                // );
-                return prev;
-              }
-            });
-
-            // updating users list for presence-system
-            setRoomsList((prev) =>
-              prev.map((member_addedUpdatingSystem) =>
-                member_addedUpdatingSystem.roomId === "presence-system"
-                  ? {
-                      ...member_addedUpdatingSystem,
-                      users: [...member_addedUpdatingSystem.users, newUser],
-                    }
-                  : member_addedUpdatingSystem
-              )
-            );
-          }
-
           // for user: admin subscribed to the user's own channel
           // for admin: user returns to the channel admin already subscribed to
-          if (room.roomId !== "presence-system") {
-            setRoomsList((prev) => {
-              return prev.map((memberAddedRoom) =>
-                memberAddedRoom.roomId === room.roomId
-                  ? {
-                      roomId: memberAddedRoom.roomId,
-                      users: [...memberAddedRoom.users, newUser],
-                    }
-                  : memberAddedRoom
-              );
+          dispatch({
+            type: "addUserToRoomUsersList",
+            user: newUser,
+            room_id: newChannel.name,
+          });
+
+          // admin only logic. users are not subscribed to member_added event on presence-system
+          if (newChannel.name === "presence-system") {
+            // creating room based on member_added data
+            dispatch({
+              type: "addNewRoom",
+              room_id: `presence-${data.id}`,
             });
           }
         });
 
         newChannel.bind("pusher:member_removed", (data: ITriggerEventData) => {
-          // update users number when a member leaves
-          setRoomsList((prev) =>
-            prev.map((memberRemovedRoom) => ({
-              ...memberRemovedRoom,
-              users: memberRemovedRoom.users.filter(
-                (user) => user.user_id !== data.id
-              ),
-            }))
-          );
+          // update users number for the binded channel when a member leaves
+          dispatch({
+            type: "removeUserFromRoomUsersList",
+            room_id: newChannel.name,
+            user_id: data.id,
+          });
         });
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
-          // processing user returning to its own channel that is already subscribed to by an administrator
-          // updating channel users count
-          if (room.roomId !== "presence-system") {
-            // current users for presence-system
-            const initialLoadUsersChannel_users: IUserId[] = Object.entries(
-              pusher.channel(room.roomId).members.members as IChannelMembers
-            ).map(([user_id, user_info]) => ({
-              user_id,
-              user_admin: user_info.user_admin,
-              user_name: user_info.user_name,
-            }));
+          // getting users subscribed to the channel
+          const initialLoadUsersChannel_users: IUserId[] = Object.entries(
+            pusher.channel(newChannel.name).members.members as IChannelMembers
+          ).map(([user_id, user_info]) => ({
+            user_id,
+            user_admin: user_info.user_admin,
+            user_name: user_info.user_name,
+          }));
 
-            // adding found users to user list
-            setRoomsList((prev) =>
-              prev.map((returningUserRoom) =>
-                returningUserRoom.roomId === room.roomId
-                  ? {
-                      ...returningUserRoom,
-                      users: initialLoadUsersChannel_users,
-                    }
-                  : returningUserRoom
-              )
-            );
-          }
-
-          // administrator only subscriptions
-          if (room.roomId === "presence-system") {
-            const allRoomsList: IChatRoom[] = Object.keys(
-              pusher.channel("presence-system").members.members
-            ).map((member) => {
-              // filtering current user who may yet to be registered as presence-system member
-              if (member === userId.user_id)
-                return {
-                  roomId: `presence-${member}`,
-                  users: [userId],
-                };
-
-              // generate roomId for each member
-              const initialLoadNewRoom_roomId = `presence-${member}`;
-              // getting member data from presence-system
-              const channelOwnerUserInfo = Object.values(
-                pusher.channel("presence-system").members.get(member)
-              ) as IChannelGetMember;
-
-              const channelOwnerData: IUserId = {
-                user_id: channelOwnerUserInfo[0],
-                user_name: channelOwnerUserInfo[1].user_name,
-                user_admin: channelOwnerUserInfo[1].user_admin,
-              };
-
-              // populating users list for member's channel with initial data
-              const initialLoadNewRoom_users = [userId, channelOwnerData];
-
-              return {
-                users: initialLoadNewRoom_users,
-                roomId: initialLoadNewRoom_roomId,
-              };
+          // adding found users to user list
+          initialLoadUsersChannel_users.forEach((user) => {
+            dispatch({
+              type: "addUserToRoomUsersList",
+              room_id: newChannel.name,
+              user,
             });
+          });
 
-            // current users for presence-system
-            const initialLoadPresenceSystem_users: IUserId[] = Object.entries(
-              pusher.channel("presence-system").members
-                .members as IChannelMembers
-            ).map(([user_id, user_info]) => ({
-              user_id,
-              user_admin: user_info.user_admin,
-              user_name: user_info.user_name,
-            }));
-
-            setRoomsList([
-              {
-                roomId: "presence-system",
-                users: initialLoadPresenceSystem_users,
-              },
-              ...allRoomsList,
-            ]);
+          // administrator only. Adding rooms to roomsList based on the list of users subscribed to presence-system
+          if (newChannel.name === "presence-system") {
+            initialLoadUsersChannel_users.map((user) =>
+              dispatch({
+                type: "addNewRoom",
+                room_id: `presence-${user.user_id}`,
+              })
+            );
           }
         });
       }

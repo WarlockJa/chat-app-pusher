@@ -1,20 +1,17 @@
 import { createContext, useContext, useReducer, useState } from "react";
 
 type IChatRoomsProviderActions =
-  | { type: "addRoom"; newRoom: IChatRoom }
-  | { type: "getRoomsList" };
+  | { type: "addNewRoom"; room_id: string }
+  | { type: "removeRoom"; room_id: string }
+  | { type: "removeUserFromRoomUsersList"; user_id: string; room_id: string }
+  | { type: "addUserToRoomUsersList"; user: IUserId; room_id: string };
 
 interface IChatRoomsContext {
   activeRoom: string;
   setActiveRoom: (newActiveRooms: string) => void;
 
   roomsList: IChatRoom[];
-  // dispatch: (action: IChatRoomsProviderActions) =>
-
-  setRoomsList: (
-    newRoomsList: ((prev: IChatRoom[]) => IChatRoom[]) | IChatRoom[]
-  ) => void;
-  // getRoomMembers: (roomId: string) => IUserId[];
+  dispatch: (action: IChatRoomsProviderActions) => void;
 }
 
 const ChatRoomsContext = createContext<IChatRoomsContext | null>(null);
@@ -40,32 +37,57 @@ export function ChatRoomsProvider({
     },
   ];
 
-  // TODO add methods to RoomsList context with useReducer to add/remove users, rooms...
-  // https://react.dev/learn/managing-state
   const [activeRoom, setActiveRoom] = useState<string>(initialStateActiveRoom);
-  const [roomsList, setRoomsList] = useState<IChatRoom[]>(
+  const [roomsList, dispatch] = useReducer(
+    roomsListReducer,
     initialStateRoomsList
   );
-  // const [roomsList, dispatch] = useReducer(
-  //   roomsListReducer,
-  //   initialStateRoomsList
-  // );
 
-  // function roomsListReducer(
-  //   roomsList: IChatRoom[],
-  //   action: IChatRoomsProviderActions
-  // ) {
-  //   switch (action.type) {
-  //     case "addRoom":
-  //       return [...roomsList, action.newRoom];
-  //     case "getRoomsList":
-  //       return roomsList
+  function roomsListReducer(
+    roomsList: IChatRoom[],
+    action: IChatRoomsProviderActions
+  ) {
+    switch (action.type) {
+      case "addNewRoom":
+        // adding new room to the state with a precheck that it's not already there
+        return roomsList.findIndex((room) => room.roomId === action.room_id) ===
+          -1
+          ? [...roomsList, { roomId: action.room_id, users: [] }]
+          : roomsList;
+      case "removeRoom":
+        return roomsList.filter((room) => room.roomId !== action.room_id);
+      case "removeUserFromRoomUsersList":
+        return roomsList.map((room) =>
+          room.roomId === action.room_id
+            ? {
+                ...room,
+                users: room.users.filter(
+                  (user) => user.user_id !== action.user_id
+                ),
+              }
+            : room
+        );
+      case "addUserToRoomUsersList":
+        // adding user to rooms users list with precheck that it's not already there
+        return roomsList.map((room) =>
+          room.roomId === action.room_id
+            ? {
+                ...room,
+                users:
+                  room.users.findIndex(
+                    (user) => user.user_id === action.user.user_id
+                  ) === -1
+                    ? [...room.users, action.user]
+                    : room.users,
+              }
+            : room
+        );
 
-  //     default: {
-  //       throw Error('Unknown action: ' + JSON.stringify(action));
-  //     }
-  //   }
-  // }
+      default: {
+        throw Error("Unknown action: " + JSON.stringify(action));
+      }
+    }
+  }
 
   return (
     <ChatRoomsContext.Provider
@@ -73,10 +95,7 @@ export function ChatRoomsProvider({
         activeRoom,
         setActiveRoom,
         roomsList,
-        // dispatch
-        // roomsList,
-        setRoomsList,
-        // getRoomMembers,
+        dispatch,
       }}
     >
       {children}

@@ -29,6 +29,11 @@ interface IUserInfo {
   user_name: string;
 }
 
+interface ITriggerEventData {
+  id: string;
+  info: IUserInfo;
+}
+
 interface IChatRoom {
   roomId: string;
   users: IUserId[];
@@ -42,10 +47,5 @@ interface IChannelMembers {
   };
 }
 
-// pusher.channel("channel-name").members.members.get("user_name")
+// Object.values(pusher.channel("channel-name").members.members.get("user_name"))
 type IChannelGetMember = [string, { user_admin: boolean; user_name: string }];
-
-interface ITriggerEventData {
-  id: string;
-  info: IUserInfo;
-}
