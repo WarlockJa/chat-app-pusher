@@ -38,38 +38,38 @@ export default function useSubscriptions({
         if (room.roomId === "presence-system" && !user_admin) return;
 
         // TODO process later
-        // newChannel.bind("message", function (data: IMessageData) {
-        //   // setChatData((prev) =>
-        //   //   prev
-        //   //     ? [
-        //   //         ...prev.filter(
-        //   //           (currentRoom) => currentRoom.roomId !== room.roomId
-        //   //         ),
-        //   //         addMessage(
-        //   //           prev.find(
-        //   //             (currentRoom) => currentRoom.roomId === room.roomId
-        //   //           )!,
-        //   //           {
-        //   //             author: user_id,
-        //   //             readusers: [user_id],
-        //   //             text: data.message,
-        //   //             timestamp: new Date(),
-        //   //           }
-        //   //         ),
-        //   //       ]
-        //   //     : [
-        //   //         addMessage(
-        //   //           { roomId: room.roomId, messages: [], state: "success" },
-        //   //           {
-        //   //             author: user_id,
-        //   //             readusers: [user_id],
-        //   //             text: data.message,
-        //   //             timestamp: new Date(),
-        //   //           }
-        //   //         ),
-        //   //       ]
-        //   // );
-        // });
+        newChannel.bind("message", function (data: IMessageData) {
+          setChatData((prev) =>
+            prev
+              ? [
+                  ...prev.filter(
+                    (currentRoom) => currentRoom.roomId !== room.roomId
+                  ),
+                  addMessage(
+                    prev.find(
+                      (currentRoom) => currentRoom.roomId === room.roomId
+                    )!,
+                    {
+                      author: user_id,
+                      readusers: [user_id],
+                      text: data.message,
+                      timestamp: new Date(),
+                    }
+                  ),
+                ]
+              : [
+                  addMessage(
+                    { roomId: room.roomId, messages: [], state: "success" },
+                    {
+                      author: user_id,
+                      readusers: [user_id],
+                      text: data.message,
+                      timestamp: new Date(),
+                    }
+                  ),
+                ]
+          );
+        });
 
         // member_added and member_removed binds used to update number of users on the channel
         // i.e. allows to monitor if admin/user is present

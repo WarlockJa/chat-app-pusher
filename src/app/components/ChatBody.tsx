@@ -1,5 +1,6 @@
 import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import Spinner from "@/lib/Spinner";
 import useSWRImmutable from "swr/immutable";
 
 export default function ChatBody() {
@@ -27,22 +28,22 @@ export default function ChatBody() {
   //         </li>
   //       ))
   //     : null;
-  let chatContent;
-  if (isLoading) {
-    chatContent = "Loading..."; // TODO replace with spinner
-  } else if (error) {
-    chatContent = error;
-  } else
-    chatContent = data
-      ? data.messages.map((msg, index) => (
-          <li key={index} className="post__text">
-            {msg.text}
-          </li>
-        ))
-      : null;
-  return (
-    <div className="chat__body">
-      <ul className="chat-display">{chatContent}</ul>
+  let chatContent = (
+    <div className="chat__body--spinnerWrapper">
+      <Spinner />
     </div>
   );
+  // if (isLoading) {
+  //   chatContent = <Spinner />; // TODO replace with spinner
+  // } else if (error) {
+  //   chatContent = error;
+  // } else
+  //   chatContent = data
+  //     ? <ul className="chat-display">{data.messages.map((msg, index) => (
+  //         <li key={index} className="post__text">
+  //           {msg.text}
+  //         </li>
+  //       ))}</ul>
+  // : null;
+  return <div className="chat__body">{chatContent}</div>;
 }

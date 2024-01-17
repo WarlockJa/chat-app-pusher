@@ -18,6 +18,10 @@
     flex: 1;
 
     .chat__body {
+      .chat__body--spinnerWrapper {
+        display: flex;
+        justify-content: center;
+      }
     }
   }
 

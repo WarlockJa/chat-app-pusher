@@ -1,10 +1,12 @@
-/* :root {
+:root {
+  --clr-main-font: #bfbfbf;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --clr-main-font: #aeaeae;
   }
-} */
+}
 
 *,
 *::after,
