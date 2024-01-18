@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer, useState } from "react";
 
-type IChatRoomsProviderActions =
+type TChatRoomsProviderActions =
   | { type: "addNewRoom"; room_id: string }
   | { type: "removeRoom"; room_id: string }
   | { type: "removeUserFromRoomUsersList"; user_id: string; room_id: string }
@@ -11,7 +11,7 @@ interface IChatRoomsContext {
   setActiveRoom: (newActiveRooms: string) => void;
 
   roomsList: IChatRoom[];
-  dispatch: (action: IChatRoomsProviderActions) => void;
+  dispatch: (action: TChatRoomsProviderActions) => void;
 }
 
 const ChatRoomsContext = createContext<IChatRoomsContext | null>(null);
@@ -45,8 +45,8 @@ export function ChatRoomsProvider({
 
   function roomsListReducer(
     roomsList: IChatRoom[],
-    action: IChatRoomsProviderActions
-  ) {
+    action: TChatRoomsProviderActions
+  ): IChatRoom[] {
     switch (action.type) {
       case "addNewRoom":
         // adding new room to the state with a precheck that it's not already there

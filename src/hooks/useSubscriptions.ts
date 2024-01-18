@@ -4,6 +4,7 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import { addMessage } from "@/util/addMessage";
 import { PusherPresence } from "@/context/PusherProvider";
+import { channel } from "@prisma/client";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -16,9 +17,9 @@ export default function useSubscriptions({
 }) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // roomsList context and useReducer dispatch methods
-  const { roomsList, dispatch } = useChatRoomsContext();
+  const { roomsList, dispatch: dispatchChatRooms } = useChatRoomsContext();
   // local chat data
-  const { setChatData } = useChatDataContext();
+  const { dispatch: dispatchChatData } = useChatDataContext();
 
   useEffect(() => {
     const { user_id, user_admin } = userId;
@@ -38,37 +39,47 @@ export default function useSubscriptions({
         if (room.roomId === "presence-system" && !user_admin) return;
 
         // TODO process later
-        newChannel.bind("message", function (data: IMessageData) {
-          setChatData((prev) =>
-            prev
-              ? [
-                  ...prev.filter(
-                    (currentRoom) => currentRoom.roomId !== room.roomId
-                  ),
-                  addMessage(
-                    prev.find(
-                      (currentRoom) => currentRoom.roomId === room.roomId
-                    )!,
-                    {
-                      author: user_id,
-                      readusers: [user_id],
-                      text: data.message,
-                      timestamp: new Date(),
-                    }
-                  ),
-                ]
-              : [
-                  addMessage(
-                    { roomId: room.roomId, messages: [], state: "success" },
-                    {
-                      author: user_id,
-                      readusers: [user_id],
-                      text: data.message,
-                      timestamp: new Date(),
-                    }
-                  ),
-                ]
-          );
+        newChannel.bind("message", async function (data: IMessageData) {
+          dispatchChatData({
+            type: "addRoomMessage",
+            room_id: newChannel.name,
+            message: {
+              text: data.message,
+              author: data.author,
+              readusers: [],
+              timestamp: new Date(),
+            },
+          });
+          //   setChatData((prev) =>
+          //     prev
+          //       ? [
+          //           ...prev.filter(
+          //             (currentRoom) => currentRoom.roomId !== room.roomId
+          //           ),
+          //           addMessage(
+          //             prev.find(
+          //               (currentRoom) => currentRoom.roomId === room.roomId
+          //             )!,
+          //             {
+          //               author: user_id,
+          //               readusers: [user_id],
+          //               text: data.message,
+          //               timestamp: new Date(),
+          //             }
+          //           ),
+          //         ]
+          //       : [
+          //           addMessage(
+          //             { roomId: room.roomId, messages: [], state: "success" },
+          //             {
+          //               author: user_id,
+          //               readusers: [user_id],
+          //               text: data.message,
+          //               timestamp: new Date(),
+          //             }
+          //           ),
+          //         ]
+          //   );
         });
 
         // member_added and member_removed binds used to update number of users on the channel
@@ -83,7 +94,7 @@ export default function useSubscriptions({
 
           // for user: admin subscribed to the user's own channel
           // for admin: user returns to the channel admin already subscribed to
-          dispatch({
+          dispatchChatRooms({
             type: "addUserToRoomUsersList",
             user: newUser,
             room_id: newChannel.name,
@@ -92,7 +103,7 @@ export default function useSubscriptions({
           // admin only logic. users are not subscribed to member_added event on presence-system
           if (newChannel.name === "presence-system") {
             // creating room based on member_added data
-            dispatch({
+            dispatchChatRooms({
               type: "addNewRoom",
               room_id: `presence-${data.id}`,
             });
@@ -101,7 +112,7 @@ export default function useSubscriptions({
 
         newChannel.bind("pusher:member_removed", (data: ITriggerEventData) => {
           // update users number for the binded channel when a member leaves
-          dispatch({
+          dispatchChatRooms({
             type: "removeUserFromRoomUsersList",
             room_id: newChannel.name,
             user_id: data.id,
@@ -110,6 +121,35 @@ export default function useSubscriptions({
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
+          // TEST chat data
+          dispatchChatData({ type: "addRoom", room_id: newChannel.name });
+          fetch(`/api/v1/db?roomId=${newChannel.name}`)
+            .then((response) => response.json())
+            .then((result: channel) => {
+              const messages = result.messages ? result.messages : [];
+              dispatchChatData({
+                type: "addRoomMessages",
+                room_id: newChannel.name,
+                messages: messages,
+              });
+            })
+            .catch((error) => {
+              // error result is null check. No channel found in the DB
+              // not actually an error, means no messages were ever created for this room
+              error.message === "result is null"
+                ? dispatchChatData({
+                    type: "addRoomMessages",
+                    room_id: newChannel.name,
+                    messages: [],
+                  })
+                : dispatchChatData({
+                    type: "setRoomError",
+                    room_id: newChannel.name,
+                    error,
+                  });
+            });
+          // END TEST
+
           // getting users subscribed to the channel
           const initialLoadUsersChannel_users: IUserId[] = Object.entries(
             pusher.channel(newChannel.name).members.members as IChannelMembers
@@ -121,7 +161,7 @@ export default function useSubscriptions({
 
           // adding found users to user list
           initialLoadUsersChannel_users.forEach((user) => {
-            dispatch({
+            dispatchChatRooms({
               type: "addUserToRoomUsersList",
               room_id: newChannel.name,
               user,
@@ -131,7 +171,7 @@ export default function useSubscriptions({
           // administrator only. Adding rooms to roomsList based on the list of users subscribed to presence-system
           if (newChannel.name === "presence-system") {
             initialLoadUsersChannel_users.map((user) =>
-              dispatch({
+              dispatchChatRooms({
                 type: "addNewRoom",
                 room_id: `presence-${user.user_id}`,
               })

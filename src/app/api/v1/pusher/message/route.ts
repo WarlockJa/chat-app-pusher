@@ -19,14 +19,9 @@ import { pusherServer } from "@/lib/pusher";
 //   },
 // };
 
-interface IPostData {
-  message: string;
-  activeRoom: string;
-}
-
 export async function POST(req: Request) {
-  const data: IPostData = await req.json();
-  const { message, activeRoom } = data;
+  const data: IMessagePOST = await req.json();
+  const { message, activeRoom, author } = data;
 
   if (!message) return NextResponse.json({}, { status: 201 });
 
@@ -39,6 +34,7 @@ export async function POST(req: Request) {
 
   pusherServer.trigger(activeRoom, "message", {
     message: data.message,
+    author,
   });
 
   return NextResponse.json({ message }, { statusText: "OK", status: 200 });

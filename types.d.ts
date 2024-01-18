@@ -1,5 +1,10 @@
 interface IMessageData {
   message: string;
+  author: string;
+}
+
+interface IMessagePOST extends IMessageData {
+  activeRoom: string;
 }
 
 interface IUserLocalStorageData {

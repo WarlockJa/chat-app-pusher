@@ -8,39 +8,49 @@ import useSWRImmutable from "swr/immutable";
 
 export default function ChatBody({ userId }: { userId: IUserId }) {
   const { activeRoom } = useChatRoomsContext();
-  // const { chatData } = useChatDataContext();
+  const { chatData } = useChatDataContext();
   // const activeRoomChatData = chatData?.find(
-  //   (item) => item.roomId === activeRoom
+  //   (item) => item.room_id === activeRoom
   // );
-
-  const { data, isLoading, error } = useSWRImmutable<IChatData>(
-    `/api/v1/db?roomId=${activeRoom}`
+  const chatData_ActiveRoom = chatData?.find(
+    (room) => room.room_id === activeRoom
   );
+  // console.log(chatData_ActiveRoom);
+  const data: IChatData = chatData_ActiveRoom
+    ? chatData_ActiveRoom
+    : { room_id: activeRoom, messages: [], state: "loading" };
+
+  // const { data, isLoading, error } = useSWRImmutable<IChatData>(
+  //   `/api/v1/db?roomId=${activeRoom}`
+  // );
 
   // scrolling to the last message
   const lastMessageRef = useRef<HTMLLIElement>(null);
   useLayoutEffect(() => {
     lastMessageRef.current ? lastMessageRef.current.scrollIntoView() : null;
-  }, [lastMessageRef.current]);
+  }, [lastMessageRef.current, activeRoom, data.messages.length]);
 
   let chatContent;
-  let lastDateDay = "";
-  if (isLoading) {
+  let lastMessage = "";
+  if (data.state === "loading") {
     chatContent = (
       <div className="chat__body--spinnerWrapper">
         <Spinner />
       </div>
     );
-  } else if (error) {
-    chatContent = error;
+  } else if (data.state === "error") {
+    chatContent = "Error while loading chat room messages";
   } else
     chatContent = data ? (
       <ul className="chat-display">
         {data.messages.map((msg, index) => {
           const userIsMsgAuthor = msg.author === userId.user_id;
+          const currentMsgDay = format(msg.timestamp, "y,M,d");
+          const postDate = lastMessage !== currentMsgDay;
+          lastMessage = currentMsgDay;
           return (
             <Fragment key={msg.author.concat(msg.timestamp.toString())}>
-              {lastDateDay !== format(msg.timestamp, "y,M,d") ? (
+              {postDate ? (
                 <div className="post post--center">
                   {format(msg.timestamp, "MMMM d")}
                 </div>

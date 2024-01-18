@@ -20,16 +20,19 @@ export default function SendForm({
     e.preventDefault();
     // TODO get types from back-end into front-end somewhow. tRPC?
 
+    const messageBody: IMessagePOST = {
+      message,
+      author: userId.user_name,
+      activeRoom,
+    };
+
     // triggering "message" event for Pusher
     fetch("/api/v1/pusher/message", {
       method: "POST",
       headers: {
         "Content-Type": "Application/json",
       },
-      body: JSON.stringify({
-        message,
-        activeRoom,
-      }),
+      body: JSON.stringify(messageBody),
     });
 
     // TODO change message data

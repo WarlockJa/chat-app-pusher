@@ -5,20 +5,20 @@
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
-  gap: 0.25rem;
 
   .sendForm__input {
     flex-grow: 1;
     max-width: calc(80% - 0.25rem);
+    border-radius: 1em 0 0 1em;
   }
 
   .sendForm__button {
     width: 20%;
+    border-radius: 0 1em 1em 0;
   }
 
   .sendForm__input,
   .sendForm__button {
-    border-radius: 10px;
     padding: 0.5rem;
   }
 }
