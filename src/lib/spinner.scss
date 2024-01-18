@@ -2,21 +2,21 @@
   color: var(--clr-main-font);
   display: inline-block;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 3em;
+  height: 3em;
 }
 .lds-spinner div {
-  transform-origin: 40px 40px;
+  transform-origin: 1.5em 1.5em;
   animation: lds-spinner 1.2s linear infinite;
 }
 .lds-spinner div:after {
   content: " ";
   display: block;
   position: absolute;
-  top: 3px;
-  left: 37px;
-  width: 6px;
-  height: 18px;
+  top: 0.1em;
+  left: 1.5em;
+  width: 0.2em;
+  height: 0.8em;
   border-radius: 20%;
   background: var(--clr-main-font);
 }

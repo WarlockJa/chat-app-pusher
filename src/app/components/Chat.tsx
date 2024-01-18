@@ -20,7 +20,7 @@ export default function Chat({
       {/* <TestElement /> */}
       <ChatRooms />
       <div className="chat__wrapper">
-        <ChatBody />
+        <ChatBody userId={userId} />
         <SendForm userId={userId} pusher={pusher} />
       </div>
     </div>

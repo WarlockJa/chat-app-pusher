@@ -2,6 +2,7 @@
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { PusherPresence } from "@/context/PusherProvider";
 import { useState } from "react";
+import "./sendform.scss";
 
 export default function SendForm({
   userId,
@@ -51,18 +52,21 @@ export default function SendForm({
   };
 
   return (
-    <div>
-      <form onSubmit={(e) => handleSubmit(e)}>
+    <>
+      <form className="sendForm" onSubmit={(e) => handleSubmit(e)}>
         <input
+          className="sendForm__input"
           type="text"
           name="message"
           id="chat-input"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button type="submit">Send</button>
+        <button className="sendForm__button" type="submit">
+          Send
+        </button>
       </form>
-      <button
+      {/* <button
         onClick={
           // () => console.log(userId.user_admin ? "is admin" : "not admin")
           // () => {
@@ -90,7 +94,7 @@ export default function SendForm({
         }
       >
         TEST
-      </button>
-    </div>
+      </button> */}
+    </>
   );
 }

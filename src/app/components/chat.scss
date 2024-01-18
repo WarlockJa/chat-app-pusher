@@ -11,18 +11,9 @@
   border: 1px solid green;
 
   .chat__wrapper {
-    border: 1px solid coral;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     flex: 1;
 
-    .chat__body {
-      .chat__body--spinnerWrapper {
-        display: flex;
-        justify-content: center;
-      }
-    }
+    border: 1px solid coral;
   }
 
   @include media.min-width(medium) {
