@@ -20,12 +20,14 @@ import { pusherServer } from "@/lib/pusher";
 // };
 
 export async function POST(req: Request) {
+  // TODO add zod validation AND import types to sendForm
   const data: IMessagePOST = await req.json();
   const { message, activeRoom, author } = data;
 
   if (!message) return NextResponse.json({}, { status: 201 });
 
   // vaidating request
+  // TODO add zod validation
   if (!activeRoom)
     return NextResponse.json(
       {},

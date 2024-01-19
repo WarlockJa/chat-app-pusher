@@ -1,20 +1,16 @@
 .sendForm {
-  width: 100%;
-  margin: auto;
-  max-width: 600px;
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
 
   .sendForm__input {
     flex-grow: 1;
-    max-width: calc(80% - 0.25rem);
-    border-radius: 1em 0 0 1em;
+    max-width: 80%;
+    border-radius: 0 0 0 1em;
+    border-right: none;
   }
 
   .sendForm__button {
     width: 20%;
-    border-radius: 0 1em 1em 0;
+    border-radius: 0 0 1em 0;
   }
 
   .sendForm__input,

@@ -3,6 +3,13 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { PusherPresence } from "@/context/PusherProvider";
 import { useState } from "react";
 import "./sendform.scss";
+import { schemaApiDBPOST } from "@/lib/validators";
+import { z } from "zod";
+import { updateLastAccessTimestamp } from "@/lib/dbMethods";
+
+// TODO get types from back-end zod schema into front-end
+// type schemaPOST = z.infer<typeof schemaApiDBPOST>;
+type schemaDBPost = z.infer<typeof schemaApiDBPOST>;
 
 export default function SendForm({
   userId,
@@ -18,9 +25,8 @@ export default function SendForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO get types from back-end into front-end somewhow. tRPC?
 
-    const messageBody: IMessagePOST = {
+    const messagePostBody: IMessagePOST = {
       message,
       author: userId.user_name,
       activeRoom,
@@ -32,8 +38,14 @@ export default function SendForm({
       headers: {
         "Content-Type": "Application/json",
       },
-      body: JSON.stringify(messageBody),
+      body: JSON.stringify(messagePostBody),
     });
+
+    const dbPostBody: schemaDBPost = {
+      message,
+      userId: userId.user_id,
+      room: activeRoom,
+    };
 
     // TODO change message data
     // writing message to DB
@@ -42,11 +54,7 @@ export default function SendForm({
       headers: {
         "Content-Type": "Application/json",
       },
-      body: JSON.stringify({
-        message,
-        userId: userId.user_id,
-        room: activeRoom,
-      }),
+      body: JSON.stringify(dbPostBody),
     })
       .then((response) => response.json())
       .then((test) => console.log(test));
@@ -69,7 +77,7 @@ export default function SendForm({
           Send
         </button>
       </form>
-      {/* <button
+      <button
         onClick={
           // () => console.log(userId.user_admin ? "is admin" : "not admin")
           // () => {
@@ -82,22 +90,27 @@ export default function SendForm({
           //   fetch("/api/v1/pusher/system")
           //     .then((response) => response.json())
           //     .then((result) => console.log(result))
-          () => {
-            console.log(
-              Object.entries(
-                pusher.channel(`presence-${userId.user_id}`).members
-                  .members as IChannelMembers
-              ).map(([user_id, user_info]) => ({
-                user_id,
-                user_name: user_info.user_name,
-                user_admin: user_info.user_admin,
-              }))
-            );
-          }
+          // () => {
+          //   console.log(
+          //     Object.entries(
+          //       pusher.channel(`presence-${userId.user_id}`).members
+          //         .members as IChannelMembers
+          //     ).map(([user_id, user_info]) => ({
+          //       user_id,
+          //       user_name: user_info.user_name,
+          //       user_admin: user_info.user_admin,
+          //     }))
+          //   );
+          // }
+          () =>
+            updateLastAccessTimestamp({
+              user_id: userId.user_id,
+              channel_name: "presence-WJ",
+            })
         }
       >
         TEST
-      </button> */}
+      </button>
     </>
   );
 }

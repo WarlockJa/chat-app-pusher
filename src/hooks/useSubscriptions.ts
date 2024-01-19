@@ -5,6 +5,7 @@ import { useChatDataContext } from "@/context/ChatDataProvider";
 import { addMessage } from "@/util/addMessage";
 import { PusherPresence } from "@/context/PusherProvider";
 import { channel } from "@prisma/client";
+import { updateLastAccessTimestamp } from "@/lib/dbMethods";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -46,10 +47,14 @@ export default function useSubscriptions({
             message: {
               text: data.message,
               author: data.author,
-              readusers: [],
               timestamp: new Date(),
             },
           });
+
+          // updating last access array for the current channel in the DB
+          // this timestamp is used to identify unread messages
+          updateLastAccessTimestamp({ user_id, channel_name: newChannel.name });
+
           //   setChatData((prev) =>
           //     prev
           //       ? [
@@ -121,12 +126,13 @@ export default function useSubscriptions({
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
-          // TEST chat data
           dispatchChatData({ type: "addRoom", room_id: newChannel.name });
+          // TODO abstract fetch to dbMethods
           fetch(`/api/v1/db?roomId=${newChannel.name}`)
             .then((response) => response.json())
             .then((result: channel) => {
               const messages = result.messages ? result.messages : [];
+              console.log(result);
               dispatchChatData({
                 type: "addRoomMessages",
                 room_id: newChannel.name,

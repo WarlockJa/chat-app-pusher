@@ -1,5 +1,7 @@
 .chat__body {
   border: 1px solid purple;
+  border-radius: 1em 1em 0 0;
+
   height: calc(100% - 2.25em);
   overflow-y: scroll;
   .chat__body--spinnerWrapper {
@@ -18,9 +20,9 @@
 
     .post {
       background-color: #eee;
-      border-radius: 10px;
+      border-radius: 0.8em;
       padding: 0 0 0.25rem;
-      margin: 0.5rem;
+      margin: 0.25rem 0;
       overflow: hidden;
       flex-shrink: 0;
 

@@ -14,11 +14,16 @@ type Message {
   author    String
   text      String
   timestamp DateTime @default(now())
-  readusers String[]
+}
+
+type UserTimestamp {
+  user      String
+  timestamp DateTime @default(now())
 }
 
 model channel {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String    @unique
-  messages Message[]
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  name       String          @unique
+  messages   Message[]
+  lastaccess UserTimestamp[]
 }

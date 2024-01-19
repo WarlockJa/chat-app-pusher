@@ -1,4 +1,5 @@
 import "../chat.scss";
+import "../sendform.scss";
 import { writeLocalStorage } from "@/util/localStorageRW";
 import { useUserIdContext } from "@/context/UserIdProvider";
 
@@ -72,9 +73,17 @@ export default function NoUserPlug({
           </ul>
         </div>
         <div>
-          <form onSubmit={(e) => handleSubmit(e)}>
-            <input type="text" name="message" id="chat-input" maxLength={20} />
-            <button type="submit">Send</button>
+          <form className="sendForm" onSubmit={(e) => handleSubmit(e)}>
+            <input
+              className="sendForm__input"
+              type="text"
+              name="message"
+              id="chat-input"
+              maxLength={20}
+            />
+            <button className="sendForm__button" type="submit">
+              Send
+            </button>
           </form>
         </div>
       </div>

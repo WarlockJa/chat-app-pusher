@@ -26,6 +26,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
 
   // scrolling to the last message
   const lastMessageRef = useRef<HTMLLIElement>(null);
+  const paginationMarker = useRef(null);
   useLayoutEffect(() => {
     lastMessageRef.current ? lastMessageRef.current.scrollIntoView() : null;
   }, [lastMessageRef.current, activeRoom, data.messages.length]);
@@ -39,10 +40,11 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
       </div>
     );
   } else if (data.state === "error") {
-    chatContent = "Error while loading chat room messages";
+    chatContent = "Error while loading messages from the database";
   } else
     chatContent = data ? (
       <ul className="chat-display">
+        <div ref={paginationMarker}></div>
         {data.messages.map((msg, index) => {
           const userIsMsgAuthor = msg.author === userId.user_id;
           const currentMsgDay = format(msg.timestamp, "y,M,d");
@@ -70,7 +72,6 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
                   }`}
                 >
                   <span className="post__header--name">{msg.author}</span>
-                  {/* TODO get time format correct */}
                   <span className="post__header--time">
                     {format(msg.timestamp, "k:mm")}
                   </span>
