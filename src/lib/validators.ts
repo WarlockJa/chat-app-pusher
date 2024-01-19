@@ -1,7 +1,36 @@
 import { regexAlphanumericWithDash } from "@/util/regExes";
 import { z } from "zod";
 
-export const schemaApiDBGET = z
+export const schemaApiV1PusherMessagePost = z.object({
+  message: z
+    .string()
+    .min(1)
+    .max(400, { message: "Message exceeds 400 characters" }),
+  activeRoom: z
+    .string({
+      required_error: "ActiveRoom is required",
+      invalid_type_error: "Required type for activeRoom is string",
+    })
+    .startsWith("presence-", {
+      message: "ActiveRoom must start with 'presence-'",
+    })
+    .max(45)
+    .regex(regexAlphanumericWithDash, {
+      message: "UserId may only contains alphanumerical characters and dash",
+    }),
+  // TODO add .uuid()
+  author: z
+    .string({
+      required_error: "UserId is required",
+      invalid_type_error: "Required type for userId is string",
+    })
+    .max(36, { message: "Maximum length for userId is 36" })
+    .regex(regexAlphanumericWithDash, {
+      message: "UserId may only contains alphanumerical characters and dash",
+    }),
+});
+
+export const schemaApiV1dbGET = z
   .object({
     roomId: z
       .string({
@@ -18,7 +47,7 @@ export const schemaApiDBGET = z
   })
   .strict(); // do not allow unrecognized keys
 
-export const schemaApiDBPOST = z
+export const schemaApiV1dbPOST = z
   .object({
     // TODO replace after TEST
     // userId: z.string().uuid()
@@ -50,7 +79,7 @@ export const schemaApiDBPOST = z
   })
   .strict();
 
-export const schemaApiDBPUT = z
+export const schemaApiV1dbPUT = z
   .object({
     // TODO replace after TEST
     // userId: z.string().uuid()
@@ -78,7 +107,7 @@ export const schemaApiDBPUT = z
   })
   .strict();
 
-export const schemaPusherAuthPOST = z
+export const schemaApiV1PusherAuthPOST = z
   .object({
     socket_id: z.string({ required_error: "Required socket_id" }),
     channel_name: z.string({ required_error: "Required channel_name" }),

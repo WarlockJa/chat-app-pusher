@@ -1,12 +1,11 @@
 import { prisma } from "@/lib/globalForPrisma";
 import {
-  schemaApiDBGET,
-  schemaApiDBPOST,
-  schemaApiDBPUT,
+  schemaApiV1dbGET,
+  schemaApiV1dbPOST,
+  schemaApiV1dbPUT,
 } from "@/lib/validators";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { UserTimestamp } from "@prisma/client";
 
 // fetching a chat room data from DB
 export async function GET(req: NextRequest) {
@@ -14,7 +13,7 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const roomId = url.searchParams.get("roomId");
 
-    const data = schemaApiDBGET.parse({ roomId });
+    const data = schemaApiV1dbGET.parse({ roomId });
 
     const messages = await prisma.channel.findUnique({
       where: {
@@ -35,7 +34,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
-    const data = schemaApiDBPOST.parse(reqBody);
+    const data = schemaApiV1dbPOST.parse(reqBody);
 
     // TODO upsert somehow?
     const channel = await prisma.channel.findUnique({
@@ -95,7 +94,7 @@ type TLatestTimestampResponse = [
 export async function PUT(req: Request) {
   try {
     const reqBody = await req.json();
-    const data = schemaApiDBPUT.parse(reqBody);
+    const data = schemaApiV1dbPUT.parse(reqBody);
 
     // fetching aggregated data with latest timestamp form messages array and lastaccess array
     const aggregateLatestMessageTimestamp = (await prisma.channel.aggregateRaw({

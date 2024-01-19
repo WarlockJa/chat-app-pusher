@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { PresenceChannel } from "pusher-js";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
-import { addMessage } from "@/util/addMessage";
 import { PusherPresence } from "@/context/PusherProvider";
-import { channel } from "@prisma/client";
-import { updateLastAccessTimestamp } from "@/lib/dbMethods";
+import {
+  getChannelMessages,
+  updateLastAccessTimestamp,
+} from "@/lib/apiDBMethods";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -127,34 +128,11 @@ export default function useSubscriptions({
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
           dispatchChatData({ type: "addRoom", room_id: newChannel.name });
-          // TODO abstract fetch to dbMethods
-          fetch(`/api/v1/db?roomId=${newChannel.name}`)
-            .then((response) => response.json())
-            .then((result: channel) => {
-              const messages = result.messages ? result.messages : [];
-              console.log(result);
-              dispatchChatData({
-                type: "addRoomMessages",
-                room_id: newChannel.name,
-                messages: messages,
-              });
-            })
-            .catch((error) => {
-              // error result is null check. No channel found in the DB
-              // not actually an error, means no messages were ever created for this room
-              error.message === "result is null"
-                ? dispatchChatData({
-                    type: "addRoomMessages",
-                    room_id: newChannel.name,
-                    messages: [],
-                  })
-                : dispatchChatData({
-                    type: "setRoomError",
-                    room_id: newChannel.name,
-                    error,
-                  });
-            });
-          // END TEST
+          // fetching messages from DB
+          getChannelMessages({
+            params: { roomId: newChannel.name },
+            dispatchChatData,
+          });
 
           // getting users subscribed to the channel
           const initialLoadUsersChannel_users: IUserId[] = Object.entries(

@@ -1,5 +1,5 @@
 import { pusherServer } from "@/lib/pusher";
-import { schemaPusherAuthPOST } from "@/lib/validators";
+import { schemaApiV1PusherAuthPOST } from "@/lib/validators";
 import { NextRequest, NextResponse } from "next/server";
 import { PresenceChannelData } from "pusher";
 
@@ -7,7 +7,7 @@ import { PresenceChannelData } from "pusher";
 export async function POST(req: NextRequest) {
   const data = await req.text();
 
-  // TODO test
+  // TODO test. cleanup more like it
   // console.log(data);
   // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
 
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // data validation
-    const validatedData = schemaPusherAuthPOST.parse({
+    const validatedData = schemaApiV1PusherAuthPOST.parse({
       socket_id,
       channel_name,
       user_id,

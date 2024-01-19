@@ -1,10 +1,9 @@
 import "./chatbody.scss";
 import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
-import Spinner from "@/lib/Spinner";
+import Spinner from "@/util/Spinner";
 import { format } from "date-fns";
 import { Fragment, useLayoutEffect, useRef } from "react";
-import useSWRImmutable from "swr/immutable";
 
 export default function ChatBody({ userId }: { userId: IUserId }) {
   const { activeRoom } = useChatRoomsContext();

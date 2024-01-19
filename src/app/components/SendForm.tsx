@@ -3,13 +3,11 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { PusherPresence } from "@/context/PusherProvider";
 import { useState } from "react";
 import "./sendform.scss";
-import { schemaApiDBPOST } from "@/lib/validators";
-import { z } from "zod";
-import { updateLastAccessTimestamp } from "@/lib/dbMethods";
-
-// TODO get types from back-end zod schema into front-end
-// type schemaPOST = z.infer<typeof schemaApiDBPOST>;
-type schemaDBPost = z.infer<typeof schemaApiDBPOST>;
+import {
+  addChannelMessage,
+  updateLastAccessTimestamp,
+} from "@/lib/apiDBMethods";
+import { sendMessageEvent } from "@/lib/apiPusherMethods";
 
 export default function SendForm({
   userId,
@@ -26,39 +24,13 @@ export default function SendForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const messagePostBody: IMessagePOST = {
-      message,
-      author: userId.user_name,
-      activeRoom,
-    };
-
     // triggering "message" event for Pusher
-    fetch("/api/v1/pusher/message", {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-      },
-      body: JSON.stringify(messagePostBody),
-    });
+    sendMessageEvent({ message, author: userId.user_name, activeRoom });
 
-    const dbPostBody: schemaDBPost = {
-      message,
-      userId: userId.user_id,
-      room: activeRoom,
-    };
-
-    // TODO change message data
     // writing message to DB
-    fetch("/api/v1/db", {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-      },
-      body: JSON.stringify(dbPostBody),
-    })
-      .then((response) => response.json())
-      .then((test) => console.log(test));
+    addChannelMessage({ message, userId: userId.user_id, room: activeRoom });
 
+    // reset form input value
     setMessage("");
   };
 

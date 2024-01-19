@@ -1,43 +1,24 @@
 import { NextResponse } from "next/server";
 import { pusherServer } from "@/lib/pusher";
-
-// interface IUser {
-//   name: string;
-//   rooms: string[];
-//   role: "admin" | "user";
-// }
-
-// interface IUsersState {
-//   users: IUser[];
-//   setUsers: (newUsersArray: IUser[]) => void;
-// }
-
-// const UsersState: IUsersState = {
-//   users: [],
-//   setUsers: function (newUsersArray) {
-//     this.users = newUsersArray;
-//   },
-// };
+import { schemaApiV1PusherMessagePost } from "@/lib/validators";
+import { z } from "zod";
 
 export async function POST(req: Request) {
-  // TODO add zod validation AND import types to sendForm
-  const data: IMessagePOST = await req.json();
-  const { message, activeRoom, author } = data;
+  try {
+    const reqBody = await req.json();
+    // vaidating request body
+    const data = schemaApiV1PusherMessagePost.parse(reqBody);
 
-  if (!message) return NextResponse.json({}, { status: 201 });
+    pusherServer.trigger(data.activeRoom, "message", {
+      message: data.message,
+      author: data.author,
+    });
 
-  // vaidating request
-  // TODO add zod validation
-  if (!activeRoom)
-    return NextResponse.json(
-      {},
-      { status: 400, statusText: "Socket id and channel name required" }
-    );
-
-  pusherServer.trigger(activeRoom, "message", {
-    message: data.message,
-    author,
-  });
-
-  return NextResponse.json({ message }, { statusText: "OK", status: 200 });
+    return NextResponse.json({ statusText: "OK", status: 200 });
+  } catch (error) {
+    // checking if error is a zod validation error
+    return error instanceof z.ZodError
+      ? NextResponse.json(error, { status: 400 })
+      : NextResponse.json(error, { status: 500 });
+  }
 }

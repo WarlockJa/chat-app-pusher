@@ -7,24 +7,31 @@ import {
   useReducer,
 } from "react";
 
+export interface IChatDataAddRoom {
+  type: "addRoom";
+  room_id: string;
+}
+export interface IChatDataSetRoomError {
+  type: "setRoomError";
+  room_id: string;
+  error: Error;
+}
+export interface IChatDataAddRoomMessage {
+  type: "addRoomMessage";
+  room_id: string;
+  message: Message;
+}
+export interface IChatDataAddRoomMessages {
+  type: "addRoomMessages";
+  room_id: string;
+  messages: Message[];
+}
+
 type TChatDataProviderActions =
-  | { type: "addRoom"; room_id: string }
-  | {
-      type: "setRoomError";
-      room_id: string;
-      error: Error;
-    }
-  // | { type: "getRoomData"; room_id: string }
-  | {
-      type: "addRoomMessage";
-      room_id: string;
-      message: Message;
-    }
-  | {
-      type: "addRoomMessages";
-      room_id: string;
-      messages: Message[];
-    };
+  | IChatDataAddRoom
+  | IChatDataSetRoomError
+  | IChatDataAddRoomMessage
+  | IChatDataAddRoomMessages;
 
 export type TChatDataStateLiteral = "loading" | "success" | "error";
 
@@ -96,11 +103,6 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
             ? { ...room, error: action.error, state: "error" }
             : room
         );
-      // case "getRoomData":
-      //   const roomData = chatData.find(
-      //     (room) => room.room_id === action.room_id
-      //   );
-      //   return roomData ? [roomData] : [];
       default:
         throw Error("Unknown action: " + JSON.stringify(action));
     }
