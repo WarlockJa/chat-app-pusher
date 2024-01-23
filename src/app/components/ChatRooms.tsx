@@ -1,9 +1,12 @@
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import "./chatrooms.scss";
+import { useChatDataContext } from "@/context/ChatDataProvider";
+import getUnreadMessages from "@/util/getUnreadMessages";
 
 export default function ChatRooms() {
   // context data
   const { activeRoom, setActiveRoom, roomsList } = useChatRoomsContext();
+  const { chatData } = useChatDataContext();
 
   // switching to the new room
   const handleRoomSwitch = (room: string) => {
@@ -21,19 +24,26 @@ export default function ChatRooms() {
     //   (item) =>
     //     item !== "presence-system" && item !== `presence-${userId}`
     // )
-    .map((room) => (
-      <li
-        className={
-          activeRoom === room.roomId
-            ? "chat__rooms--room chat__rooms--roomActive"
-            : "chat__rooms--room"
-        }
-        key={room.roomId}
-        onClick={() => handleRoomSwitch(room.roomId)}
-      >
-        <span>{JSON.stringify(room.users.length)}</span> {room.roomId.slice(9)}
-      </li>
-    ));
+    .map((currentRoom) => {
+      const unreadMessages = getUnreadMessages({
+        chatData: chatData?.find((room) => room.room_id === currentRoom.roomId),
+      });
+      return (
+        <li
+          className={
+            activeRoom === currentRoom.roomId
+              ? "chat__rooms--room chat__rooms--roomActive"
+              : "chat__rooms--room"
+          }
+          key={currentRoom.roomId}
+          onClick={() => handleRoomSwitch(currentRoom.roomId)}
+        >
+          <span>{JSON.stringify(currentRoom.users.length)}</span>{" "}
+          {currentRoom.roomId.slice(9)}{" "}
+          <span>{unreadMessages > 0 ? unreadMessages.toString() : null}</span>
+        </li>
+      );
+    });
 
   return <ul className="chat__rooms">{content}</ul>;
 }

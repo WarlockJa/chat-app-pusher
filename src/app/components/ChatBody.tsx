@@ -24,11 +24,13 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   // );
 
   // scrolling to the last message
-  const lastMessageRef = useRef<HTMLLIElement>(null);
+  const messageToScrollIntoViewRef = useRef<HTMLLIElement>(null);
   const paginationMarker = useRef(null);
   useLayoutEffect(() => {
-    lastMessageRef.current ? lastMessageRef.current.scrollIntoView() : null;
-  }, [lastMessageRef.current, activeRoom, data.messages.length]);
+    messageToScrollIntoViewRef.current
+      ? messageToScrollIntoViewRef.current.scrollIntoView()
+      : null;
+  }, [messageToScrollIntoViewRef.current, activeRoom, data.messages.length]);
 
   let chatContent;
   let lastMessage = "";
@@ -49,6 +51,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           const currentMsgDay = format(msg.timestamp, "y,M,d");
           const postDate = lastMessage !== currentMsgDay;
           lastMessage = currentMsgDay;
+
           return (
             <Fragment key={msg.author.concat(msg.timestamp.toString())}>
               {postDate ? (
@@ -61,7 +64,14 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
                 className={`post ${
                   userIsMsgAuthor ? "post--left" : "post--right"
                 }`}
-                ref={index === data.messages.length - 1 ? lastMessageRef : null}
+                ref={
+                  // finding first unread message or last message to scroll to
+                  msg.unread && !messageToScrollIntoViewRef.current
+                    ? messageToScrollIntoViewRef
+                    : index === data.messages.length - 1
+                    ? messageToScrollIntoViewRef
+                    : null
+                }
               >
                 <div
                   className={`post__header ${

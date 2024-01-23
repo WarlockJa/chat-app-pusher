@@ -7,8 +7,12 @@ import {
   useReducer,
 } from "react";
 
+export interface IChatData_MessageExtended extends Message {
+  unread: boolean;
+}
+
 export interface IChatDataAddRoom {
-  type: "addRoom";
+  type: "ChatData_addRoom";
   room_id: string;
 }
 export interface IChatDataSetRoomError {
@@ -19,12 +23,12 @@ export interface IChatDataSetRoomError {
 export interface IChatDataAddRoomMessage {
   type: "addRoomMessage";
   room_id: string;
-  message: Message;
+  message: IChatData_MessageExtended;
 }
 export interface IChatDataAddRoomMessages {
   type: "addRoomMessages";
   room_id: string;
-  messages: Message[];
+  messages: IChatData_MessageExtended[];
 }
 
 type TChatDataProviderActions =
@@ -36,9 +40,9 @@ type TChatDataProviderActions =
 export type TChatDataStateLiteral = "loading" | "success" | "error";
 
 export interface IChatData {
-  room_id: string;
-  messages: Message[];
-  state: TChatDataStateLiteral;
+  room_id: string; // Pusher channel name
+  messages: IChatData_MessageExtended[]; // array of messages type from Prisma
+  state: TChatDataStateLiteral; // current room loading state
   error?: Error;
 }
 
@@ -65,9 +69,10 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
   function chatDataReducer(
     chatData: IChatData[],
     action: TChatDataProviderActions
+    // TODO fix TS somehow
   ): IChatData[] {
     switch (action.type) {
-      case "addRoom":
+      case "ChatData_addRoom":
         return chatData.findIndex((room) => room.room_id === action.room_id) ===
           -1
           ? [

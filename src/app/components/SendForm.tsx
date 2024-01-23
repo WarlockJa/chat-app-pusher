@@ -74,11 +74,18 @@ export default function SendForm({
           //     }))
           //   );
           // }
-          () =>
-            updateLastAccessTimestamp({
-              user_id: userId.user_id,
-              channel_name: "presence-WJ",
-            })
+          // () =>
+          //   updateLastAccessTimestamp({
+          //     user_id: userId.user_id,
+          //     channel_name: "presence-WJ",
+          //   })
+          () => {
+            fetch(
+              `api/v1/db/messages/new?channel_name=presence-Mike&user_id=Mike`
+            )
+              .then((response) => response.json())
+              .then((result) => console.log(result));
+          }
         }
       >
         TEST

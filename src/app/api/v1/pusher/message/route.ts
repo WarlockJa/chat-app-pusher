@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { pusherServer } from "@/lib/pusher";
-import { schemaApiV1PusherMessagePost } from "@/lib/validators";
 import { z } from "zod";
+import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
 
 export async function POST(req: Request) {
   try {

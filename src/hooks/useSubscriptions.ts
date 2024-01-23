@@ -5,6 +5,7 @@ import { useChatDataContext } from "@/context/ChatDataProvider";
 import { PusherPresence } from "@/context/PusherProvider";
 import {
   getChannelMessages,
+  getUnreadMessages,
   updateLastAccessTimestamp,
 } from "@/lib/apiDBMethods";
 
@@ -49,43 +50,14 @@ export default function useSubscriptions({
               text: data.message,
               author: data.author,
               timestamp: new Date(),
+              unread: true,
             },
           });
 
           // updating last access array for the current channel in the DB
           // this timestamp is used to identify unread messages
-          updateLastAccessTimestamp({ user_id, channel_name: newChannel.name });
-
-          //   setChatData((prev) =>
-          //     prev
-          //       ? [
-          //           ...prev.filter(
-          //             (currentRoom) => currentRoom.roomId !== room.roomId
-          //           ),
-          //           addMessage(
-          //             prev.find(
-          //               (currentRoom) => currentRoom.roomId === room.roomId
-          //             )!,
-          //             {
-          //               author: user_id,
-          //               readusers: [user_id],
-          //               text: data.message,
-          //               timestamp: new Date(),
-          //             }
-          //           ),
-          //         ]
-          //       : [
-          //           addMessage(
-          //             { roomId: room.roomId, messages: [], state: "success" },
-          //             {
-          //               author: user_id,
-          //               readusers: [user_id],
-          //               text: data.message,
-          //               timestamp: new Date(),
-          //             }
-          //           ),
-          //         ]
-          //   );
+          // TODO update last access ony message in view
+          // updateLastAccessTimestamp({ user_id, channel_name: newChannel.name });
         });
 
         // member_added and member_removed binds used to update number of users on the channel
@@ -127,12 +99,23 @@ export default function useSubscriptions({
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
-          dispatchChatData({ type: "addRoom", room_id: newChannel.name });
-          // fetching messages from DB
-          getChannelMessages({
-            params: { roomId: newChannel.name },
+          dispatchChatData({
+            type: "ChatData_addRoom",
+            room_id: newChannel.name,
+          });
+          // TODO only fetching unread messages on subscription_succeeded
+          getUnreadMessages({
+            params: {
+              user_id: userId.user_id,
+              channel_name: newChannel.name,
+            },
             dispatchChatData,
           });
+          // // fetching messages from DB
+          // getChannelMessages({
+          //   params: { roomId: newChannel.name },
+          //   dispatchChatData,
+          // });
 
           // getting users subscribed to the channel
           const initialLoadUsersChannel_users: IUserId[] = Object.entries(
