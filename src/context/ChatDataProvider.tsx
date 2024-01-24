@@ -30,12 +30,18 @@ export interface IChatDataAddRoomMessages {
   room_id: string;
   messages: IChatData_MessageExtended[];
 }
+export interface IChatDataSetMessageAsRead {
+  type: "setMessageAsRead";
+  room_id: string;
+  msgID: string; //workaround value is a string message.author+message.timestamp
+}
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
   | IChatDataSetRoomError
   | IChatDataAddRoomMessage
-  | IChatDataAddRoomMessages;
+  | IChatDataAddRoomMessages
+  | IChatDataSetMessageAsRead;
 
 export type TChatDataStateLiteral = "loading" | "success" | "error";
 
@@ -106,6 +112,19 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
         return chatData.map((room) =>
           room.room_id === action.room_id
             ? { ...room, error: action.error, state: "error" }
+            : room
+        );
+      case "setMessageAsRead":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? {
+                ...room,
+                messages: room.messages.map((message) =>
+                  message.author + message.timestamp === action.msgID
+                    ? { ...message, unread: false }
+                    : message
+                ),
+              }
             : room
         );
       default:

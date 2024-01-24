@@ -1,4 +1,4 @@
-import ChatBody from "./ChatBody";
+import ChatBody from "./ChatBody/ChatBody";
 import ChatRooms from "./ChatRooms";
 import SendForm from "./SendForm";
 import HooksElement from "./HooksElement";
