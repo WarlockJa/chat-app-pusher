@@ -4,12 +4,13 @@
 
   height: calc(100% - 2.25em);
   overflow-y: scroll;
+
   .chat__body--spinnerWrapper {
     display: flex;
     justify-content: center;
   }
 
-  .chat-display {
+  .chatDisplay {
     list-style-type: none;
     padding: 0;
     display: flex;
@@ -17,6 +18,11 @@
     justify-content: left;
     overflow-y: scroll;
     flex-grow: 1;
+
+    .unreadPostWrapper {
+      display: flex;
+      flex-flow: column;
+    }
 
     .post {
       background-color: #eee;
@@ -72,6 +78,14 @@
       margin-top: 5px;
       color: #333;
       padding: 0.25rem 0.5rem;
+    }
+
+    .post--new {
+      color: transparent;
+      font-weight: bold;
+      background: linear-gradient(45deg, blue, red);
+      background-clip: text;
+      -webkit-background-clip: text;
     }
   }
 }

@@ -10,14 +10,15 @@ export default function ChatBodyUnreadMessages({
   unreadMessages,
   user_id,
   activeRoom,
+  unreadMessagesRefsArray,
 }: {
   unreadMessages: IChatData_MessageExtended[];
   user_id: string;
   activeRoom: string;
+  unreadMessagesRefsArray: React.MutableRefObject<HTMLLIElement[]>;
 }) {
   const { dispatch } = useChatDataContext();
-  // refs array to unread <li> elements
-  const unreadMessagesRefsArray = useRef<HTMLLIElement[]>([]);
+
   // observer.
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -55,7 +56,6 @@ export default function ChatBodyUnreadMessages({
       });
     };
 
-    // TEST test for unnecessary observer reinitializations
     // reinitializing observer instance when unreadMessages changes
     if (observerRef.current) observerRef.current.disconnect();
     // Create an intersection observer with the specified callback and options
@@ -73,12 +73,7 @@ export default function ChatBodyUnreadMessages({
       if (!observerRef.current) return;
       observerRef.current.disconnect();
     };
-  }, [
-    unreadMessagesRefsArray.current,
-    unreadMessagesRefsArray.current.length,
-    unreadMessagesRefsArray.current[0],
-    JSON.stringify(unreadMessages),
-  ]);
+  }, [JSON.stringify(unreadMessages)]);
 
   let lastMessage = "";
   return unreadMessages.map((msg, index) => {
@@ -91,17 +86,27 @@ export default function ChatBodyUnreadMessages({
 
     return (
       <Fragment key={msgID}>
-        {postDate ? (
-          <div className="post post--center">
-            {format(msg.timestamp, "MMMM d")}
-          </div>
-        ) : null}
-        <ChatBodyLIElement
-          key={msg.author.concat(msg.timestamp.toString())}
-          msg={msg}
-          refUnread={{ ref: unreadMessagesRefsArray, index, id: msgID }}
-          userIsMsgAuthor={userIsMsgAuthor}
-        />
+        <div
+          className="unreadPostWrapper"
+          id={msgID}
+          ref={(el: HTMLDivElement) =>
+            (unreadMessagesRefsArray.current[index] =
+              el as unknown as HTMLLIElement)
+          }
+        >
+          {postDate ? (
+            <div className="post post--center">
+              <span className="post--new">New!</span>{" "}
+              {format(msg.timestamp, "MMMM d")}
+            </div>
+          ) : null}
+          <ChatBodyLIElement
+            key={msg.author.concat(msg.timestamp.toString())}
+            msg={msg}
+            // refUnread={{ ref: unreadMessagesRefsArray, index }}
+            userIsMsgAuthor={userIsMsgAuthor}
+          />
+        </div>
       </Fragment>
     );
   });

@@ -1,6 +1,6 @@
 import { IChatData } from "@/context/ChatDataProvider";
 
-export default function getUnreadMessages({
+export default function getUnreadMessagesCount({
   chatData,
 }: {
   chatData: IChatData | undefined;

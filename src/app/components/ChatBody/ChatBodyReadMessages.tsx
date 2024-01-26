@@ -6,14 +6,12 @@ import { Fragment } from "react";
 export default function ChatBodyReadMessages({
   readMessages,
   user_id,
-  messageToScrollIntoViewRef,
 }: {
   readMessages: IChatData_MessageExtended[];
   user_id: string;
-  messageToScrollIntoViewRef: React.RefObject<HTMLLIElement>;
 }) {
   let lastMessage = "";
-  return readMessages.map((msg, index) => {
+  return readMessages.map((msg) => {
     const userIsMsgAuthor = msg.author === user_id;
     const currentMsgDay = format(msg.timestamp, "y,M,d");
     const postDate = lastMessage !== currentMsgDay;
@@ -29,11 +27,6 @@ export default function ChatBodyReadMessages({
         <ChatBodyLIElement
           key={msg.author.concat(msg.timestamp.toString())}
           msg={msg}
-          refLastRead={
-            index === readMessages.length - 1
-              ? messageToScrollIntoViewRef
-              : undefined
-          }
           userIsMsgAuthor={userIsMsgAuthor}
         />
       </Fragment>

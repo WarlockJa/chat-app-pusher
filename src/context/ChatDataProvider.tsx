@@ -35,13 +35,19 @@ export interface IChatDataSetMessageAsRead {
   room_id: string;
   msgID: string; //workaround value is a string message.author+message.timestamp
 }
+export interface IChatDataSetScrollPosition {
+  type: "setScrollPosition";
+  room_id: string;
+  scrollPosition: IScrollPosition;
+}
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
   | IChatDataSetRoomError
   | IChatDataAddRoomMessage
   | IChatDataAddRoomMessages
-  | IChatDataSetMessageAsRead;
+  | IChatDataSetMessageAsRead
+  | IChatDataSetScrollPosition;
 
 export type TChatDataStateLiteral = "loading" | "success" | "error";
 
@@ -49,6 +55,7 @@ export interface IChatData {
   room_id: string; // Pusher channel name
   messages: IChatData_MessageExtended[]; // array of messages type from Prisma
   state: TChatDataStateLiteral; // current room loading state
+  scrollPosition: IScrollPosition;
   error?: Error;
 }
 
@@ -83,7 +90,12 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
           -1
           ? [
               ...chatData,
-              { room_id: action.room_id, messages: [], state: "loading" },
+              {
+                room_id: action.room_id,
+                messages: [],
+                state: "loading",
+                scrollPosition: { currentPosition: 0, isPreviousBottom: false },
+              },
             ]
           : chatData;
       // case "loadRoom":
@@ -125,6 +137,12 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                     : message
                 ),
               }
+            : room
+        );
+      case "setScrollPosition":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? { ...room, scrollPosition: action.scrollPosition }
             : room
         );
       default:

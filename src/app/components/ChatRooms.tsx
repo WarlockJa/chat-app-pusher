@@ -1,7 +1,7 @@
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import "./chatrooms.scss";
 import { useChatDataContext } from "@/context/ChatDataProvider";
-import getUnreadMessages from "@/util/getUnreadMessages";
+import getUnreadMessagesCount from "@/util/getUnreadMessagesCount";
 
 export default function ChatRooms() {
   // context data
@@ -25,7 +25,7 @@ export default function ChatRooms() {
     //     item !== "presence-system" && item !== `presence-${userId}`
     // )
     .map((currentRoom) => {
-      const unreadMessages = getUnreadMessages({
+      const unreadMessages = getUnreadMessagesCount({
         chatData: chatData?.find((room) => room.room_id === currentRoom.roomId),
       });
       return (

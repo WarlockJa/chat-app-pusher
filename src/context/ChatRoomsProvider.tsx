@@ -52,7 +52,13 @@ export function ChatRoomsProvider({
         // adding new room to the state with a precheck that it's not already there
         return roomsList.findIndex((room) => room.roomId === action.room_id) ===
           -1
-          ? [...roomsList, { roomId: action.room_id, users: [] }]
+          ? [
+              ...roomsList,
+              {
+                roomId: action.room_id,
+                users: [],
+              },
+            ]
           : roomsList;
       case "removeRoom":
         return roomsList.filter((room) => room.roomId !== action.room_id);

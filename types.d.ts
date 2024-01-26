@@ -54,3 +54,13 @@ interface IChannelMembers {
 
 // Object.values(pusher.channel("channel-name").members.members.get("user_name"))
 type IChannelGetMember = [string, { user_admin: boolean; user_name: string }];
+
+interface IScrollPosition {
+  currentPosition: number;
+  isPreviousBottom: boolean;
+}
+
+interface ICurrentRoomScrollData {
+  currentRoom: string;
+  scrollPosition: IScrollPosition;
+}
