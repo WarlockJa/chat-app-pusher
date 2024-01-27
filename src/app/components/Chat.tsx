@@ -4,7 +4,6 @@ import SendForm from "./SendForm";
 import HooksElement from "./HooksElement";
 import { PusherPresence } from "@/context/PusherProvider";
 
-// TODO rename TS everywhere
 export default function Chat({
   userId,
   pusher,

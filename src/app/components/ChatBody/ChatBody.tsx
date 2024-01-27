@@ -69,40 +69,27 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
       ...currentRoomScrollData,
       currentRoom: activeRoom,
     });
-    // scrolling to first unread message if present
-    if (unreadMessagesRefsArray.current[0]) {
-      unreadMessagesRefsArray.current[0].scrollIntoView();
-    } else {
-      // scrolling to saved scroll position in chatData for the activeRoom
-      chatBodyRef.current?.scrollTo({
-        top: data.scrollPosition.currentPosition,
-      });
-    }
 
-    // processing new message in room
-    activeRoom === currentRoomScrollData.currentRoom &&
-      currentRoomScrollData.scrollPosition.isPreviousBottom &&
+    // separating activeRoom change and new message in the same room events
+    if (activeRoom !== currentRoomScrollData.currentRoom) {
+      // scrolling to first unread message if present
+      if (unreadMessagesRefsArray.current[0]) {
+        unreadMessagesRefsArray.current[0].scrollIntoView();
+      } else {
+        // scrolling to saved scroll position in chatData for the activeRoom
+        chatBodyRef.current?.scrollTo({
+          top: data.scrollPosition.currentPosition,
+        });
+      }
+    } else {
+      // processing new message in the currently active room
+      if (!currentRoomScrollData.scrollPosition.isPreviousBottom) return;
       chatBodyRef.current?.scrollTo({ top: chatBodyRef.current.scrollHeight });
+    }
   }, [activeRoom, data.messages.length]);
 
-  // useLayoutEffect(() => {
-  //   if (!chatBodyRef.current) return;
-  //   if (!messageToScrollIntoViewRef.current) return;
-
-  //   const positionIsBottom =
-  // Math.abs(
-  //   chatBodyRef.current.scrollHeight -
-  //     (chatBodyRef.current.scrollTop + chatBodyRef.current.clientHeight)
-  // ) <= 1;
-
-  //   positionIsBottom && messageToScrollIntoViewRef.current.scrollIntoView();
-  //   // messageToScrollIntoViewRef.current
-  //   //   ? messageToScrollIntoViewRef.current.scrollIntoView()
-  //   //   : null;
-  // }, [activeRoom, data.messages.length]);
-
+  // initializing chatContent element
   let chatContent;
-
   if (data.state === "loading") {
     chatContent = (
       <div className="chat__body--spinnerWrapper">
