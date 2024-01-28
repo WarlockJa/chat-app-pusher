@@ -1,7 +1,9 @@
 import { z } from "zod";
-import { Message, channel } from "@prisma/client";
+import { Message } from "@prisma/client";
 import {
   IChatDataAddRoomMessages,
+  IChatDataSetPaginationHasMore,
+  IChatDataSetPaginationState,
   IChatDataSetRoomError,
   IChatData_MessageExtended,
 } from "@/context/ChatDataProvider";
@@ -51,40 +53,71 @@ export function updateLastAccessTimestamp(
 }
 
 // get messages from DB for channel collection
-export function getChannelMessages({
+export function getChannelHistoryMessages({
   params,
   dispatchChatData,
 }: {
   params: TSchemaDBMessagesHistoryGET;
   dispatchChatData: (
-    action: IChatDataAddRoomMessages | IChatDataSetRoomError
+    action:
+      | IChatDataAddRoomMessages
+      | IChatDataSetRoomError
+      | IChatDataSetPaginationState
+      | IChatDataSetPaginationHasMore
   ) => void;
 }) {
-  fetch(`/api/v1/db/messages/history?roomId=${params.roomId}`)
+  fetch(
+    `/api/v1/db/messages/history?channel_name=${params.channel_name}&user_id=${params.user_id}`
+  )
     .then((response) => response.json())
-    .then((result: channel) => {
-      const messages: IChatData_MessageExtended[] = result.messages
-        ? result.messages.map((message) => ({ ...message, unread: false }))
+    .then((result: Message[]) => {
+      const messages: IChatData_MessageExtended[] = result
+        ? result.map((message) => ({ ...message, unread: false }))
         : [];
+
+      // console.log(result);
+      dispatchChatData({
+        type: "setPaginationHasMore",
+        room_id: params.channel_name,
+        // TODO add hasMore return from api
+        newHasMore: false,
+      });
+
+      // chat history loaded flag
+      dispatchChatData({
+        type: "setPaginationState",
+        room_id: params.channel_name,
+        newState: "success",
+      });
+
+      // adding history messages to the room chatData
       dispatchChatData({
         type: "addRoomMessages",
-        room_id: params.roomId,
+        room_id: params.channel_name,
         messages,
       });
     })
     .catch((error) => {
       // error check 'result is null'. No channel found in the DB
       // not actually an error, means no messages were ever created for this room
+
+      // chat history loaded flag
+      dispatchChatData({
+        type: "setPaginationState",
+        room_id: params.channel_name,
+        newState: "error",
+      });
+
       // TODO move this check to api?
       error.message === "result is null"
         ? dispatchChatData({
             type: "addRoomMessages",
-            room_id: params.roomId,
+            room_id: params.channel_name,
             messages: [],
           })
         : dispatchChatData({
             type: "setRoomError",
-            room_id: params.roomId,
+            room_id: params.channel_name,
             error,
           });
     });
@@ -107,6 +140,7 @@ export function getUnreadMessages({
       const unreadMessages: IChatData_MessageExtended[] = result.map(
         (message) => ({ ...message, unread: true })
       );
+      // console.log(result);
       dispatchChatData({
         type: "addRoomMessages",
         room_id: params.channel_name,

@@ -17,7 +17,7 @@ export default function Chat({
     <div className="chat">
       <HooksElement pusher={pusher} userId={userId} />
       {/* <TestElement /> */}
-      <ChatRooms />
+      <ChatRooms user_id={userId.user_id} />
       <div className="chat__wrapper">
         <ChatBody userId={userId} />
         <SendForm userId={userId} pusher={pusher} />

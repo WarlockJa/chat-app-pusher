@@ -8,6 +8,7 @@ import {
   updateLastAccessTimestamp,
 } from "@/lib/apiDBMethods";
 import { sendMessageEvent } from "@/lib/apiPusherMethods";
+import { useChatDataContext } from "@/context/ChatDataProvider";
 
 export default function SendForm({
   userId,
@@ -20,6 +21,7 @@ export default function SendForm({
 
   const { activeRoom } = useChatRoomsContext();
   const [message, setMessage] = useState<string>("");
+  const { chatData } = useChatDataContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,7 +47,11 @@ export default function SendForm({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className="sendForm__button" type="submit">
+        <button
+          className="sendForm__button"
+          type="submit"
+          disabled={message === ""}
+        >
           Send
         </button>
       </form>
@@ -79,13 +85,22 @@ export default function SendForm({
           //     user_id: userId.user_id,
           //     channel_name: "presence-WJ",
           //   })
-          () => {
-            fetch(
-              `api/v1/db/messages/new?channel_name=presence-Mike&user_id=Mike`
-            )
-              .then((response) => response.json())
-              .then((result) => console.log(result));
-          }
+          // () => {
+          //   fetch(
+          //     `api/v1/db/messages/history?channel_name=presence-WJ&user_id=WJ`
+          //   )
+          //     .then((response) => response.json())
+          //     .then((result) => console.log(result));
+          // }
+          // () => {
+          //   fetch(
+          //     `api/v1/db/messages/new?channel_name=presence-Mike&user_id=Mike`
+          //   )
+          //     .then((response) => response.json())
+          //     .then((result) => console.log(result));
+          // }
+          () =>
+            console.log(chatData?.find((room) => room.room_id === activeRoom))
         }
       >
         TEST

@@ -1,14 +1,9 @@
 import { prisma } from "@/lib/globalForPrisma";
+import { TUnreadMessages } from "@/lib/prisma";
 import { schemaApiV1dbMessagesNewGET } from "@/lib/validators/db/new";
 import { Message } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-
-type TUnreadMessages = [
-  {
-    messages: Message[];
-  }
-];
 
 export async function GET(req: NextRequest) {
   try {

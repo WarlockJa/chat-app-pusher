@@ -11,11 +11,13 @@ export default function ChatBodyUnreadMessages({
   user_id,
   activeRoom,
   unreadMessagesRefsArray,
+  showFirstDate,
 }: {
   unreadMessages: IChatData_MessageExtended[];
   user_id: string;
   activeRoom: string;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLLIElement[]>;
+  showFirstDate: Date | undefined;
 }) {
   const { dispatch } = useChatDataContext();
 
@@ -79,31 +81,36 @@ export default function ChatBodyUnreadMessages({
   return unreadMessages.map((msg, index) => {
     const userIsMsgAuthor = msg.author === user_id;
     const currentMsgDay = format(msg.timestamp, "y,M,d");
-    const postDate = lastMessage !== currentMsgDay;
-    lastMessage = currentMsgDay;
 
     const msgID = msg.author.concat(msg.timestamp.toString());
+
+    const postDate = showFirstDate ? (
+      format(showFirstDate, "y,M,d") !== currentMsgDay ? (
+        <div className="post post--center">
+          <span className="post--new">New!</span>{" "}
+          {format(msg.timestamp, "MMMM d")}
+        </div>
+      ) : null
+    ) : null;
+
+    // saving current message date for comparison with the next message
+    lastMessage = currentMsgDay;
 
     return (
       <Fragment key={msgID}>
         <div
           className="unreadPostWrapper"
           id={msgID}
-          ref={(el: HTMLDivElement) =>
-            (unreadMessagesRefsArray.current[index] =
-              el as unknown as HTMLLIElement)
+          ref={
+            (el: HTMLDivElement) =>
+              (unreadMessagesRefsArray.current[index] =
+                el as unknown as HTMLLIElement) // TODO fix TS
           }
         >
-          {postDate ? (
-            <div className="post post--center">
-              <span className="post--new">New!</span>{" "}
-              {format(msg.timestamp, "MMMM d")}
-            </div>
-          ) : null}
+          {postDate}
           <ChatBodyLIElement
             key={msg.author.concat(msg.timestamp.toString())}
             msg={msg}
-            // refUnread={{ ref: unreadMessagesRefsArray, index }}
             userIsMsgAuthor={userIsMsgAuthor}
           />
         </div>

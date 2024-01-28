@@ -4,7 +4,7 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import { PusherPresence } from "@/context/PusherProvider";
 import {
-  getChannelMessages,
+  getChannelHistoryMessages,
   getUnreadMessages,
   updateLastAccessTimestamp,
 } from "@/lib/apiDBMethods";
@@ -20,7 +20,11 @@ export default function useSubscriptions({
 }) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // roomsList context and useReducer dispatch methods
-  const { roomsList, dispatch: dispatchChatRooms } = useChatRoomsContext();
+  const {
+    roomsList,
+    activeRoom,
+    dispatch: dispatchChatRooms,
+  } = useChatRoomsContext();
   // local chat data
   const { dispatch: dispatchChatData } = useChatDataContext();
 
@@ -103,7 +107,18 @@ export default function useSubscriptions({
             type: "ChatData_addRoom",
             room_id: newChannel.name,
           });
-          // TODO only fetching unread messages on subscription_succeeded
+          // TODO move to ChatBody for pagination marker activation
+          // // fetching historical data on active channel
+          // if (newChannel.name === activeRoom) {
+          //   getChannelHistoryMessages({
+          //     dispatchChatData,
+          //     params: {
+          //       user_id: userId.user_id,
+          //       channel_name: newChannel.name,
+          //     },
+          //   });
+          // }
+          // fetching unread messages on subscription_succeeded
           getUnreadMessages({
             params: {
               user_id: userId.user_id,
@@ -111,11 +126,6 @@ export default function useSubscriptions({
             },
             dispatchChatData,
           });
-          // // fetching messages from DB
-          // getChannelMessages({
-          //   params: { roomId: newChannel.name },
-          //   dispatchChatData,
-          // });
 
           // getting users subscribed to the channel
           const initialLoadUsersChannel_users: IUserId[] = Object.entries(

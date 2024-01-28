@@ -40,6 +40,16 @@ export interface IChatDataSetScrollPosition {
   room_id: string;
   scrollPosition: IScrollPosition;
 }
+export interface IChatDataSetPaginationState {
+  type: "setPaginationState";
+  room_id: string;
+  newState: TChatDataStateLiteral;
+}
+export interface IChatDataSetPaginationHasMore {
+  type: "setPaginationHasMore";
+  room_id: string;
+  newHasMore: boolean;
+}
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
@@ -47,15 +57,16 @@ type TChatDataProviderActions =
   | IChatDataAddRoomMessage
   | IChatDataAddRoomMessages
   | IChatDataSetMessageAsRead
-  | IChatDataSetScrollPosition;
-
-export type TChatDataStateLiteral = "loading" | "success" | "error";
+  | IChatDataSetScrollPosition
+  | IChatDataSetPaginationState
+  | IChatDataSetPaginationHasMore;
 
 export interface IChatData {
   room_id: string; // Pusher channel name
   messages: IChatData_MessageExtended[]; // array of messages type from Prisma
   state: TChatDataStateLiteral; // current room loading state
   scrollPosition: IScrollPosition;
+  pagination: IChatDataPagination;
   error?: Error;
 }
 
@@ -82,7 +93,6 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
   function chatDataReducer(
     chatData: IChatData[],
     action: TChatDataProviderActions
-    // TODO fix TS somehow
   ): IChatData[] {
     switch (action.type) {
       case "ChatData_addRoom":
@@ -94,13 +104,18 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 room_id: action.room_id,
                 messages: [],
                 state: "loading",
-                scrollPosition: { currentPosition: 0, isPreviousBottom: false },
+                scrollPosition: {
+                  currentPosition: 0,
+                  isPreviousBottom: false,
+                  previousScrollHeight: 0,
+                },
+                pagination: {
+                  historyLoadedState: "success",
+                  hasMore: true,
+                },
               },
             ]
           : chatData;
-      // case "loadRoom":
-      //   await fetch(`/api/v1/db?roomId=${action.room_id}`).then(response => response.json()).then(result => )
-      //   return chatData;
       case "addRoomMessage":
         return chatData.map((room) =>
           room.room_id === action.room_id
@@ -115,7 +130,9 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
           room.room_id === action.room_id
             ? {
                 ...room,
-                messages: [...room.messages, ...action.messages],
+                messages: [...room.messages, ...action.messages].sort((a, b) =>
+                  a.timestamp >= b.timestamp ? 1 : -1
+                ),
                 state: "success",
               }
             : room
@@ -143,6 +160,30 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
         return chatData.map((room) =>
           room.room_id === action.room_id
             ? { ...room, scrollPosition: action.scrollPosition }
+            : room
+        );
+      case "setPaginationState":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? {
+                ...room,
+                pagination: {
+                  ...room.pagination,
+                  historyLoadedState: action.newState,
+                },
+              }
+            : room
+        );
+      case "setPaginationHasMore":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? {
+                ...room,
+                pagination: {
+                  ...room.pagination,
+                  hasMore: action.newHasMore,
+                },
+              }
             : room
         );
       default:

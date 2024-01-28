@@ -55,12 +55,20 @@ interface IChannelMembers {
 // Object.values(pusher.channel("channel-name").members.members.get("user_name"))
 type IChannelGetMember = [string, { user_admin: boolean; user_name: string }];
 
+type TChatDataStateLiteral = "loading" | "success" | "error";
+
 interface IScrollPosition {
   currentPosition: number;
   isPreviousBottom: boolean;
+  previousScrollHeight: number;
 }
 
 interface ICurrentRoomScrollData {
   currentRoom: string;
   scrollPosition: IScrollPosition;
+}
+
+interface IChatDataPagination {
+  historyLoadedState: TChatDataStateLiteral;
+  hasMore: boolean;
 }
