@@ -2,11 +2,12 @@ import "./chatbody.scss";
 import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import Spinner from "@/util/Spinner";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import ChatBodyReadMessages from "./ChatBodyReadMessages";
 import ChatBodyUnreadMessages from "./ChatBodyUnreadMessages";
 import { isScrolledBottom } from "@/util/scrollFunctions";
 import PaginationMarker from "./PaginationMarker";
+import useScrollData from "../../../hooks/ChatBody/useScrollData";
 
 export default function ChatBody({ userId }: { userId: IUserId }) {
   const { activeRoom } = useChatRoomsContext();
@@ -64,91 +65,107 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
       });
     }
   };
-  // processing scrolling when new message is added to the active room
-  useLayoutEffect(() => {
-    if (!chatBodyRef.current) return;
-    // processing activeRoom change
-    // saving scroll data to previous room if existed
-    if (currentRoomScrollData.currentRoom !== "") {
-      dispatch({
-        type: "setScrollPosition",
-        room_id: currentRoomScrollData.currentRoom,
-        scrollPosition: currentRoomScrollData.scrollPosition,
-      });
-    }
-    // changing current room to activeRoom
-    setCurrentRoomScrollData({
-      ...currentRoomScrollData,
-      currentRoom: activeRoom,
-    });
 
-    // separating activeRoom change and new message in the same room events
-    if (activeRoom !== currentRoomScrollData.currentRoom) {
-      // active room change
-      // scrolling to first unread message if present
-      if (unreadMessagesRefsArray.current[0]) {
-        // console.log("scroll to first unread");
-        unreadMessagesRefsArray.current[0].scrollIntoView();
-      } else {
-        // console.log(
-        //   "scroll to last position ",
-        //   data.scrollPosition.currentPosition
-        // );
-        // scrolling to saved scroll position in chatData for the activeRoom
-        chatBodyRef.current.scrollTo({
-          top: data.scrollPosition.currentPosition,
-        });
-      }
-    } else {
-      // new messages in the same room
-      if (currentRoomScrollData.scrollPosition.isPreviousBottom) {
-        // console.log("scroll to bottom");
-        // new message
-        chatBodyRef.current.scrollTo({
-          top: chatBodyRef.current.scrollHeight,
-        });
-      } else {
-        // console.log("unread");
-        // processing new chat history page loaded
-        if (
-          unreadMessagesRefsArray.current.length > 0 &&
-          currentRoomScrollData.scrollPosition.previousScrollHeight !== 0
-        ) {
-          // console.log(
-          //   "unread - scroll to previous top ",
-          //   currentRoomScrollData.scrollPosition.previousScrollHeight,
-          //   " - ",
-          //   chatBodyRef.current.scrollHeight
-          // );
-          // scroll to previous top message
-          chatBodyRef.current.scrollTo({
-            top:
-              chatBodyRef.current.scrollHeight -
-              currentRoomScrollData.scrollPosition.previousScrollHeight,
-          });
-        } else {
-          // console.log("history");
-          // new chat history page
-          // checking if this is a first batch of messages being loaded, if it is then we do not scroll
-          if (currentRoomScrollData.scrollPosition.previousScrollHeight !== 0) {
-            // console.log("history - scroll to previous top");
-            // scroll to previous top message
-            chatBodyRef.current.scrollTo({
-              top: currentRoomScrollData.scrollPosition.previousScrollHeight,
-            });
-          }
-        }
-        // saving new chatBodyRef scrollHeight
-        setCurrentRoomScrollData({
-          ...currentRoomScrollData,
-          scrollPosition: {
-            ...currentRoomScrollData.scrollPosition,
-            previousScrollHeight: chatBodyRef.current.scrollHeight,
-          },
-        });
-      }
-    }
-  }, [activeRoom, data.messages.length]);
+  // TEST
+  // number of new messages used to differentiate between added read and unread messages
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
+  // processing chatBody scrolling into view when active room changes or new messages arrive
+  useScrollData({
+    chatBodyRef,
+    activeRoom,
+    currentRoomScrollData,
+    data,
+    dispatch,
+    setCurrentRoomScrollData,
+    unreadMessagesRefsArray,
+    unreadMessagesCount,
+  });
+
+  // // processing scrolling when new message is added to the active room
+  // useLayoutEffect(() => {
+  //   if (!chatBodyRef.current) return;
+  //   // processing activeRoom change
+  //   // saving scroll data to previous room if existed
+  //   if (currentRoomScrollData.currentRoom !== "") {
+  //     dispatch({
+  //       type: "setScrollPosition",
+  //       room_id: currentRoomScrollData.currentRoom,
+  //       scrollPosition: currentRoomScrollData.scrollPosition,
+  //     });
+  //   }
+  //   // changing current room to activeRoom
+  //   setCurrentRoomScrollData({
+  //     ...currentRoomScrollData,
+  //     currentRoom: activeRoom,
+  //   });
+
+  //   // separating activeRoom change and new message in the same room events
+  //   if (activeRoom !== currentRoomScrollData.currentRoom) {
+  //     // active room change
+  //     // scrolling to first unread message if present
+  //     if (unreadMessagesRefsArray.current[0]) {
+  //       // console.log("scroll to first unread");
+  //       unreadMessagesRefsArray.current[0].scrollIntoView();
+  //     } else {
+  //       // console.log(
+  //       //   "scroll to last position ",
+  //       //   data.scrollPosition.currentPosition
+  //       // );
+  //       // scrolling to saved scroll position in chatData for the activeRoom
+  //       chatBodyRef.current.scrollTo({
+  //         top: data.scrollPosition.currentPosition,
+  //       });
+  //     }
+  //   } else {
+  //     // new messages in the same room
+  //     if (currentRoomScrollData.scrollPosition.isPreviousBottom) {
+  //       // console.log("scroll to bottom");
+  //       // new message
+  //       chatBodyRef.current.scrollTo({
+  //         top: chatBodyRef.current.scrollHeight,
+  //       });
+  //     } else {
+  //       // console.log("unread");
+  //       // processing new chat history page loaded
+  //       if (
+  //         unreadMessagesRefsArray.current.length > 0 &&
+  //         currentRoomScrollData.scrollPosition.previousScrollHeight !== 0
+  //       ) {
+  //         // console.log(
+  //         //   "unread - scroll to previous top ",
+  //         //   currentRoomScrollData.scrollPosition.previousScrollHeight,
+  //         //   " - ",
+  //         //   chatBodyRef.current.scrollHeight
+  //         // );
+  //         // scroll to previous top message
+  //         chatBodyRef.current.scrollTo({
+  //           top:
+  //             chatBodyRef.current.scrollHeight -
+  //             currentRoomScrollData.scrollPosition.previousScrollHeight,
+  //         });
+  //       } else {
+  //         // console.log("history");
+  //         // new chat history page
+  //         // checking if this is a first batch of messages being loaded, if it is then we do not scroll
+  //         if (currentRoomScrollData.scrollPosition.previousScrollHeight !== 0) {
+  //           // console.log("history - scroll to previous top");
+  //           // scroll to previous top message
+  //           chatBodyRef.current.scrollTo({
+  //             top: currentRoomScrollData.scrollPosition.previousScrollHeight,
+  //           });
+  //         }
+  //       }
+  //       // saving new chatBodyRef scrollHeight
+  //       setCurrentRoomScrollData({
+  //         ...currentRoomScrollData,
+  //         scrollPosition: {
+  //           ...currentRoomScrollData.scrollPosition,
+  //           previousScrollHeight: chatBodyRef.current.scrollHeight,
+  //         },
+  //       });
+  //     }
+  //   }
+  // }, [activeRoom, data.messages.length]);
 
   // initializing chatContent element
   let chatContent;
@@ -202,20 +219,19 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           activeRoom={activeRoom}
           unreadMessagesRefsArray={unreadMessagesRefsArray}
           showFirstDate={showFirstDate}
+          setUnreadMessagesCount={setUnreadMessagesCount}
         />
       </ul>
     ) : null;
   }
   return (
-    <div className="chat__body" ref={chatBodyRef} onScroll={handleScroll}>
-      {/* <button
-        onClick={() =>
-          console.log(unreadMessagesRefsArray.current[0].offsetTop)
-        }
-      >
+    <>
+      <button onClick={() => console.log(chatBodyRef.current?.scrollHeight)}>
         TEST
-      </button> */}
-      {chatContent}
-    </div>
+      </button>
+      <div className="chat__body" ref={chatBodyRef} onScroll={handleScroll}>
+        {chatContent}
+      </div>
+    </>
   );
 }

@@ -3,7 +3,7 @@ import {
   useChatDataContext,
 } from "@/context/ChatDataProvider";
 import { format } from "date-fns";
-import { Fragment, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import ChatBodyLIElement from "./ChatBodyLIElement";
 
 export default function ChatBodyUnreadMessages({
@@ -12,24 +12,23 @@ export default function ChatBodyUnreadMessages({
   activeRoom,
   unreadMessagesRefsArray,
   showFirstDate,
+  setUnreadMessagesCount,
 }: {
   unreadMessages: IChatData_MessageExtended[];
   user_id: string;
   activeRoom: string;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLLIElement[]>;
   showFirstDate: Date | undefined;
+  setUnreadMessagesCount: (newUnreadMessagesCount: number) => void;
 }) {
   const { dispatch } = useChatDataContext();
 
   // observer.
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // applying IntersectionObserver to unread <li> refs
+  // initializing observer
   useEffect(() => {
-    // checking that unreadMessagesRefsArray is initialized
-    if (unreadMessagesRefsArray.current.length === 0) return;
-    // checking that unreadMessagesRefsArray has <li> data
-    if (unreadMessagesRefsArray.current.find((item) => item === null)) return;
+    // console.log("Observer init");
 
     // InterectionOberver options
     const options = {
@@ -46,35 +45,73 @@ export default function ChatBodyUnreadMessages({
         if (entry.isIntersecting) {
           // Element is in the viewport
           // console.log("Element is in the viewport:", entry.target);
+
+          // removing observer from the <li> element
+          observerRef.current?.unobserve(entry.target);
+
+          // removing reference from unreadMessagesRefsArray
+          // TEST
+          // const test = unreadMessagesRefsArray.current.find(
+          //   (item) => item === entry.target
+          // );
+          // console.log(test?.id);
+
+          unreadMessagesRefsArray.current =
+            unreadMessagesRefsArray.current.filter(
+              (ref) => ref !== entry.target
+            );
+
+          // console.log("between: ", unreadMessagesRefsArray.current.length);
+
+          // updating status for the message as being read
           dispatch({
             type: "setMessageAsRead",
             room_id: activeRoom,
             msgID: entry.target.id,
           });
-        } else {
-          // Element is out of the viewport
-          // console.log("Element is out of the viewport:", entry.target);
+
+          // TODO add db call to update lastaccess. use entry.time to debounce DB requests
         }
+        // else {
+        //   // Element is out of the viewport
+        //   console.log("Element is out of the viewport:", entry.target);
+        // }
       });
     };
 
-    // reinitializing observer instance when unreadMessages changes
-    if (observerRef.current) observerRef.current.disconnect();
     // Create an intersection observer with the specified callback and options
     observerRef.current = new IntersectionObserver(handleIntersection, options);
-
-    // Start observing the target elements
-    unreadMessagesRefsArray.current.forEach((element) => {
-      if (!element || !observerRef.current) return;
-
-      observerRef.current.observe(element);
-    });
 
     // Cleanup the observer when the component is unmounted
     return () => {
       if (!observerRef.current) return;
       observerRef.current.disconnect();
     };
+  }, []);
+
+  // applying IntersectionObserver observe to unread <li> refs
+  useEffect(() => {
+    // checking that unreadMessagesRefsArray is initialized
+    if (unreadMessagesRefsArray.current.length === 0) return;
+    // checking that unreadMessagesRefsArray has <li> data
+    // if (unreadMessagesRefsArray.current.find((item) => item === null)) return;
+
+    // Start observing the target elements
+    // console.log("before unread: ", unreadMessages.length);
+    // console.log("before: ", unreadMessagesRefsArray.current);
+    unreadMessagesRefsArray.current.forEach((element) => {
+      // console.log(element);
+      if (!element || !observerRef.current) return;
+      // checking if element is already being observed
+      if (
+        !observerRef.current
+          .takeRecords()
+          .some((entry) => entry.target === element)
+      ) {
+        observerRef.current.observe(element);
+      }
+    });
+    // console.log("after: ", unreadMessagesRefsArray.current);
   }, [JSON.stringify(unreadMessages)]);
 
   let lastMessage = "";
@@ -96,25 +133,26 @@ export default function ChatBodyUnreadMessages({
     // saving current message date for comparison with the next message
     lastMessage = currentMsgDay;
 
+    // if (msg.text === "L'Ombre") console.log(postDate);
+
     return (
-      <Fragment key={msgID}>
-        <div
-          className="unreadPostWrapper"
-          id={msgID}
-          ref={
-            (el: HTMLDivElement) =>
-              (unreadMessagesRefsArray.current[index] =
-                el as unknown as HTMLLIElement) // TODO fix TS
-          }
-        >
-          {postDate}
-          <ChatBodyLIElement
-            key={msg.author.concat(msg.timestamp.toString())}
-            msg={msg}
-            userIsMsgAuthor={userIsMsgAuthor}
-          />
-        </div>
-      </Fragment>
+      <div
+        className="unreadPostWrapper"
+        id={msgID}
+        key={msgID}
+        ref={
+          (el: HTMLDivElement) =>
+            (unreadMessagesRefsArray.current[index] =
+              el as unknown as HTMLLIElement) // TODO fix TS
+        }
+      >
+        {postDate}
+        <ChatBodyLIElement
+          key={msg.author.concat(msg.timestamp.toString())}
+          msg={msg}
+          userIsMsgAuthor={userIsMsgAuthor}
+        />
+      </div>
     );
   });
 }

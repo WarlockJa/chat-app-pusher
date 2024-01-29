@@ -60,7 +60,7 @@ type TChatDataStateLiteral = "loading" | "success" | "error";
 interface IScrollPosition {
   currentPosition: number;
   isPreviousBottom: boolean;
-  previousScrollHeight: number;
+  previousScrollHeight: number; // TODO delete?
 }
 
 interface ICurrentRoomScrollData {
