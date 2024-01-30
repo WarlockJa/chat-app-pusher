@@ -1,7 +1,6 @@
 import { IChatData_MessageExtended } from "@/context/ChatDataProvider";
 import ChatBodyLIElement from "./ChatBodyLIElement";
 import { format } from "date-fns";
-import { Fragment } from "react";
 
 export default function ChatBodyReadMessages({
   readMessages,
@@ -10,15 +9,16 @@ export default function ChatBodyReadMessages({
   readMessages: IChatData_MessageExtended[];
   user_id: string;
 }) {
-  let lastMessage = "";
+  let previousMessageDate = "";
   return readMessages.map((msg) => {
     const userIsMsgAuthor = msg.author === user_id;
-    const currentMsgDay = format(msg.timestamp, "y,M,d");
-    const postDate = lastMessage !== currentMsgDay;
-    lastMessage = currentMsgDay;
+    const currentMsgDate = format(msg.timestamp, "y,M,d");
+    const postDate = previousMessageDate !== currentMsgDate;
+    previousMessageDate = currentMsgDate;
+    const msgID = msg.author.concat(msg.timestamp.toString());
 
     return (
-      <Fragment key={msg.author.concat(msg.timestamp.toString())}>
+      <div key={msgID} className="postWrapper">
         {postDate ? (
           <div className="post post--center">
             {format(msg.timestamp, "MMMM d")}
@@ -29,7 +29,7 @@ export default function ChatBodyReadMessages({
           msg={msg}
           userIsMsgAuthor={userIsMsgAuthor}
         />
-      </Fragment>
+      </div>
     );
   });
 }

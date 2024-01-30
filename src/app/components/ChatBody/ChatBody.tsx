@@ -28,6 +28,8 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           currentPosition: 0,
           isPreviousBottom: false,
           previousScrollHeight: 0,
+          previousReadMsgCount: 0,
+          previousUnreadMsgCount: 0,
         },
         pagination: {
           hasMore: true,
@@ -49,6 +51,8 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
         currentPosition: 0,
         isPreviousBottom: false,
         previousScrollHeight: 0,
+        previousReadMsgCount: 0,
+        previousUnreadMsgCount: 0,
       },
     });
 
@@ -66,106 +70,22 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
     }
   };
 
-  // TEST
-  // number of new messages used to differentiate between added read and unread messages
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
+  // read/unread messages to be displayed
+  const readMessages = data.messages.filter((message) => !message.unread);
+  const unreadMessages = data.messages.filter((message) => message.unread);
+
   // processing chatBody scrolling into view when active room changes or new messages arrive
   useScrollData({
     chatBodyRef,
     activeRoom,
     currentRoomScrollData,
-    data,
+    // data,
     dispatch,
     setCurrentRoomScrollData,
     unreadMessagesRefsArray,
-    unreadMessagesCount,
+    unreadMessagesCount: unreadMessages.length,
+    readMessagesCount: readMessages.length,
   });
-
-  // // processing scrolling when new message is added to the active room
-  // useLayoutEffect(() => {
-  //   if (!chatBodyRef.current) return;
-  //   // processing activeRoom change
-  //   // saving scroll data to previous room if existed
-  //   if (currentRoomScrollData.currentRoom !== "") {
-  //     dispatch({
-  //       type: "setScrollPosition",
-  //       room_id: currentRoomScrollData.currentRoom,
-  //       scrollPosition: currentRoomScrollData.scrollPosition,
-  //     });
-  //   }
-  //   // changing current room to activeRoom
-  //   setCurrentRoomScrollData({
-  //     ...currentRoomScrollData,
-  //     currentRoom: activeRoom,
-  //   });
-
-  //   // separating activeRoom change and new message in the same room events
-  //   if (activeRoom !== currentRoomScrollData.currentRoom) {
-  //     // active room change
-  //     // scrolling to first unread message if present
-  //     if (unreadMessagesRefsArray.current[0]) {
-  //       // console.log("scroll to first unread");
-  //       unreadMessagesRefsArray.current[0].scrollIntoView();
-  //     } else {
-  //       // console.log(
-  //       //   "scroll to last position ",
-  //       //   data.scrollPosition.currentPosition
-  //       // );
-  //       // scrolling to saved scroll position in chatData for the activeRoom
-  //       chatBodyRef.current.scrollTo({
-  //         top: data.scrollPosition.currentPosition,
-  //       });
-  //     }
-  //   } else {
-  //     // new messages in the same room
-  //     if (currentRoomScrollData.scrollPosition.isPreviousBottom) {
-  //       // console.log("scroll to bottom");
-  //       // new message
-  //       chatBodyRef.current.scrollTo({
-  //         top: chatBodyRef.current.scrollHeight,
-  //       });
-  //     } else {
-  //       // console.log("unread");
-  //       // processing new chat history page loaded
-  //       if (
-  //         unreadMessagesRefsArray.current.length > 0 &&
-  //         currentRoomScrollData.scrollPosition.previousScrollHeight !== 0
-  //       ) {
-  //         // console.log(
-  //         //   "unread - scroll to previous top ",
-  //         //   currentRoomScrollData.scrollPosition.previousScrollHeight,
-  //         //   " - ",
-  //         //   chatBodyRef.current.scrollHeight
-  //         // );
-  //         // scroll to previous top message
-  //         chatBodyRef.current.scrollTo({
-  //           top:
-  //             chatBodyRef.current.scrollHeight -
-  //             currentRoomScrollData.scrollPosition.previousScrollHeight,
-  //         });
-  //       } else {
-  //         // console.log("history");
-  //         // new chat history page
-  //         // checking if this is a first batch of messages being loaded, if it is then we do not scroll
-  //         if (currentRoomScrollData.scrollPosition.previousScrollHeight !== 0) {
-  //           // console.log("history - scroll to previous top");
-  //           // scroll to previous top message
-  //           chatBodyRef.current.scrollTo({
-  //             top: currentRoomScrollData.scrollPosition.previousScrollHeight,
-  //           });
-  //         }
-  //       }
-  //       // saving new chatBodyRef scrollHeight
-  //       setCurrentRoomScrollData({
-  //         ...currentRoomScrollData,
-  //         scrollPosition: {
-  //           ...currentRoomScrollData.scrollPosition,
-  //           previousScrollHeight: chatBodyRef.current.scrollHeight,
-  //         },
-  //       });
-  //     }
-  //   }
-  // }, [activeRoom, data.messages.length]);
 
   // initializing chatContent element
   let chatContent;
@@ -178,10 +98,6 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   } else if (data.state === "error") {
     chatContent = "Error while loading messages from the database";
   } else {
-    // read/unread messages to be displayed
-    const readMessages = data.messages.filter((message) => !message.unread);
-    const unreadMessages = data.messages.filter((message) => message.unread);
-
     const showFirstDate =
       readMessages.length > 0
         ? readMessages[readMessages.length - 1].timestamp
@@ -219,14 +135,20 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           activeRoom={activeRoom}
           unreadMessagesRefsArray={unreadMessagesRefsArray}
           showFirstDate={showFirstDate}
-          setUnreadMessagesCount={setUnreadMessagesCount}
         />
       </ul>
     ) : null;
   }
   return (
     <>
-      <button onClick={() => console.log(chatBodyRef.current?.scrollHeight)}>
+      <button
+        onClick={() => {
+          // chatBodyRef.current?.scrollTo({
+          //   top: 891,
+          // });
+          console.log(chatBodyRef.current?.scrollHeight);
+        }}
+      >
         TEST
       </button>
       <div className="chat__body" ref={chatBodyRef} onScroll={handleScroll}>

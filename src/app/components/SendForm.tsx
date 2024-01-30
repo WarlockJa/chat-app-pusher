@@ -45,6 +45,7 @@ export default function SendForm({
           name="message"
           id="chat-input"
           value={message}
+          maxLength={400}
           onChange={(e) => setMessage(e.target.value)}
         />
         <button

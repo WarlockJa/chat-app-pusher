@@ -12,14 +12,12 @@ export default function ChatBodyUnreadMessages({
   activeRoom,
   unreadMessagesRefsArray,
   showFirstDate,
-  setUnreadMessagesCount,
 }: {
   unreadMessages: IChatData_MessageExtended[];
   user_id: string;
   activeRoom: string;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLLIElement[]>;
   showFirstDate: Date | undefined;
-  setUnreadMessagesCount: (newUnreadMessagesCount: number) => void;
 }) {
   const { dispatch } = useChatDataContext();
 
@@ -114,15 +112,15 @@ export default function ChatBodyUnreadMessages({
     // console.log("after: ", unreadMessagesRefsArray.current);
   }, [JSON.stringify(unreadMessages)]);
 
-  let lastMessage = "";
+  let previousMessageDate = "";
   return unreadMessages.map((msg, index) => {
     const userIsMsgAuthor = msg.author === user_id;
-    const currentMsgDay = format(msg.timestamp, "y,M,d");
+    const currentMsgDate = format(msg.timestamp, "y,M,d");
 
     const msgID = msg.author.concat(msg.timestamp.toString());
 
     const postDate = showFirstDate ? (
-      format(showFirstDate, "y,M,d") !== currentMsgDay ? (
+      format(showFirstDate, "y,M,d") !== currentMsgDate ? (
         <div className="post post--center">
           <span className="post--new">New!</span>{" "}
           {format(msg.timestamp, "MMMM d")}
@@ -131,13 +129,14 @@ export default function ChatBodyUnreadMessages({
     ) : null;
 
     // saving current message date for comparison with the next message
-    lastMessage = currentMsgDay;
+    previousMessageDate = currentMsgDate;
 
     // if (msg.text === "L'Ombre") console.log(postDate);
+    // TODO fix unreadMessagesRefsArray nulls
 
     return (
       <div
-        className="unreadPostWrapper"
+        className="postWrapper"
         id={msgID}
         key={msgID}
         ref={

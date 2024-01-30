@@ -61,6 +61,8 @@ interface IScrollPosition {
   currentPosition: number;
   isPreviousBottom: boolean;
   previousScrollHeight: number; // TODO delete?
+  previousReadMsgCount: number;
+  previousUnreadMsgCount: number;
 }
 
 interface ICurrentRoomScrollData {
