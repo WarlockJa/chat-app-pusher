@@ -7,7 +7,9 @@ import ChatBodyReadMessages from "./ChatBodyReadMessages";
 import ChatBodyUnreadMessages from "./ChatBodyUnreadMessages";
 import { isScrolledBottom } from "@/util/scrollFunctions";
 import PaginationMarker from "./PaginationMarker";
-import useScrollData from "../../../hooks/ChatBody/useScrollData";
+import useScrollOnHistoryPageLoad from "../../../hooks/ChatBody/useScrollOnHistoryPageLoad";
+import useScrollOnActiveRoomChange from "@/hooks/ChatBody/useScrollOnActiveRoomChange";
+import useScrollOnNewMessage from "@/hooks/ChatBody/useScrollOnNewMessage";
 
 export default function ChatBody({ userId }: { userId: IUserId }) {
   const { activeRoom } = useChatRoomsContext();
@@ -27,8 +29,6 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
         scrollPosition: {
           currentPosition: 0,
           isPreviousBottom: false,
-          previousScrollHeight: 0,
-          previousReadMsgCount: 0,
           previousUnreadMsgCount: 0,
         },
         pagination: {
@@ -40,7 +40,9 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   // TODO pagination
   const paginationMarker = useRef<HTMLDivElement>(null);
   // refs array to unread <li> elements
-  const unreadMessagesRefsArray = useRef<HTMLLIElement[]>([]);
+  const unreadMessagesRefsArray = useRef<HTMLDivElement[]>([]);
+  // reference for the top message to scroll to when new history page is loaded
+  const topReadMessageMarker = useRef<HTMLDivElement>(null);
   // scrolling position of the chat__body div element
   const chatBodyRef = useRef<HTMLDivElement>(null);
   // current room state used to save last scroll position on activeRoom change
@@ -50,8 +52,6 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
       scrollPosition: {
         currentPosition: 0,
         isPreviousBottom: false,
-        previousScrollHeight: 0,
-        previousReadMsgCount: 0,
         previousUnreadMsgCount: 0,
       },
     });
@@ -74,17 +74,43 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   const readMessages = data.messages.filter((message) => !message.unread);
   const unreadMessages = data.messages.filter((message) => message.unread);
 
-  // processing chatBody scrolling into view when active room changes or new messages arrive
-  useScrollData({
-    chatBodyRef,
+  /* 
+    These hooks abstracts automatic scrolling inside ChatBody when either activeRoom or
+    the amount of messages to display changes
+    Possible scenarios include:
+    1 - Changing to the new active room that has new messages (ACTIVE ROOM + NEW MESSAGES):
+      scrolling to the new message
+    2 - Changing to a new active room that has no new messages (ACTIVE ROOM + NO NEW MESSAGES):
+      scrolling to the previous position saved for the room
+    3 - New message arrives when ChatBody is scrolled to the bottom (SAME ROOM + NEW MESSAGE + SCROLLED TO BOTTOM):
+      scroll new message into the view
+    4 - New message arrives when ChatBody is not scrolled to the bottom (SAME ROOM + NEW MESSAGE + NOT SCROLLED TO BOTTOM):
+      no scrolling required
+    5 - New history chat data page is loaded and added to the top (SAME ROOM + NEW HISTORY PAGE):
+      preserve current viewport position
+  */
+  // Scenarios: 1-2
+  useScrollOnActiveRoomChange({
     activeRoom,
+    chatBodyRef,
     currentRoomScrollData,
-    // data,
     dispatch,
     setCurrentRoomScrollData,
     unreadMessagesRefsArray,
+    activeRoomScrollPosition: data.scrollPosition.currentPosition,
+  });
+  // Scenarios: 3-4
+  useScrollOnNewMessage({
+    currentRoomScrollData,
+    setCurrentRoomScrollData,
+    unreadMessagesRefsArray,
     unreadMessagesCount: unreadMessages.length,
-    readMessagesCount: readMessages.length,
+  });
+  // Scenario 5
+  useScrollOnHistoryPageLoad({
+    topReadMessageMarker,
+    readMessages,
+    activeRoom,
   });
 
   // initializing chatContent element
@@ -98,16 +124,13 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   } else if (data.state === "error") {
     chatContent = "Error while loading messages from the database";
   } else {
+    // timestamp for the last read message to compare with the first unread message
     const showFirstDate =
       readMessages.length > 0
         ? readMessages[readMessages.length - 1].timestamp
         : undefined;
-    // const showFirstDate =
-    //   readMessages.length > 0 && unreadMessages.length > 0
-    //     ? readMessages[readMessages.length - 1].timestamp !==
-    //       unreadMessages[0].timestamp
-    //     : false;
 
+    // messages data to display
     chatContent = data ? (
       <ul className="chatDisplay">
         {
@@ -128,6 +151,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
         <ChatBodyReadMessages
           readMessages={readMessages}
           user_id={userId.user_id}
+          topReadMessageMarker={topReadMessageMarker}
         />
         <ChatBodyUnreadMessages
           unreadMessages={unreadMessages}
@@ -141,16 +165,16 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   }
   return (
     <>
-      <button
+      {/* <button
         onClick={() => {
           // chatBodyRef.current?.scrollTo({
           //   top: 891,
           // });
-          console.log(chatBodyRef.current?.scrollHeight);
+          console.log(unreadMessagesRefsArray.current);
         }}
       >
         TEST
-      </button>
+      </button> */}
       <div className="chat__body" ref={chatBodyRef} onScroll={handleScroll}>
         {chatContent}
       </div>

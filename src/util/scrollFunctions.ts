@@ -9,10 +9,5 @@ export function isScrolledBottom(element: HTMLDivElement) {
 
 // returns true if element is scrolled to the bottom otherwise returns false
 export function isScrolledTop(element: HTMLDivElement) {
-  return (
-    // Math.abs(
-    //   element.scrollHeight - (element.scrollTop + element.clientHeight)
-    // ) <= 1
-    element.scrollTop <= 1
-  );
+  return element.scrollTop <= 1;
 }

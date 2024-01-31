@@ -1,7 +1,7 @@
 import { PusherPresence } from "@/context/PusherProvider";
 import useSubscriptions from "@/hooks/useSubscriptions";
 
-export default function HooksElement({
+export default function SubscriptionsHookWrapper({
   userId,
   pusher,
 }: {
@@ -9,7 +9,6 @@ export default function HooksElement({
   pusher: PusherPresence;
 }) {
   // console.log("--------------Hooks rerender");
-  // useChatData({ userId });
   useSubscriptions({ pusher, userId });
 
   return null;

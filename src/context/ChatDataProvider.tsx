@@ -1,4 +1,5 @@
 "use client";
+import getMsgKey from "@/util/getMsgKey";
 import { Message } from "@prisma/client";
 import {
   PropsWithChildren,
@@ -107,7 +108,7 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 scrollPosition: {
                   currentPosition: 0,
                   isPreviousBottom: false,
-                  previousScrollHeight: 0,
+                  previousUnreadMsgCount: 0,
                 },
                 pagination: {
                   historyLoadedState: "success",
@@ -149,7 +150,7 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
             ? {
                 ...room,
                 messages: room.messages.map((message) =>
-                  message.author + message.timestamp === action.msgID
+                  getMsgKey(message) === action.msgID
                     ? { ...message, unread: false }
                     : message
                 ),
