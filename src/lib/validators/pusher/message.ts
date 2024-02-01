@@ -2,6 +2,11 @@ import { regexAlphanumericWithDash } from "@/util/regExes";
 import { z } from "zod";
 
 export const schemaApiV1PusherMessagePost = z.object({
+  id: z
+    .string({
+      required_error: "Message ID required",
+    })
+    .uuid({ message: "Message ID must be UUIDv4" }),
   message: z
     .string()
     .min(1)

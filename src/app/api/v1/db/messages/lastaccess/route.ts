@@ -3,38 +3,51 @@ import { schemaApiV1dbMessagesLastaccessPOST } from "@/lib/validators/db/lastacc
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-type TLatestTimestampResponse = [
-  {
-    _id: { $oid: string };
-    latestTimestamp: { [date_key: string]: string };
-  }
-];
+type TTimestampResponse =
+  | [
+      {
+        timestamp: { $date: string };
+      }
+    ]
+  | [];
+// TODO make it accept message ID and replace timestamp in last access with the timestamp for the message with the ID we sent
 // updating last access array for a channel in DB
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
     const data = schemaApiV1dbMessagesLastaccessPOST.parse(reqBody);
 
-    // fetching aggregated data with latest timestamp form messages array and lastaccess array
-    const aggregateLatestMessageTimestamp = (await prisma.channel.aggregateRaw({
+    const aggreagateMessageTimestamp = (await prisma.channel.aggregateRaw({
       pipeline: [
         {
-          $match: { name: data.channel_name },
+          // finding a channel with data.channel_name
+          $match: {
+            name: data.channel_name,
+          },
         },
         {
+          $unwind: "$messages",
+        },
+        {
+          // finding a message with the provided message_id
+          $match: {
+            "messages.id": data.message_id,
+          },
+        },
+        {
+          // selecting timestamp for the message
           $project: {
             _id: 0,
-            latestTimestamp: {
-              $arrayElemAt: ["$messages.timestamp", -1],
-            },
+            timestamp: "$messages.timestamp",
           },
         },
       ],
-    })) as unknown as TLatestTimestampResponse;
+    })) as unknown as TTimestampResponse;
 
+    if (aggreagateMessageTimestamp.length === 0)
+      return NextResponse.json("Message not found", { status: 201 });
     // latest message timestamp
-    const lastMessageTimestamp =
-      aggregateLatestMessageTimestamp[0].latestTimestamp;
+    const messageTimestamp = aggreagateMessageTimestamp[0].timestamp;
 
     // removing user from lastaccess array and adding with a new timestamp
     const result = await prisma.$runCommandRaw({
@@ -50,7 +63,7 @@ export async function POST(req: Request) {
             $push: {
               lastaccess: {
                 user: data.user_id,
-                timestamp: lastMessageTimestamp,
+                timestamp: messageTimestamp,
               },
             },
           },

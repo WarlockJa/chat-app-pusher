@@ -1,7 +1,9 @@
-import { IChatData_MessageExtended } from "@/context/ChatDataProvider";
+import {
+  IChatData,
+  IChatData_MessageExtended,
+} from "@/context/ChatDataProvider";
 import { format } from "date-fns";
 import ChatBodyLIElement from "./ChatBodyLIElement";
-import getMsgKey from "@/util/getMsgKey";
 import ChatBodyMessageHeader from "./ChatBodyMessageHeader";
 import useIOUnreadMsgsArray from "@/hooks/ChatBody/useIOUnreadMsgsArray";
 
@@ -11,24 +13,28 @@ export default function ChatBodyUnreadMessages({
   activeRoom,
   unreadMessagesRefsArray,
   showFirstDate,
+  activeRoom_chatData,
 }: {
   unreadMessages: IChatData_MessageExtended[];
   user_id: string;
   activeRoom: string;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
   showFirstDate: Date | undefined;
+  activeRoom_chatData: IChatData;
 }) {
   // attaching IntersectionObserver to post elements via unreadMessagesRefsArray
-  useIOUnreadMsgsArray({ activeRoom, unreadMessagesRefsArray });
+  useIOUnreadMsgsArray({
+    activeRoom,
+    unreadMessagesRefsArray,
+    user_id,
+    activeRoom_chatData,
+  });
 
   // generating unread messages elements
   let previousMessageDate = "";
   return unreadMessages.map((msg, index) => {
     const userIsMsgAuthor = msg.author === user_id;
     const currentMsgDate = format(msg.timestamp, "y,M,d");
-
-    // creating "unique" message key
-    const msgID = getMsgKey(msg);
 
     // displaying post header if date changes from previous post
     let postDate = null;
@@ -53,8 +59,8 @@ export default function ChatBodyUnreadMessages({
     return (
       <div
         className="postWrapper"
-        id={msgID}
-        key={msgID}
+        id={msg.id}
+        key={msg.id}
         ref={(el: HTMLDivElement) =>
           (unreadMessagesRefsArray.current[index] = el)
         }

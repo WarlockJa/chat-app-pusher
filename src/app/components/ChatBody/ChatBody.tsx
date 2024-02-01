@@ -159,6 +159,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           activeRoom={activeRoom}
           unreadMessagesRefsArray={unreadMessagesRefsArray}
           showFirstDate={showFirstDate}
+          activeRoom_chatData={data}
         />
       </ul>
     ) : null;

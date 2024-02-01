@@ -9,7 +9,6 @@ import { useUserIdContext } from "@/context/UserIdProvider";
 import { ChatRoomsProvider } from "@/context/ChatRoomsProvider";
 import { ChatDataProvider } from "@/context/ChatDataProvider";
 import Chat from "./Chat";
-import { SWRConfig } from "swr";
 
 export default function ChatWrapper({
   user_id,
@@ -41,14 +40,7 @@ export default function ChatWrapper({
   return (
     <ChatRoomsProvider userId={userId}>
       <ChatDataProvider>
-        <SWRConfig
-          value={{
-            fetcher: (resource, init) =>
-              fetch(resource, init).then((res) => res.json()),
-          }}
-        >
-          <Chat userId={userId} pusher={pusher} />
-        </SWRConfig>
+        <Chat userId={userId} pusher={pusher} />
       </ChatDataProvider>
     </ChatRoomsProvider>
   );

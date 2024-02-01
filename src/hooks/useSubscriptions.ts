@@ -3,11 +3,13 @@ import { PresenceChannel } from "pusher-js";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import { PusherPresence } from "@/context/PusherProvider";
-import {
-  getChannelHistoryMessages,
-  getUnreadMessages,
-  updateLastAccessTimestamp,
-} from "@/lib/apiDBMethods";
+import { getUnreadMessages } from "@/lib/apiDBMethods";
+import { z } from "zod";
+import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
+
+type TSchemaApiV1PusherMessagePost = z.infer<
+  typeof schemaApiV1PusherMessagePost
+>;
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -46,23 +48,27 @@ export default function useSubscriptions({
         if (room.roomId === "presence-system" && !user_admin) return;
 
         // TODO process later
-        newChannel.bind("message", async function (data: IMessageData) {
-          dispatchChatData({
-            type: "addRoomMessage",
-            room_id: newChannel.name,
-            message: {
-              text: data.message,
-              author: data.author,
-              timestamp: new Date(),
-              unread: true,
-            },
-          });
+        newChannel.bind(
+          "message",
+          async function (data: TSchemaApiV1PusherMessagePost) {
+            dispatchChatData({
+              type: "addRoomMessage",
+              room_id: newChannel.name,
+              message: {
+                id: data.id,
+                text: data.message,
+                author: data.author,
+                timestamp: new Date(),
+                unread: true,
+              },
+            });
 
-          // updating last access array for the current channel in the DB
-          // this timestamp is used to identify unread messages
-          // TODO update last access ony message in view
-          // updateLastAccessTimestamp({ user_id, channel_name: newChannel.name });
-        });
+            // updating last access array for the current channel in the DB
+            // this timestamp is used to identify unread messages
+            // TODO update last access ony message in view
+            // updateLastAccessTimestamp({ user_id, channel_name: newChannel.name });
+          }
+        );
 
         // member_added and member_removed binds used to update number of users on the channel
         // i.e. allows to monitor if admin/user is present

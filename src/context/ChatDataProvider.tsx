@@ -1,5 +1,4 @@
 "use client";
-import getMsgKey from "@/util/getMsgKey";
 import { Message } from "@prisma/client";
 import {
   PropsWithChildren,
@@ -34,7 +33,7 @@ export interface IChatDataAddRoomMessages {
 export interface IChatDataSetMessageAsRead {
   type: "setMessageAsRead";
   room_id: string;
-  msgID: string; //workaround value is a string message.author+message.timestamp
+  message_id: string;
 }
 export interface IChatDataSetScrollPosition {
   type: "setScrollPosition";
@@ -150,7 +149,7 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
             ? {
                 ...room,
                 messages: room.messages.map((message) =>
-                  getMsgKey(message) === action.msgID
+                  message.id === action.message_id
                     ? { ...message, unread: false }
                     : message
                 ),

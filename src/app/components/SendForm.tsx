@@ -26,11 +26,26 @@ export default function SendForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // generating message uuid to be used in both Pusher message event and written in DB
+    // using front-end generation method because it is a faster alternative to
+    // DB generation of the message uuid with the following use in Pusher message event
+    const messageId = crypto.randomUUID();
+
     // triggering "message" event for Pusher
-    sendMessageEvent({ message, author: userId.user_name, activeRoom });
+    sendMessageEvent({
+      message,
+      author: userId.user_name,
+      activeRoom,
+      id: messageId,
+    });
 
     // writing message to DB
-    addChannelMessage({ message, userId: userId.user_id, room: activeRoom });
+    addChannelMessage({
+      message,
+      userId: userId.user_id,
+      room: activeRoom,
+      message_id: messageId,
+    });
 
     // reset form input value
     setMessage("");
@@ -100,8 +115,7 @@ export default function SendForm({
           //     .then((response) => response.json())
           //     .then((result) => console.log(result));
           // }
-          () =>
-            console.log(chatData?.find((room) => room.room_id === activeRoom))
+          () => console.log(navigator.onLine)
         }
       >
         TEST

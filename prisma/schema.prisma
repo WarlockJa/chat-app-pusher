@@ -11,6 +11,7 @@ datasource db {
 }
 
 type Message {
+  id        String   @default(uuid())
   author    String
   text      String
   timestamp DateTime @default(now())

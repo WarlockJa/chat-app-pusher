@@ -31,6 +31,11 @@ export const schemaApiV1dbMessagesHistoryGET = z
 
 export const schemaApiV1dbMessagesHistoryPOST = z
   .object({
+    message_id: z
+      .string({
+        required_error: "Message ID required",
+      })
+      .uuid({ message: "Message ID must be UUIDv4" }),
     // TODO replace after TEST
     // userId: z.string().uuid()
     userId: z

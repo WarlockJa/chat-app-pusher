@@ -22,11 +22,6 @@ export async function GET(req: NextRequest) {
       channel_name,
     });
 
-    // const messages = await prisma.channel.findUnique({
-    //   where: {
-    //     name: data.roomId,
-    //   },
-    // });
     // fetching unread messages from the channel using lastaccess timestamp
     const readMessagesFromDB = (await prisma.channel.aggregateRaw({
       pipeline: [
@@ -42,6 +37,11 @@ export async function GET(req: NextRequest) {
                 cond: { $eq: ["$$access.user", data.user_id] },
               },
             },
+          },
+        },
+        {
+          $match: {
+            userLastAccess: { $ne: [] }, // Filter out documents where userLastAccess is empty
           },
         },
         {
@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// writing a message to a channel in DB
+// writing a message to a channel in the DB
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
@@ -113,6 +113,7 @@ export async function POST(req: Request) {
           messages: {
             push: [
               {
+                id: data.message_id,
                 text: data.message,
                 author: data.userId,
               },
@@ -126,6 +127,7 @@ export async function POST(req: Request) {
           name: data.room,
           messages: [
             {
+              id: data.message_id,
               author: data.userId,
               text: data.message,
             },

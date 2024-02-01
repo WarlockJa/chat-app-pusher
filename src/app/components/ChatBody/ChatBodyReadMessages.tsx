@@ -1,7 +1,6 @@
 import { IChatData_MessageExtended } from "@/context/ChatDataProvider";
 import ChatBodyLIElement from "./ChatBodyLIElement";
 import { format } from "date-fns";
-import getMsgKey from "@/util/getMsgKey";
 import ChatBodyMessageHeader from "./ChatBodyMessageHeader";
 
 export default function ChatBodyReadMessages({
@@ -19,12 +18,10 @@ export default function ChatBodyReadMessages({
     const currentMsgDate = format(msg.timestamp, "y,M,d");
     const postDate = previousMessageDate !== currentMsgDate;
     previousMessageDate = currentMsgDate;
-    // creating "unique" key
-    const msgID = getMsgKey(msg);
 
     return (
       <div
-        key={msgID}
+        key={msg.id}
         className="postWrapper"
         ref={index === 0 ? topReadMessageMarker : null}
       >

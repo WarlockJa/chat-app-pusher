@@ -46,7 +46,7 @@ export function addChannelMessage(body: TSchemaDBMessagesHistoryPOST) {
 export function updateLastAccessTimestamp(
   body: TSchemaDBMessagesLastaccessPOST
 ) {
-  fetch("/api/v1/db/messages/new", {
+  fetch("/api/v1/db/messages/lastaccess", {
     method: "POST",
     body: JSON.stringify(body),
   });

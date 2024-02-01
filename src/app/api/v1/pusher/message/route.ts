@@ -12,6 +12,7 @@ export async function POST(req: Request) {
     pusherServer.trigger(data.activeRoom, "message", {
       message: data.message,
       author: data.author,
+      id: data.id,
     });
 
     return NextResponse.json({ statusText: "OK", status: 200 });

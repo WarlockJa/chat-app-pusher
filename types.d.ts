@@ -1,12 +1,8 @@
 interface IMessageData {
+  id: string;
   message: string;
   author: string;
 }
-
-interface IMessagePOST extends IMessageData {
-  activeRoom: string;
-}
-
 interface IUserLocalStorageData {
   user_id: string;
   user_name: string;
