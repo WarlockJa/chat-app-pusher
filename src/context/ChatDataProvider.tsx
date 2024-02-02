@@ -20,11 +20,6 @@ export interface IChatDataSetRoomError {
   room_id: string;
   error: Error;
 }
-export interface IChatDataAddRoomMessage {
-  type: "addRoomMessage";
-  room_id: string;
-  message: IChatData_MessageExtended;
-}
 export interface IChatDataAddRoomMessages {
   type: "addRoomMessages";
   room_id: string;
@@ -54,7 +49,6 @@ export interface IChatDataSetPaginationHasMore {
 type TChatDataProviderActions =
   | IChatDataAddRoom
   | IChatDataSetRoomError
-  | IChatDataAddRoomMessage
   | IChatDataAddRoomMessages
   | IChatDataSetMessageAsRead
   | IChatDataSetScrollPosition
@@ -116,23 +110,20 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
               },
             ]
           : chatData;
-      case "addRoomMessage":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? {
-                ...room,
-                messages: [...room.messages, action.message],
-              }
-            : room
-        );
       case "addRoomMessages":
         return chatData.map((room) =>
           room.room_id === action.room_id
             ? {
                 ...room,
-                messages: [...room.messages, ...action.messages].sort((a, b) =>
-                  a.timestamp >= b.timestamp ? 1 : -1
-                ),
+                // filtering possible duplicates.
+                // This is a failsafe for Internet connection disruption that would cause Pusher
+                // subscriptions to re-trigger and fetch messages from DB for a second time
+                messages: [...room.messages, ...action.messages]
+                  .filter(
+                    (message, index, self) =>
+                      index === self.findIndex((msg) => msg.id === message.id)
+                  )
+                  .sort((a, b) => (a.timestamp >= b.timestamp ? 1 : -1)),
                 state: "success",
               }
             : room

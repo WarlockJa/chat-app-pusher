@@ -47,26 +47,22 @@ export default function useSubscriptions({
         // if user is not an administrator no further interactions with presence-system required
         if (room.roomId === "presence-system" && !user_admin) return;
 
-        // TODO process later
         newChannel.bind(
           "message",
           async function (data: TSchemaApiV1PusherMessagePost) {
             dispatchChatData({
-              type: "addRoomMessage",
+              type: "addRoomMessages",
               room_id: newChannel.name,
-              message: {
-                id: data.id,
-                text: data.message,
-                author: data.author,
-                timestamp: new Date(),
-                unread: true,
-              },
+              messages: [
+                {
+                  id: data.id,
+                  text: data.message,
+                  author: data.author,
+                  timestamp: new Date(),
+                  unread: true,
+                },
+              ],
             });
-
-            // updating last access array for the current channel in the DB
-            // this timestamp is used to identify unread messages
-            // TODO update last access ony message in view
-            // updateLastAccessTimestamp({ user_id, channel_name: newChannel.name });
           }
         );
 
