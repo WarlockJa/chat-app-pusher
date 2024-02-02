@@ -14,6 +14,9 @@ import {
 import { schemaApiV1dbMessagesLastaccessPOST } from "./validators/db/lastaccess";
 import { schemaApiV1dbMessagesNewGET } from "./validators/db/new";
 
+// TODO extract to Chat params
+const PAGE_LIMIT = 10;
+
 // inferring api endpoints expected types from zod models
 type TSchemaDBMessagesHistoryPOST = z.infer<
   typeof schemaApiV1dbMessagesHistoryPOST
@@ -67,7 +70,9 @@ export function getChannelHistoryMessages({
   ) => void;
 }) {
   fetch(
-    `/api/v1/db/messages/history?channel_name=${params.channel_name}&user_id=${params.user_id}`
+    `/api/v1/db/messages/history?channel_name=${params.channel_name}&user_id=${
+      params.user_id
+    }&limit=${PAGE_LIMIT}&skip=${1}` // TODO adjust ChatData to provide proper skip number
   )
     .then((response) => response.json())
     .then((result: Message[]) => {

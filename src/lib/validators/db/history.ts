@@ -26,6 +26,11 @@ export const schemaApiV1dbMessagesHistoryGET = z
       .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }),
+    limit: z.number({
+      required_error: "Limit of messages to return required",
+      invalid_type_error: "Must be a number",
+    }),
+    skip: z.union([z.number(), z.nan()]),
   })
   .strict();
 
