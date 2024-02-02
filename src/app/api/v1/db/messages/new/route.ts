@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/globalForPrisma";
-import { TUnreadMessages } from "@/lib/prisma";
+import { TMessageDB } from "@/lib/prisma";
 import { schemaApiV1dbMessagesNewGET } from "@/lib/validators/db/new";
 import { Message } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -55,16 +55,20 @@ export async function GET(req: NextRequest) {
             },
           },
         },
+        {
+          $unwind: "$messages", // Unwind the array to get a flat result
+        },
+        {
+          $replaceRoot: { newRoot: "$messages" }, // Replace root to get the desired structure
+        },
       ],
-    })) as unknown as TUnreadMessages;
+    })) as unknown as TMessageDB[];
 
     // parsing response from DB
     let unreadMessages: Message[];
     if (unreadMessagesFromDB.length > 0) {
-      unreadMessages = unreadMessagesFromDB[0].messages.map((message) => ({
+      unreadMessages = unreadMessagesFromDB.map((message) => ({
         ...message,
-        // @ts-ignore
-        // NOTE: MongoDB pipeline returns date as an object { '$date': Date }
         timestamp: message.timestamp.$date,
       }));
     } else unreadMessages = [];

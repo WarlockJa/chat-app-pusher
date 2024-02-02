@@ -72,7 +72,7 @@ export function getChannelHistoryMessages({
   fetch(
     `/api/v1/db/messages/history?channel_name=${params.channel_name}&user_id=${
       params.user_id
-    }&limit=${PAGE_LIMIT}&skip=${1}` // TODO adjust ChatData to provide proper skip number
+    }&limit=${PAGE_LIMIT}&skip=${"feck"}` // TODO adjust ChatData to provide proper skip  number
   )
     .then((response) => response.json())
     .then((result: Message[]) => {
