@@ -105,7 +105,7 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 messages: [],
                 state: "loading",
                 scrollPosition: {
-                  currentPosition: 0,
+                  currentPosition: 999999,
                   isPreviousBottom: false,
                   previousUnreadMsgCount: 0,
                 },

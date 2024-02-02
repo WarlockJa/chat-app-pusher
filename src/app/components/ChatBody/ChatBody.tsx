@@ -7,9 +7,7 @@ import ChatBodyReadMessages from "./ChatBodyReadMessages";
 import ChatBodyUnreadMessages from "./ChatBodyUnreadMessages";
 import { isScrolledBottom } from "@/util/scrollFunctions";
 import PaginationMarker from "./PaginationMarker";
-import useScrollOnHistoryPageLoad from "../../../hooks/ChatBody/useScrollOnHistoryPageLoad";
-import useScrollOnActiveRoomChange from "@/hooks/ChatBody/useScrollOnActiveRoomChange";
-import useScrollOnNewMessage from "@/hooks/ChatBody/useScrollOnNewMessage";
+import useChatBodyScroll from "./useChatBodyScroll";
 
 export default function ChatBody({ userId }: { userId: IUserId }) {
   const { activeRoom } = useChatRoomsContext();
@@ -27,7 +25,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
         messages: [],
         state: "loading",
         scrollPosition: {
-          currentPosition: 0,
+          currentPosition: 999999,
           isPreviousBottom: false,
           previousUnreadMsgCount: 0,
         },
@@ -50,7 +48,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
     useState<ICurrentRoomScrollData>({
       currentRoom: "",
       scrollPosition: {
-        currentPosition: 0,
+        currentPosition: 999999,
         isPreviousBottom: false,
         previousUnreadMsgCount: 0,
       },
@@ -74,23 +72,8 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   const readMessages = data.messages.filter((message) => !message.unread);
   const unreadMessages = data.messages.filter((message) => message.unread);
 
-  /* 
-    These hooks abstracts automatic scrolling inside ChatBody when either activeRoom or
-    the amount of messages to display changes
-    Possible scenarios include:
-    1 - Changing to the new active room that has new messages (ACTIVE ROOM + NEW MESSAGES):
-      scrolling to the new message
-    2 - Changing to a new active room that has no new messages (ACTIVE ROOM + NO NEW MESSAGES):
-      scrolling to the previous position saved for the room
-    3 - New message arrives when ChatBody is scrolled to the bottom (SAME ROOM + NEW MESSAGE + SCROLLED TO BOTTOM):
-      scroll new message into the view
-    4 - New message arrives when ChatBody is not scrolled to the bottom (SAME ROOM + NEW MESSAGE + NOT SCROLLED TO BOTTOM):
-      no scrolling required
-    5 - New history chat data page is loaded and added to the top (SAME ROOM + NEW HISTORY PAGE):
-      preserve current viewport position
-  */
-  // Scenarios: 1-2
-  useScrollOnActiveRoomChange({
+  // automatic scrolling on activeRoom change or new messages added
+  useChatBodyScroll({
     activeRoom,
     chatBodyRef,
     currentRoomScrollData,
@@ -98,19 +81,9 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
     setCurrentRoomScrollData,
     unreadMessagesRefsArray,
     activeRoomScrollPosition: data.scrollPosition.currentPosition,
-  });
-  // Scenarios: 3-4
-  useScrollOnNewMessage({
-    currentRoomScrollData,
-    setCurrentRoomScrollData,
-    unreadMessagesRefsArray,
-    unreadMessagesCount: unreadMessages.length,
-  });
-  // Scenario 5
-  useScrollOnHistoryPageLoad({
     topReadMessageMarker,
     readMessages,
-    activeRoom,
+    unreadMessagesCount: unreadMessages.length,
   });
 
   // initializing chatContent element
@@ -147,7 +120,6 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
             />
           ) : null
         }
-
         <ChatBodyReadMessages
           readMessages={readMessages}
           user_id={userId.user_id}
@@ -171,7 +143,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           // chatBodyRef.current?.scrollTo({
           //   top: 891,
           // });
-          console.log(unreadMessagesRefsArray.current);
+          console.log(data.scrollPosition.currentPosition);
         }}
       >
         TEST

@@ -71,7 +71,7 @@ export default function SendForm({
           Send
         </button>
       </form>
-      <button
+      {/* <button
         onClick={
           // () => console.log(userId.user_admin ? "is admin" : "not admin")
           // () => {
@@ -119,7 +119,7 @@ export default function SendForm({
         }
       >
         TEST
-      </button>
+      </button> */}
     </>
   );
 }
