@@ -21,7 +21,7 @@ export default function SendForm({
 
   const { activeRoom } = useChatRoomsContext();
   const [message, setMessage] = useState<string>("");
-  const { chatData } = useChatDataContext();
+  const { dispatch: dispatchChatData } = useChatDataContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,6 +45,22 @@ export default function SendForm({
       userId: userId.user_id,
       room: activeRoom,
       message_id: messageId,
+    });
+
+    // Optimistic chat message post. Adding message directly to the local ChatData context.
+    // Once received again via Pusher "message" event this message's will be filtered by id
+    dispatchChatData({
+      type: "addRoomMessages",
+      room_id: activeRoom,
+      messages: [
+        {
+          id: messageId,
+          text: message,
+          author: userId.user_name,
+          timestamp: new Date(),
+          unread: true,
+        },
+      ],
     });
 
     // reset form input value

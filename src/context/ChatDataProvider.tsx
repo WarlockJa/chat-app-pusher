@@ -121,7 +121,7 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 messages: [...room.messages, ...action.messages]
                   .filter(
                     (message, index, self) =>
-                      index === self.findIndex((msg) => msg.id === message.id)
+                      index === self.findIndex((msg) => msg.id === message.id) // add optimistic update handling
                   )
                   .sort((a, b) => (a.timestamp >= b.timestamp ? 1 : -1)),
                 state: "success",
