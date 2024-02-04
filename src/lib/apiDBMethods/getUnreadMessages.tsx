@@ -1,0 +1,44 @@
+import { z } from "zod";
+import { schemaApiV1dbMessagesNewGET } from "../validators/db/new";
+import {
+  IChatDataAddRoomMessages,
+  IChatDataSetRoomError,
+  IChatData_MessageExtended,
+} from "@/context/ChatDataProvider";
+import { Message } from "@prisma/client";
+
+// inferring api endpoints expected types from zod models
+type TSchemaDBMessagesNewGet = z.infer<typeof schemaApiV1dbMessagesNewGET>;
+
+export function getUnreadMessages({
+  params,
+  dispatchChatData,
+}: {
+  params: TSchemaDBMessagesNewGet;
+  dispatchChatData: (
+    action: IChatDataAddRoomMessages | IChatDataSetRoomError
+  ) => void;
+}) {
+  fetch(
+    `api/v1/db/messages/new?channel_name=${params.channel_name}&user_id=${params.user_id}`
+  )
+    .then((response) => response.json())
+    .then((result: Message[]) => {
+      const unreadMessages: IChatData_MessageExtended[] = result.map(
+        (message) => ({ ...message, unread: true })
+      );
+      // console.log(result);
+      dispatchChatData({
+        type: "addRoomMessages",
+        room_id: params.channel_name,
+        messages: unreadMessages,
+      });
+    })
+    .catch((error) =>
+      dispatchChatData({
+        type: "setRoomError",
+        room_id: params.channel_name,
+        error,
+      })
+    );
+}

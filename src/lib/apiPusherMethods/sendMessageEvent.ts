@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { schemaApiV1PusherMessagePost } from "./validators/pusher/message";
+import { schemaApiV1PusherMessagePost } from "../validators/pusher/message";
 
 type TSchemaPusherMessagePost = z.infer<typeof schemaApiV1PusherMessagePost>;
 export function sendMessageEvent(body: TSchemaPusherMessagePost) {
