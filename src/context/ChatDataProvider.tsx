@@ -7,6 +7,9 @@ import {
   useReducer,
 } from "react";
 
+// TODO extract to Chat params
+const PAGE_LIMIT = process.env.NEXT_PUBLIC_PAGE_LIMIT;
+
 export interface IChatData_MessageExtended extends Message {
   unread: boolean;
 }
@@ -40,10 +43,19 @@ export interface IChatDataSetPaginationState {
   room_id: string;
   newState: TChatDataStateLiteral;
 }
-export interface IChatDataSetPaginationHasMore {
-  type: "setPaginationHasMore";
+export interface IChatDataSetPaginationLimit {
+  type: "setPaginationLimit";
   room_id: string;
-  newHasMore: boolean;
+  limit: number;
+}
+export interface IChatDataSetPaginationTotalCount {
+  type: "setPaginationTotalCount";
+  room_id: string;
+  totalCount: number;
+}
+export interface IChatDataIncreasePaginationPagesLoaded {
+  type: "increasePaginationPagesLoaded";
+  room_id: string;
 }
 
 type TChatDataProviderActions =
@@ -53,7 +65,9 @@ type TChatDataProviderActions =
   | IChatDataSetMessageAsRead
   | IChatDataSetScrollPosition
   | IChatDataSetPaginationState
-  | IChatDataSetPaginationHasMore;
+  | IChatDataSetPaginationTotalCount
+  | IChatDataIncreasePaginationPagesLoaded
+  | IChatDataSetPaginationLimit;
 
 export interface IChatData {
   room_id: string; // Pusher channel name
@@ -105,7 +119,10 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 },
                 pagination: {
                   historyLoadedState: "success",
-                  hasMore: true,
+                  // hasMore: true,
+                  limit: PAGE_LIMIT ? Number(PAGE_LIMIT) : 10,
+                  totalCount: 0,
+                  pagesLoaded: 0,
                 },
               },
             ]
@@ -165,14 +182,38 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
               }
             : room
         );
-      case "setPaginationHasMore":
+      case "setPaginationLimit":
         return chatData.map((room) =>
           room.room_id === action.room_id
             ? {
                 ...room,
                 pagination: {
                   ...room.pagination,
-                  hasMore: action.newHasMore,
+                  limit: action.limit,
+                },
+              }
+            : room
+        );
+      case "setPaginationTotalCount":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? {
+                ...room,
+                pagination: {
+                  ...room.pagination,
+                  totalCount: action.totalCount,
+                },
+              }
+            : room
+        );
+      case "increasePaginationPagesLoaded":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? {
+                ...room,
+                pagination: {
+                  ...room.pagination,
+                  pagesLoaded: room.pagination.pagesLoaded + 1,
                 },
               }
             : room

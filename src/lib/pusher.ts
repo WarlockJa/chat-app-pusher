@@ -9,9 +9,6 @@ export const pusherServer = new PusherServer({
   useTLS: true,
 });
 
-// TODO catch pusher service unavailable error
-// currently pusherClient responds with optimisic cache instance
-// maybe catch no response on message send or do a global connection check loop
 export const pusherClient = ({
   user_id,
   user_admin,

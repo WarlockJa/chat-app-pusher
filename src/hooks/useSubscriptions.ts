@@ -3,9 +3,9 @@ import { PresenceChannel } from "pusher-js";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import { PusherPresence } from "@/context/PusherProvider";
-import { getUnreadMessages } from "@/lib/apiDBMethods";
 import { z } from "zod";
 import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
+import { getUnreadMessages } from "@/lib/apiDBMethods/getUnreadMessages";
 
 type TSchemaApiV1PusherMessagePost = z.infer<
   typeof schemaApiV1PusherMessagePost

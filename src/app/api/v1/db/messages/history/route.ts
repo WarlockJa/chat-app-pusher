@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     });
 
     // if data.skip is NaN fetching total count of history messages from the DB
-    const totalNumberOfMessages = isNaN(data.skip)
+    const totalNumberOfMessages = isNaN(data.skip as number) // TODO TS?
       ? (
           (await prisma.channel.aggregateRaw({
             pipeline: [
@@ -172,7 +172,13 @@ export async function GET(req: NextRequest) {
         timestamp: message.timestamp.$date,
       }));
     } else readMessages = [];
-    return NextResponse.json(readMessages, { status: 200 });
+    return NextResponse.json(
+      {
+        messages: readMessages,
+        totalCount: isNaN(data.skip) ? totalNumberOfMessages : 0,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     // checking if error is a zod validation error
     return error instanceof z.ZodError

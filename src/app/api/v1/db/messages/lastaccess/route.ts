@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/globalForPrisma";
+import { prisma } from "@/lib/prisma/globalForPrisma";
 import { schemaApiV1dbMessagesLastaccessPOST } from "@/lib/validators/db/lastaccess";
 import { NextResponse } from "next/server";
 import { z } from "zod";

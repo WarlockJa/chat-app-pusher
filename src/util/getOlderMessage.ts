@@ -1,4 +1,4 @@
-import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
+import { IChatData } from "@/context/ChatDataProvider";
 
 interface IGetOlderMessageProps {
   first: { message_id: string; entryTimestamp: number };
@@ -6,6 +6,10 @@ interface IGetOlderMessageProps {
   activeRoom_chatData: IChatData;
 }
 
+// this is a helper function for useIOUnreadMsgArray
+// it compares two timestamps for two messages defined by
+// the message_id in first and second props fields
+// and returns the object with the older corresponding message
 export default function getOlderMessage({
   first,
   second,

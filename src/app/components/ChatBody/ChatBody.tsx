@@ -7,7 +7,10 @@ import ChatBodyReadMessages from "./ChatBodyReadMessages";
 import ChatBodyUnreadMessages from "./ChatBodyUnreadMessages";
 import { isScrolledBottom } from "@/util/scrollFunctions";
 import PaginationMarker from "./PaginationMarker";
-import useChatBodyScroll from "./useChatBodyScroll";
+import useChatBodyScroll from "@/hooks/ChatBody/useChatBodyScroll";
+
+// TODO extract to Chat params
+const PAGE_LIMIT = process.env.NEXT_PUBLIC_PAGE_LIMIT;
 
 export default function ChatBody({ userId }: { userId: IUserId }) {
   const { activeRoom } = useChatRoomsContext();
@@ -30,8 +33,10 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           previousUnreadMsgCount: 0,
         },
         pagination: {
-          hasMore: true,
           historyLoadedState: "success",
+          limit: PAGE_LIMIT ? Number(PAGE_LIMIT) : 10,
+          totalCount: 0,
+          pagesLoaded: 0,
         },
       };
 
@@ -97,11 +102,39 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   } else if (data.state === "error") {
     chatContent = "Error while loading messages from the database";
   } else {
+    // TODO MOVE PAGINATION TO API FFS!!!1one!!
     // timestamp for the last read message to compare with the first unread message
     const showFirstDate =
       readMessages.length > 0
         ? readMessages[readMessages.length - 1].timestamp
         : undefined;
+
+    // calculating if there's more history pages
+    const hasMore =
+      data.pagination.pagesLoaded < 1
+        ? true
+        : data.pagination.totalCount -
+            (data.pagination.pagesLoaded - 1) * data.pagination.limit >
+          0;
+
+    // calculating amount of messages to skip, to fetch another history page
+    // console.log(data.pagination);
+    const skip =
+      data.pagination.pagesLoaded < 1
+        ? Number("init")
+        : data.pagination.totalCount -
+            data.pagination.pagesLoaded * data.pagination.limit <
+          0
+        ? 0
+        : data.pagination.totalCount -
+          data.pagination.pagesLoaded * data.pagination.limit;
+
+    // adjusting the limit for the last page fetch
+    const calculatedLimit =
+      skip !== 0
+        ? data.pagination.limit
+        : data.pagination.totalCount -
+          (data.pagination.pagesLoaded - 1) * data.pagination.limit;
 
     // messages data to display
     chatContent = data ? (
@@ -112,11 +145,13 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
             <div className="chat__body--spinnerWrapper">
               <Spinner />
             </div>
-          ) : data.pagination.hasMore ? (
+          ) : hasMore ? (
             <PaginationMarker
               paginationMarker={paginationMarker}
               user_id={userId.user_id}
               channel_name={activeRoom}
+              limit={calculatedLimit}
+              skip={skip}
             />
           ) : null
         }

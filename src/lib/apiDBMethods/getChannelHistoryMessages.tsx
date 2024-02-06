@@ -2,15 +2,13 @@ import { z } from "zod";
 import { schemaApiV1dbMessagesHistoryGET } from "../validators/db/history";
 import {
   IChatDataAddRoomMessages,
-  IChatDataSetPaginationHasMore,
+  IChatDataIncreasePaginationPagesLoaded,
   IChatDataSetPaginationState,
+  IChatDataSetPaginationTotalCount,
   IChatDataSetRoomError,
   IChatData_MessageExtended,
 } from "@/context/ChatDataProvider";
 import { Message } from "@prisma/client";
-
-// TODO extract to Chat params
-const PAGE_LIMIT = 10;
 
 // inferring api endpoints expected types from zod models
 type TSchemaDBMessagesHistoryGET = z.infer<
@@ -28,26 +26,33 @@ export function getChannelHistoryMessages({
       | IChatDataAddRoomMessages
       | IChatDataSetRoomError
       | IChatDataSetPaginationState
-      | IChatDataSetPaginationHasMore
+      | IChatDataSetPaginationTotalCount
+      | IChatDataIncreasePaginationPagesLoaded
   ) => void;
 }) {
   fetch(
-    `/api/v1/db/messages/history?channel_name=${params.channel_name}&user_id=${
-      params.user_id
-    }&limit=${PAGE_LIMIT}&skip=${"feck"}` // TODO adjust ChatData to provide proper skip  number
+    `/api/v1/db/messages/history?channel_name=${params.channel_name}&user_id=${params.user_id}&limit=${params.limit}&skip=${params.skip}` // TODO adjust ChatData to provide proper skip value
   )
     .then((response) => response.json())
-    .then((result: Message[]) => {
-      const messages: IChatData_MessageExtended[] = result
-        ? result.map((message) => ({ ...message, unread: false }))
+    .then((result: { messages: Message[]; totalCount: number }) => {
+      const messages: IChatData_MessageExtended[] = result.messages
+        ? result.messages.map((message) => ({ ...message, unread: false }))
         : [];
 
-      // console.log(result);
+      // console.log(params.limit, params.skip);
+      console.log(result);
+      // setting totalCount for available history messages on first fetch
+      if (result.totalCount !== 0)
+        dispatchChatData({
+          type: "setPaginationTotalCount",
+          room_id: params.channel_name,
+          totalCount: result.totalCount,
+        });
+
+      // increasing pagesLoaded counter for the room
       dispatchChatData({
-        type: "setPaginationHasMore",
+        type: "increasePaginationPagesLoaded",
         room_id: params.channel_name,
-        // TODO add hasMore return from api
-        newHasMore: false,
       });
 
       // chat history loaded flag

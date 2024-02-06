@@ -55,7 +55,7 @@ type TChatDataStateLiteral = "loading" | "success" | "error";
 
 interface IScrollPosition {
   currentPosition: number;
-  isPreviousBottom: boolean;
+  isPreviousBottom: boolean; // move up from scrollPosition
   previousUnreadMsgCount: number;
 }
 
@@ -65,6 +65,9 @@ interface ICurrentRoomScrollData {
 }
 
 interface IChatDataPagination {
-  historyLoadedState: TChatDataStateLiteral;
-  hasMore: boolean;
+  historyLoadedState: TChatDataStateLiteral; // states for fetching history page
+  limit: number; // amount to fetch per page
+  totalCount: number; // total amount found in DB
+  // hasMore: boolean; // flag for data availability
+  pagesLoaded: number;
 }

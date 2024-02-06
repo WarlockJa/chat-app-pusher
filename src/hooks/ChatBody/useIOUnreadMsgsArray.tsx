@@ -1,5 +1,5 @@
 import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
-import { updateLastAccessTimestamp } from "@/lib/apiDBMethods";
+import { updateLastAccessTimestamp } from "@/lib/apiDBMethods/updateLastAccessTimestamp";
 import getOlderMessage from "@/util/getOlderMessage";
 import { useEffect, useRef } from "react";
 

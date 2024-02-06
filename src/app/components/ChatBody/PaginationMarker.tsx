@@ -1,15 +1,19 @@
 import { useChatDataContext } from "@/context/ChatDataProvider";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import { getChannelHistoryMessages } from "@/lib/apiDBMethods";
+import { getChannelHistoryMessages } from "@/lib/apiDBMethods/getChannelHistoryMessages";
 
 export default function PaginationMarker({
   paginationMarker,
   user_id,
   channel_name,
+  limit,
+  skip,
 }: {
   paginationMarker: React.RefObject<HTMLDivElement>;
   user_id: string;
   channel_name: string;
+  limit: number;
+  skip: number;
 }) {
   const { dispatch: dispatchChatData } = useChatDataContext();
 
@@ -28,6 +32,8 @@ export default function PaginationMarker({
       params: {
         user_id,
         channel_name,
+        limit,
+        skip,
       },
     });
   };

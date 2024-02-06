@@ -3,12 +3,9 @@ import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
 import { PusherPresence } from "@/context/PusherProvider";
 import { useState } from "react";
 import "./sendform.scss";
-import {
-  addChannelMessage,
-  updateLastAccessTimestamp,
-} from "@/lib/apiDBMethods";
-import { sendMessageEvent } from "@/lib/apiPusherMethods";
 import { useChatDataContext } from "@/context/ChatDataProvider";
+import { sendMessageEvent } from "@/lib/apiPusherMethods/sendMessageEvent";
+import { addChannelMessage } from "@/lib/apiDBMethods/addChannelMessage";
 
 export default function SendForm({
   userId,
