@@ -1,13 +1,14 @@
 import "./chatbody.scss";
 import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
 import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
-import Spinner from "@/util/Spinner";
+import Spinner from "@/util/spinners/Spinner";
 import { useRef, useState } from "react";
 import ChatBodyReadMessages from "./ChatBodyReadMessages";
 import ChatBodyUnreadMessages from "./ChatBodyUnreadMessages";
 import { isScrolledBottom } from "@/util/scrollFunctions";
 import PaginationMarker from "./PaginationMarker";
 import useChatBodyScroll from "@/hooks/ChatBody/useChatBodyScroll";
+import SpinnerFlat from "@/util/spinners/SpinnerFlat";
 
 // TODO extract to Chat params
 const PAGE_LIMIT = process.env.NEXT_PUBLIC_PAGE_LIMIT;
@@ -143,7 +144,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
           // pagintaion marker for chat data history
           data.pagination.historyLoadedState === "loading" ? (
             <div className="chat__body--spinnerWrapper">
-              <Spinner />
+              <SpinnerFlat />
             </div>
           ) : hasMore ? (
             <PaginationMarker
