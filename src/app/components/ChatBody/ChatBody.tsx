@@ -36,8 +36,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
         pagination: {
           historyLoadedState: "success",
           limit: PAGE_LIMIT ? Number(PAGE_LIMIT) : 10,
-          totalCount: 0,
-          pagesLoaded: 0,
+          hasMore: true,
         },
       };
 
@@ -103,39 +102,11 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   } else if (data.state === "error") {
     chatContent = "Error while loading messages from the database";
   } else {
-    // TODO MOVE PAGINATION TO API FFS!!!1one!!
     // timestamp for the last read message to compare with the first unread message
     const showFirstDate =
       readMessages.length > 0
         ? readMessages[readMessages.length - 1].timestamp
         : undefined;
-
-    // calculating if there's more history pages
-    const hasMore =
-      data.pagination.pagesLoaded < 1
-        ? true
-        : data.pagination.totalCount -
-            (data.pagination.pagesLoaded - 1) * data.pagination.limit >
-          0;
-
-    // calculating amount of messages to skip, to fetch another history page
-    // console.log(data.pagination);
-    const skip =
-      data.pagination.pagesLoaded < 1
-        ? Number("init")
-        : data.pagination.totalCount -
-            data.pagination.pagesLoaded * data.pagination.limit <
-          0
-        ? 0
-        : data.pagination.totalCount -
-          data.pagination.pagesLoaded * data.pagination.limit;
-
-    // adjusting the limit for the last page fetch
-    const calculatedLimit =
-      skip !== 0
-        ? data.pagination.limit
-        : data.pagination.totalCount -
-          (data.pagination.pagesLoaded - 1) * data.pagination.limit;
 
     // messages data to display
     chatContent = data ? (
@@ -146,13 +117,12 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
             <div className="chat__body--spinnerWrapper">
               <SpinnerFlat />
             </div>
-          ) : hasMore ? (
+          ) : data.pagination.hasMore ? (
             <PaginationMarker
               paginationMarker={paginationMarker}
-              user_id={userId.user_id}
               channel_name={activeRoom}
-              limit={calculatedLimit}
-              skip={skip}
+              limit={data.pagination.limit}
+              message_id={data.messages[0] ? data.messages[0].id : null}
             />
           ) : null
         }

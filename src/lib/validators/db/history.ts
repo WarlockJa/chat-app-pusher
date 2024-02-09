@@ -3,17 +3,12 @@ import { z } from "zod";
 
 export const schemaApiV1dbMessagesHistoryGET = z
   .object({
-    // TODO replace after TEST
-    // userId: z.string().uuid()
-    user_id: z
+    message_id: z
       .string({
-        required_error: "UserId is required",
-        invalid_type_error: "Required type for userId is string",
+        required_error: "Message ID required",
       })
-      .max(36, { message: "Maximum length for userId is 36" })
-      .regex(regexAlphanumericWithDash, {
-        message: "UserId may only contains alphanumerical characters and dash",
-      }),
+      .uuid({ message: "Message ID must be UUIDv4" })
+      .nullable(),
     channel_name: z
       .string({
         required_error: "Channel name is required",
@@ -26,13 +21,47 @@ export const schemaApiV1dbMessagesHistoryGET = z
       .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }),
-    limit: z.number({
-      required_error: "Limit of messages to return required",
-      invalid_type_error: "Must be a number",
-    }),
-    skip: z.union([z.number(), z.nan()]),
+    limit: z
+      .number({
+        required_error: "Limit of messages to return required",
+        invalid_type_error: "Must be a number",
+      })
+      .nullable(),
   })
   .strict();
+// TODO delete
+// export const schemaApiV1dbMessagesHistoryGET = z
+//   .object({
+//     // TODO replace after TEST
+//     // userId: z.string().uuid()
+//     user_id: z
+//       .string({
+//         required_error: "UserId is required",
+//         invalid_type_error: "Required type for userId is string",
+//       })
+//       .max(36, { message: "Maximum length for userId is 36" })
+//       .regex(regexAlphanumericWithDash, {
+//         message: "UserId may only contains alphanumerical characters and dash",
+//       }),
+//     channel_name: z
+//       .string({
+//         required_error: "Channel name is required",
+//         invalid_type_error: "Required type for channel name is string",
+//       })
+//       .startsWith("presence-", {
+//         message: "Channel name must start with 'presence-'",
+//       })
+//       .max(45)
+//       .regex(regexAlphanumericWithDash, {
+//         message: "UserId may only contains alphanumerical characters and dash",
+//       }),
+//     limit: z.number({
+//       required_error: "Limit of messages to return required",
+//       invalid_type_error: "Must be a number",
+//     }),
+//     skip: z.union([z.number(), z.nan()]),
+//   })
+//   .strict();
 
 export const schemaApiV1dbMessagesHistoryPOST = z
   .object({

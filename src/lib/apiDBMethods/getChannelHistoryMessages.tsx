@@ -2,9 +2,8 @@ import { z } from "zod";
 import { schemaApiV1dbMessagesHistoryGET } from "../validators/db/history";
 import {
   IChatDataAddRoomMessages,
-  IChatDataIncreasePaginationPagesLoaded,
   IChatDataSetPaginationState,
-  IChatDataSetPaginationTotalCount,
+  IChatDataSetPaginationHasMore,
   IChatDataSetRoomError,
   IChatData_MessageExtended,
 } from "@/context/ChatDataProvider";
@@ -26,33 +25,25 @@ export function getChannelHistoryMessages({
       | IChatDataAddRoomMessages
       | IChatDataSetRoomError
       | IChatDataSetPaginationState
-      | IChatDataSetPaginationTotalCount
-      | IChatDataIncreasePaginationPagesLoaded
+      | IChatDataSetPaginationHasMore
   ) => void;
 }) {
   fetch(
-    `/api/v1/db/messages/history?channel_name=${params.channel_name}&user_id=${params.user_id}&limit=${params.limit}&skip=${params.skip}` // TODO adjust ChatData to provide proper skip value
+    `/api/v1/db/messages/history?channel_name=${params.channel_name}${
+      params.message_id ? `&message_id=${params.message_id}` : ""
+    }${params.limit ? `&limit=${params.limit}` : ""}`
   )
     .then((response) => response.json())
-    .then((result: { messages: Message[]; totalCount: number }) => {
+    .then((result: { messages: Message[]; hasMore: boolean }) => {
       const messages: IChatData_MessageExtended[] = result.messages
         ? result.messages.map((message) => ({ ...message, unread: false }))
         : [];
 
-      // console.log(params.limit, params.skip);
-      console.log(result);
       // setting totalCount for available history messages on first fetch
-      if (result.totalCount !== 0)
-        dispatchChatData({
-          type: "setPaginationTotalCount",
-          room_id: params.channel_name,
-          totalCount: result.totalCount,
-        });
-
-      // increasing pagesLoaded counter for the room
       dispatchChatData({
-        type: "increasePaginationPagesLoaded",
+        type: "setPaginationHasMore",
         room_id: params.channel_name,
+        hasMore: result.hasMore,
       });
 
       // chat history loaded flag

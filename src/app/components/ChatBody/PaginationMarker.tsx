@@ -4,16 +4,14 @@ import { getChannelHistoryMessages } from "@/lib/apiDBMethods/getChannelHistoryM
 
 export default function PaginationMarker({
   paginationMarker,
-  user_id,
   channel_name,
   limit,
-  skip,
+  message_id,
 }: {
   paginationMarker: React.RefObject<HTMLDivElement>;
-  user_id: string;
   channel_name: string;
   limit: number;
-  skip: number;
+  message_id: string | null;
 }) {
   const { dispatch: dispatchChatData } = useChatDataContext();
 
@@ -30,10 +28,9 @@ export default function PaginationMarker({
     getChannelHistoryMessages({
       dispatchChatData,
       params: {
-        user_id,
         channel_name,
         limit,
-        skip,
+        message_id,
       },
     });
   };

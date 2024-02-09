@@ -67,7 +67,5 @@ interface ICurrentRoomScrollData {
 interface IChatDataPagination {
   historyLoadedState: TChatDataStateLiteral; // states for fetching history page
   limit: number; // amount to fetch per page
-  totalCount: number; // total amount found in DB
-  // hasMore: boolean; // flag for data availability
-  pagesLoaded: number;
+  hasMore: boolean; // flag for data availability
 }

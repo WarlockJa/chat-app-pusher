@@ -48,14 +48,10 @@ export interface IChatDataSetPaginationLimit {
   room_id: string;
   limit: number;
 }
-export interface IChatDataSetPaginationTotalCount {
-  type: "setPaginationTotalCount";
+export interface IChatDataSetPaginationHasMore {
+  type: "setPaginationHasMore";
   room_id: string;
-  totalCount: number;
-}
-export interface IChatDataIncreasePaginationPagesLoaded {
-  type: "increasePaginationPagesLoaded";
-  room_id: string;
+  hasMore: boolean;
 }
 
 type TChatDataProviderActions =
@@ -65,8 +61,7 @@ type TChatDataProviderActions =
   | IChatDataSetMessageAsRead
   | IChatDataSetScrollPosition
   | IChatDataSetPaginationState
-  | IChatDataSetPaginationTotalCount
-  | IChatDataIncreasePaginationPagesLoaded
+  | IChatDataSetPaginationHasMore
   | IChatDataSetPaginationLimit;
 
 export interface IChatData {
@@ -119,10 +114,8 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 },
                 pagination: {
                   historyLoadedState: "success",
-                  // hasMore: true,
+                  hasMore: true,
                   limit: PAGE_LIMIT ? Number(PAGE_LIMIT) : 10,
-                  totalCount: 0,
-                  pagesLoaded: 0,
                 },
               },
             ]
@@ -194,26 +187,14 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
               }
             : room
         );
-      case "setPaginationTotalCount":
+      case "setPaginationHasMore":
         return chatData.map((room) =>
           room.room_id === action.room_id
             ? {
                 ...room,
                 pagination: {
                   ...room.pagination,
-                  totalCount: action.totalCount,
-                },
-              }
-            : room
-        );
-      case "increasePaginationPagesLoaded":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? {
-                ...room,
-                pagination: {
-                  ...room.pagination,
-                  pagesLoaded: room.pagination.pagesLoaded + 1,
+                  hasMore: action.hasMore,
                 },
               }
             : room
