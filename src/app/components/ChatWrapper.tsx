@@ -15,6 +15,7 @@ export default function ChatWrapper({
   user_name,
   user_admin,
   storage_uuid,
+  pageLimit,
 }: IChatProps) {
   // populating state with user data
   const { loadingUserId } = useUserId({
@@ -40,7 +41,11 @@ export default function ChatWrapper({
   return (
     <ChatRoomsProvider userId={userId}>
       <ChatDataProvider>
-        <Chat userId={userId} pusher={pusher} />
+        <Chat
+          userId={userId}
+          pusher={pusher}
+          pageLimit={pageLimit ? pageLimit : 30}
+        />
       </ChatDataProvider>
     </ChatRoomsProvider>
   );

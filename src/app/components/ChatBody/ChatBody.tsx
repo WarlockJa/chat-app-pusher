@@ -10,10 +10,13 @@ import PaginationMarker from "./PaginationMarker";
 import useChatBodyScroll from "@/hooks/ChatBody/useChatBodyScroll";
 import SpinnerFlat from "@/util/spinners/SpinnerFlat";
 
-// TODO extract to Chat params
-const PAGE_LIMIT = process.env.NEXT_PUBLIC_PAGE_LIMIT;
-
-export default function ChatBody({ userId }: { userId: IUserId }) {
+export default function ChatBody({
+  userId,
+  pageLimit,
+}: {
+  userId: IUserId;
+  pageLimit: number;
+}) {
   const { activeRoom } = useChatRoomsContext();
   const { chatData, dispatch } = useChatDataContext();
 
@@ -35,12 +38,12 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
         },
         pagination: {
           historyLoadedState: "success",
-          limit: PAGE_LIMIT ? Number(PAGE_LIMIT) : 10,
+          limit: pageLimit,
           hasMore: true,
         },
       };
 
-  // TODO pagination
+  // pagination marker
   const paginationMarker = useRef<HTMLDivElement>(null);
   // refs array to unread <li> elements
   const unreadMessagesRefsArray = useRef<HTMLDivElement[]>([]);

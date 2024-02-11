@@ -10,6 +10,7 @@ export default function Home() {
         <PusherConnectionProvider>
           <ChatWrapper
             storage_uuid={process.env.NEXT_PUBLIC_LOCAL_STORAGE_UUID}
+            pageLimit={10}
           />
         </PusherConnectionProvider>
       </UserIdProvider>

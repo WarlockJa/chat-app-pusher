@@ -7,9 +7,11 @@ import { PusherPresence } from "@/context/PusherProvider";
 export default function Chat({
   userId,
   pusher,
+  pageLimit,
 }: {
   userId: IUserId;
   pusher: PusherPresence;
+  pageLimit: number;
 }) {
   // console.log("------------Chat rerender-------------");
 
@@ -18,7 +20,7 @@ export default function Chat({
       <SubscriptionsHookWrapper pusher={pusher} userId={userId} />
       <ChatRooms />
       <div className="chat__wrapper">
-        <ChatBody userId={userId} />
+        <ChatBody userId={userId} pageLimit={pageLimit} />
         <SendForm userId={userId} pusher={pusher} />
       </div>
     </div>
