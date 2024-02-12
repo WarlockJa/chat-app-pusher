@@ -45,16 +45,6 @@ export interface IChatDataSetPaginationHasMore {
   room_id: string;
   hasMore: boolean;
 }
-export interface IChatDataAddTypingUser {
-  type: "addTypingUser";
-  room_id: string;
-  user: string;
-}
-export interface IChatDataRemoveTypingUser {
-  type: "removeTypingUser";
-  room_id: string;
-  user: string;
-}
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
@@ -64,9 +54,7 @@ type TChatDataProviderActions =
   | IChatDataSetScrollPosition
   | IChatDataSetPaginationState
   | IChatDataSetPaginationHasMore
-  | IChatDataSetPaginationLimit
-  | IChatDataAddTypingUser
-  | IChatDataRemoveTypingUser;
+  | IChatDataSetPaginationLimit;
 
 export interface IChatData {
   room_id: string; // Pusher channel name
@@ -210,27 +198,6 @@ export function ChatDataProvider({
                   ...room.pagination,
                   hasMore: action.hasMore,
                 },
-              }
-            : room
-        );
-      case "addTypingUser":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? {
-                ...room,
-                typing: [
-                  ...room.typing.filter((user) => user !== action.user),
-                  action.user,
-                ],
-              }
-            : room
-        );
-      case "removeTypingUser":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? {
-                ...room,
-                typing: [...room.typing.filter((user) => user !== action.user)],
               }
             : room
         );

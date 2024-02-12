@@ -8,6 +8,7 @@ import {
 import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
+import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -23,6 +24,8 @@ export default function useSubscriptions({
   const { roomsList, dispatch: dispatchChatRooms } = useChatRoomsContext();
   // local chat data
   const { dispatch: dispatchChatData } = useChatDataContext();
+  // users typing data
+  const { dispatchUsersTyping } = useUsersTypingContext();
   // timeouts array for typing users. Using ref because bind makes a snapshot of useState and can't access new data
   const typingUsers = useRef<ITypingUserTimeout[]>([]);
 
@@ -73,7 +76,7 @@ export default function useSubscriptions({
             data: Omit<TSchemaApiV1PusherTypingPost, "activeRoom">
           ) {
             // sending typing information to the chatData
-            dispatchChatData({
+            dispatchUsersTyping({
               type: "addTypingUser",
               room_id: newChannel.name,
               user: data.author,
@@ -92,7 +95,7 @@ export default function useSubscriptions({
               id: authorId,
               timeout: setTimeout(
                 () =>
-                  dispatchChatData({
+                  dispatchUsersTyping({
                     type: "removeTypingUser",
                     room_id: newChannel.name,
                     user: data.author,
@@ -150,6 +153,10 @@ export default function useSubscriptions({
         newChannel.bind("pusher:subscription_succeeded", () => {
           dispatchChatData({
             type: "ChatData_addRoom",
+            room_id: newChannel.name,
+          });
+          dispatchUsersTyping({
+            type: "UsersTyping_addRoom",
             room_id: newChannel.name,
           });
 

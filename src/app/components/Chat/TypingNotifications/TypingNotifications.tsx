@@ -1,27 +1,22 @@
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import "./typingnotifications.scss";
-import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
+import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 export default function TypingNotifications() {
-  // TODO this will rerender every time chatData changes
-  // we need to do something
   const { activeRoom } = useChatRoomsContext();
-  const { chatData } = useChatDataContext();
+  const { getRoomTypingUsers } = useUsersTypingContext();
 
-  // getting active room chat data
-  const chatData_ActiveRoom = chatData?.find(
-    (room) => room.room_id === activeRoom
-  );
+  // getting active room typing users data
+  const data = getRoomTypingUsers(activeRoom);
 
-  if (!chatData_ActiveRoom) return;
-
-  const typingUsers: string = chatData_ActiveRoom.typing.reduce(
+  // forming output string
+  const typingUsers: string = data.users.reduce(
     (users, user, index) => users.concat(index === 0 ? `${user}` : `, ${user}`),
     ""
   );
 
   const content =
     typingUsers !== ""
-      ? chatData_ActiveRoom.typing.length === 1
+      ? data.users.length === 1
         ? `${typingUsers} is typing...`
         : `${typingUsers} are typing...`
       : "";

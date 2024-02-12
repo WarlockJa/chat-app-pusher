@@ -9,6 +9,7 @@ import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
 import { ChatRoomsProvider } from "@/context/innerContexts/ChatRoomsProvider";
 import { ChatDataProvider } from "@/context/innerContexts/ChatDataProvider";
 import Chat from "./Chat/Chat";
+import { UsersTypingProvider } from "@/context/innerContexts/UsersTypingProvider";
 
 export default function ChatPusher({
   user_id,
@@ -41,11 +42,13 @@ export default function ChatPusher({
   return (
     <ChatRoomsProvider userId={userId}>
       <ChatDataProvider pageLimit={pageLimit ? pageLimit : 30}>
-        <Chat
-          userId={userId}
-          pusher={pusher}
-          pageLimit={pageLimit ? pageLimit : 30}
-        />
+        <UsersTypingProvider>
+          <Chat
+            userId={userId}
+            pusher={pusher}
+            pageLimit={pageLimit ? pageLimit : 30}
+          />
+        </UsersTypingProvider>
       </ChatDataProvider>
     </ChatRoomsProvider>
   );
