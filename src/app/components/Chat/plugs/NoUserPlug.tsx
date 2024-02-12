@@ -1,5 +1,5 @@
 import "../chat.scss";
-import "../sendform.scss";
+import "../SendForm/sendform.scss";
 import { writeLocalStorage } from "@/util/localStorageRW";
 import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
 

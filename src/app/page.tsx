@@ -1,5 +1,5 @@
 import { PusherConnectionProvider } from "@/context/outerContexts/PusherProvider";
-import ChatWrapper from "./components/ChatWrapper";
+import ChatPusher from "./components/ChatPusher";
 import styles from "./page.module.css";
 import { UserIdProvider } from "@/context/outerContexts/UserIdProvider";
 
@@ -8,7 +8,7 @@ export default function Home() {
     <main className={styles.main}>
       <UserIdProvider>
         <PusherConnectionProvider>
-          <ChatWrapper
+          <ChatPusher
             storage_uuid={process.env.NEXT_PUBLIC_LOCAL_STORAGE_UUID}
             pageLimit={10}
           />

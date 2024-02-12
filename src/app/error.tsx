@@ -1,7 +1,5 @@
 "use client"; // Error components must be Client Components
-import "./components/chat.scss";
-
-// import { useEffect } from "react";
+import "./components/Chat/chat.scss";
 
 export default function Error({
   error,

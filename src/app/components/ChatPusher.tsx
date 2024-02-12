@@ -1,16 +1,16 @@
 "use client";
-import "./chat.scss";
-import NoUserPlug from "./plugs/NoUserPlug";
-import LoadingPlug from "./plugs/LoadingPlug";
+import "./Chat/chat.scss";
+import NoUserPlug from "./Chat/plugs/NoUserPlug";
+import LoadingPlug from "./Chat/plugs/LoadingPlug";
 import usePusherConnection from "@/hooks/usePusherConnection";
 import useUserId from "@/hooks/useUserId";
 import { usePusherContext } from "@/context/outerContexts/PusherProvider";
 import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
 import { ChatRoomsProvider } from "@/context/innerContexts/ChatRoomsProvider";
 import { ChatDataProvider } from "@/context/innerContexts/ChatDataProvider";
-import Chat from "./Chat";
+import Chat from "./Chat/Chat";
 
-export default function ChatWrapper({
+export default function ChatPusher({
   user_id,
   user_name,
   user_admin,

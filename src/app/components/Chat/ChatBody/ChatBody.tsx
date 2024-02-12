@@ -6,10 +6,10 @@ import {
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import Spinner from "@/util/spinners/Spinner";
 import { useRef, useState } from "react";
-import ChatBodyReadMessages from "./ChatBodyReadMessages";
-import ChatBodyUnreadMessages from "./ChatBodyUnreadMessages";
+import ChatBodyReadMessages from "./components/ChatBodyReadMessages";
+import ChatBodyUnreadMessages from "./components/ChatBodyUnreadMessages";
 import { isScrolledBottom } from "@/util/scrollFunctions";
-import PaginationMarker from "./PaginationMarker";
+import PaginationMarker from "./components/PaginationMarker";
 import useChatBodyScroll from "@/hooks/ChatBody/useChatBodyScroll";
 import SpinnerFlat from "@/util/spinners/SpinnerFlat";
 

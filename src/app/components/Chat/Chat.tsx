@@ -1,7 +1,7 @@
 import ChatBody from "./ChatBody/ChatBody";
-import ChatRooms from "./ChatRooms";
-import SendForm from "./SendForm";
-import SubscriptionsHookWrapper from "./SubscriptionsHookWrapper";
+import ChatRooms from "./ChatRooms/ChatRooms";
+import SendForm from "./SendForm/SendForm";
+import SubscriptionsHookWrapper from "./ChatBody/components/SubscriptionsHookWrapper";
 import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import TypingNotifications from "./TypingNotifications/TypingNotifications";
 
