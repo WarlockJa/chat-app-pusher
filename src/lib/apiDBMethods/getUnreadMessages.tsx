@@ -2,7 +2,7 @@ import {
   IChatDataAddRoomMessages,
   IChatDataSetRoomError,
   IChatData_MessageExtended,
-} from "@/context/ChatDataProvider";
+} from "@/context/innerContexts/ChatDataProvider";
 import { Message } from "@prisma/client";
 import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/generatedTypes";
 

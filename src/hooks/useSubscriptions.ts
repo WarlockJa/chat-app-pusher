@@ -23,7 +23,7 @@ export default function useSubscriptions({
   // roomsList context and useReducer dispatch methods
   const { roomsList, dispatch: dispatchChatRooms } = useChatRoomsContext();
   // local chat data
-  const { dispatch: dispatchChatData } = useChatDataContext();
+  const { dispatchChatData } = useChatDataContext();
   // users typing data
   const { dispatchUsersTyping } = useUsersTypingContext();
   // timeouts array for typing users. Using ref because bind makes a snapshot of useState and can't access new data

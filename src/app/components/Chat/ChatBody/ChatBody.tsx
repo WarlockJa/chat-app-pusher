@@ -21,32 +21,32 @@ export default function ChatBody({
   pageLimit: number;
 }) {
   const { activeRoom } = useChatRoomsContext();
-  const { chatData, dispatch } = useChatDataContext();
+  const { dispatchChatData, getRoomChatData } = useChatDataContext();
 
-  // getting active room chat data
-  const chatData_ActiveRoom = chatData?.find(
-    (room) => room.room_id === activeRoom
-  );
+  const data = getRoomChatData(activeRoom);
+  // // getting active room chat data
+  // const chatData_ActiveRoom = chatData?.find(
+  //   (room) => room.room_id === activeRoom
+  // );
 
-  // TODO why is this here? It should not exist
-  const data: IChatData = chatData_ActiveRoom
-    ? chatData_ActiveRoom
-    : {
-        room_id: activeRoom,
-        messages: [],
-        state: "loading",
-        scrollPosition: {
-          currentPosition: 999999,
-          isPreviousBottom: false,
-          previousUnreadMsgCount: 0,
-        },
-        pagination: {
-          historyLoadedState: "success",
-          limit: pageLimit,
-          hasMore: true,
-        },
-        typing: [],
-      };
+  // // TODO why is this here? It should not exist
+  // const data: IChatData = chatData_ActiveRoom
+  //   ? chatData_ActiveRoom
+  //   : {
+  //       room_id: activeRoom,
+  //       messages: [],
+  //       state: "loading",
+  //       scrollPosition: {
+  //         currentPosition: 999999,
+  //         isPreviousBottom: false,
+  //         previousUnreadMsgCount: 0,
+  //       },
+  //       pagination: {
+  //         historyLoadedState: "success",
+  //         limit: pageLimit,
+  //         hasMore: true,
+  //       },
+  //     };
 
   // pagination marker
   const paginationMarker = useRef<HTMLDivElement>(null);
@@ -90,7 +90,7 @@ export default function ChatBody({
     activeRoom,
     chatBodyRef,
     currentRoomScrollData,
-    dispatch,
+    dispatchChatData,
     setCurrentRoomScrollData,
     unreadMessagesRefsArray,
     activeRoomScrollPosition: data.scrollPosition.currentPosition,

@@ -1,4 +1,4 @@
-import { IChatData } from "@/context/ChatDataProvider";
+import { IChatData } from "@/context/innerContexts/ChatDataProvider";
 
 interface IGetOlderMessageProps {
   first: { message_id: string; entryTimestamp: number };

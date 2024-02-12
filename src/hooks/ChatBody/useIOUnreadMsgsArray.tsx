@@ -28,7 +28,7 @@ export default function useIOUnreadMsgsArray({
   const observerRef = useRef<IntersectionObserver | null>(null);
   // handleIntersection dependencies
   // TODO pass a props
-  const { dispatch } = useChatDataContext();
+  const { dispatchChatData } = useChatDataContext();
 
   // initializing observer
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function useIOUnreadMsgsArray({
           observerRef.current?.unobserve(entry.target);
 
           // updating status for the message as being read
-          dispatch({
+          dispatchChatData({
             type: "setMessageAsRead",
             room_id: activeRoom,
             message_id: entry.target.id,

@@ -19,7 +19,7 @@ export default function SendForm({
 
   const { activeRoom } = useChatRoomsContext();
   const [message, setMessage] = useState<string>("");
-  const { dispatch: dispatchChatData } = useChatDataContext();
+  const { dispatchChatData } = useChatDataContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

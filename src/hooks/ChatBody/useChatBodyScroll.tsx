@@ -27,7 +27,7 @@ interface IUseChatBodyScrollProps {
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
   currentRoomScrollData: ICurrentRoomScrollData;
   setCurrentRoomScrollData: (data: ICurrentRoomScrollData) => void;
-  dispatch: (action: IChatDataSetScrollPosition) => void;
+  dispatchChatData: (action: IChatDataSetScrollPosition) => void;
   activeRoom: string;
   activeRoomScrollPosition: number;
   // 3-4
@@ -42,7 +42,7 @@ export default function useChatBodyScroll({
   activeRoomScrollPosition,
   chatBodyRef,
   currentRoomScrollData,
-  dispatch,
+  dispatchChatData,
   setCurrentRoomScrollData,
   unreadMessagesRefsArray,
   topReadMessageMarker,
@@ -62,7 +62,7 @@ export default function useChatBodyScroll({
       // Updating last scroll position for the active room that is about to change
       if (currentRoomScrollData.currentRoom !== "") {
         // saving scroll data to previous room if existed
-        dispatch({
+        dispatchChatData({
           type: "setScrollPosition",
           room_id: currentRoomScrollData.currentRoom,
           scrollPosition: currentRoomScrollData.scrollPosition,

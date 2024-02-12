@@ -62,13 +62,13 @@ export interface IChatData {
   state: TChatDataStateLiteral; // current room loading state
   scrollPosition: IScrollPosition;
   pagination: IChatDataPagination;
-  typing: string[];
   error?: Error;
 }
 
 interface IChatDataContext {
   chatData: IChatData[] | null;
-  dispatch: (action: TChatDataProviderActions) => void;
+  dispatchChatData: (action: TChatDataProviderActions) => void;
+  getRoomChatData: (room_id: string) => IChatData;
   // setChatData: (
   //   newChatData:
   //     | ((prev: IChatData[] | null) => IChatData[] | null) // figuring out this type took a while
@@ -89,11 +89,33 @@ export function ChatDataProvider({
   pageLimit: number;
 }) {
   const initialStateChatData: IChatData[] = [];
-  const [chatData, dispatch] = useReducer(
+  const [chatData, dispatchChatData] = useReducer(
     chatDataReducer,
     initialStateChatData
   );
 
+  // state methods
+  function getRoomChatData(room_id: string) {
+    const roomData = chatData.find((room) => room.room_id === room_id);
+    const emptyRoom: IChatData = {
+      room_id,
+      messages: [],
+      state: "loading",
+      scrollPosition: {
+        currentPosition: 999999,
+        isPreviousBottom: false,
+        previousUnreadMsgCount: 0,
+      },
+      pagination: {
+        historyLoadedState: "success",
+        hasMore: true,
+        limit: pageLimit,
+      },
+    };
+    return roomData ? roomData : emptyRoom;
+  }
+
+  // reducers
   function chatDataReducer(
     chatData: IChatData[],
     action: TChatDataProviderActions
@@ -118,7 +140,6 @@ export function ChatDataProvider({
                   hasMore: true,
                   limit: pageLimit,
                 },
-                typing: [],
               },
             ]
           : chatData;
@@ -207,7 +228,9 @@ export function ChatDataProvider({
   }
 
   return (
-    <ChatDataContext.Provider value={{ chatData, dispatch }}>
+    <ChatDataContext.Provider
+      value={{ chatData, dispatchChatData, getRoomChatData }}
+    >
       {children}
     </ChatDataContext.Provider>
   );

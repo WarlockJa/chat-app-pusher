@@ -13,7 +13,7 @@ export default function PaginationMarker({
   limit: number;
   message_id: string | null;
 }) {
-  const { dispatch: dispatchChatData } = useChatDataContext();
+  const { dispatchChatData } = useChatDataContext();
 
   // callback for the pagination marker intersection event
   const handleMarkerIntersection = () => {
