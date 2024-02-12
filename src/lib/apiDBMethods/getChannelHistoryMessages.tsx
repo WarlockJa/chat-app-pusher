@@ -1,5 +1,3 @@
-import { z } from "zod";
-import { schemaApiV1dbMessagesHistoryGET } from "../validators/db/history";
 import {
   IChatDataAddRoomMessages,
   IChatDataSetPaginationState,
@@ -8,18 +6,14 @@ import {
   IChatData_MessageExtended,
 } from "@/context/ChatDataProvider";
 import { Message } from "@prisma/client";
-
-// inferring api endpoints expected types from zod models
-type TSchemaDBMessagesHistoryGET = z.infer<
-  typeof schemaApiV1dbMessagesHistoryGET
->;
+import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/generatedTypes";
 
 // get messages from DB for channel collection
 export function getChannelHistoryMessages({
   params,
   dispatchChatData,
 }: {
-  params: TSchemaDBMessagesHistoryGET;
+  params: TSchemaApiV1dbMessagesHistoryGET;
   dispatchChatData: (
     action:
       | IChatDataAddRoomMessages

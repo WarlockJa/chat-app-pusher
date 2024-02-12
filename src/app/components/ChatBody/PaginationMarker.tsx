@@ -1,4 +1,4 @@
-import { useChatDataContext } from "@/context/ChatDataProvider";
+import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import { getChannelHistoryMessages } from "@/lib/apiDBMethods/getChannelHistoryMessages";
 

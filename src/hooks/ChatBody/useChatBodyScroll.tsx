@@ -18,7 +18,7 @@
 import {
   IChatDataSetScrollPosition,
   IChatData_MessageExtended,
-} from "@/context/ChatDataProvider";
+} from "@/context/innerContexts/ChatDataProvider";
 import { useLayoutEffect, useRef } from "react";
 
 interface IUseChatBodyScrollProps {

@@ -1,4 +1,4 @@
-import { PusherPresence } from "@/context/PusherProvider";
+import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import useSubscriptions from "@/hooks/useSubscriptions";
 
 export default function SubscriptionsHookWrapper({

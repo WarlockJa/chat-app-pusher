@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PresenceChannel } from "pusher-js";
-import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
-import { useChatDataContext } from "@/context/ChatDataProvider";
-import { PusherPresence } from "@/context/PusherProvider";
-import { z } from "zod";
-import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
 import { getUnreadMessages } from "@/lib/apiDBMethods/getUnreadMessages";
-
-type TSchemaApiV1PusherMessagePost = z.infer<
-  typeof schemaApiV1PusherMessagePost
->;
+import {
+  TSchemaApiV1PusherMessagePost,
+  TSchemaApiV1PusherTypingPost,
+} from "@/lib/validators/pusher/generatedTypes";
+import { PusherPresence } from "@/context/outerContexts/PusherProvider";
+import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
+import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -22,16 +20,14 @@ export default function useSubscriptions({
 }) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // roomsList context and useReducer dispatch methods
-  const {
-    roomsList,
-    activeRoom,
-    dispatch: dispatchChatRooms,
-  } = useChatRoomsContext();
+  const { roomsList, dispatch: dispatchChatRooms } = useChatRoomsContext();
   // local chat data
   const { dispatch: dispatchChatData } = useChatDataContext();
+  // timeouts array for typing users. Using ref because bind makes a snapshot of useState and can't access new data
+  const typingUsers = useRef<ITypingUserTimeout[]>([]);
 
   useEffect(() => {
-    const { user_id, user_admin } = userId;
+    const { user_admin } = userId;
 
     // subscribing to channels added to roomsList
     roomsList.forEach((room) => {
@@ -47,9 +43,13 @@ export default function useSubscriptions({
         // if user is not an administrator no further interactions with presence-system required
         if (room.roomId === "presence-system" && !user_admin) return;
 
+        // binding to the "message" event
         newChannel.bind(
           "message",
-          async function (data: TSchemaApiV1PusherMessagePost) {
+          async function (
+            data: Omit<TSchemaApiV1PusherMessagePost, "activeRoom">
+          ) {
+            // adding new message to the chatData
             dispatchChatData({
               type: "addRoomMessages",
               room_id: newChannel.name,
@@ -63,6 +63,49 @@ export default function useSubscriptions({
                 },
               ],
             });
+          }
+        );
+
+        // binding to the "typing" event
+        newChannel.bind(
+          "typing",
+          async function (
+            data: Omit<TSchemaApiV1PusherTypingPost, "activeRoom">
+          ) {
+            // sending typing information to the chatData
+            dispatchChatData({
+              type: "addTypingUser",
+              room_id: newChannel.name,
+              user: data.author,
+            });
+
+            // creating/refreshing typing notification for the user in the room
+            // creating id for the author based on the name and the channel
+            const authorId = newChannel.name.concat(data.author);
+            // clearing timeout from the typingUsers arra for the author, if already exists
+            clearTimeout(
+              typingUsers.current.find((user) => user.id === authorId)?.timeout
+            );
+
+            // creating a new timeout object
+            const typingUser: ITypingUserTimeout = {
+              id: authorId,
+              timeout: setTimeout(
+                () =>
+                  dispatchChatData({
+                    type: "removeTypingUser",
+                    room_id: newChannel.name,
+                    user: data.author,
+                  }),
+                1000
+              ),
+            };
+
+            // removing previous timeout object, if present, and writing a new one
+            typingUsers.current = [
+              ...typingUsers.current.filter((user) => user.id !== authorId),
+              typingUser,
+            ];
           }
         );
 
@@ -109,17 +152,7 @@ export default function useSubscriptions({
             type: "ChatData_addRoom",
             room_id: newChannel.name,
           });
-          // TODO move to ChatBody for pagination marker activation
-          // // fetching historical data on active channel
-          // if (newChannel.name === activeRoom) {
-          //   getChannelHistoryMessages({
-          //     dispatchChatData,
-          //     params: {
-          //       user_id: userId.user_id,
-          //       channel_name: newChannel.name,
-          //     },
-          //   });
-          // }
+
           // fetching unread messages on subscription_succeeded
           getUnreadMessages({
             params: {
@@ -172,7 +205,12 @@ export default function useSubscriptions({
       }
     });
 
-    // cleanup function is not required
+    // cleanup
+    return () => {
+      // clearing typing timouts
+      typingUsers.current.forEach((user) => clearTimeout(user.timeout));
+    };
+    // cleanup function for subscriptions is not required
     // existing subscriptions terminated on pusherClient disconnect
   }, [roomsList.length]);
 }

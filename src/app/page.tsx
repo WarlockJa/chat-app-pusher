@@ -1,7 +1,7 @@
-import { PusherConnectionProvider } from "@/context/PusherProvider";
+import { PusherConnectionProvider } from "@/context/outerContexts/PusherProvider";
 import ChatWrapper from "./components/ChatWrapper";
 import styles from "./page.module.css";
-import { UserIdProvider } from "@/context/UserIdProvider";
+import { UserIdProvider } from "@/context/outerContexts/UserIdProvider";
 
 export default function Home() {
   return (

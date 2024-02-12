@@ -1,4 +1,4 @@
-import { useUserIdContext } from "@/context/UserIdProvider";
+import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
 import { readLocalStorage } from "@/util/localStorageRW";
 import { useEffect, useState } from "react";
 

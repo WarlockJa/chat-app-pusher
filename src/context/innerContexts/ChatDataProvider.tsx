@@ -1,14 +1,6 @@
 "use client";
 import { Message } from "@prisma/client";
-import {
-  PropsWithChildren,
-  createContext,
-  useContext,
-  useReducer,
-} from "react";
-
-// TODO extract to Chat params
-const PAGE_LIMIT = process.env.NEXT_PUBLIC_PAGE_LIMIT;
+import { createContext, useContext, useReducer } from "react";
 
 export interface IChatData_MessageExtended extends Message {
   unread: boolean;
@@ -53,6 +45,16 @@ export interface IChatDataSetPaginationHasMore {
   room_id: string;
   hasMore: boolean;
 }
+export interface IChatDataAddTypingUser {
+  type: "addTypingUser";
+  room_id: string;
+  user: string;
+}
+export interface IChatDataRemoveTypingUser {
+  type: "removeTypingUser";
+  room_id: string;
+  user: string;
+}
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
@@ -62,7 +64,9 @@ type TChatDataProviderActions =
   | IChatDataSetScrollPosition
   | IChatDataSetPaginationState
   | IChatDataSetPaginationHasMore
-  | IChatDataSetPaginationLimit;
+  | IChatDataSetPaginationLimit
+  | IChatDataAddTypingUser
+  | IChatDataRemoveTypingUser;
 
 export interface IChatData {
   room_id: string; // Pusher channel name
@@ -70,6 +74,7 @@ export interface IChatData {
   state: TChatDataStateLiteral; // current room loading state
   scrollPosition: IScrollPosition;
   pagination: IChatDataPagination;
+  typing: string[];
   error?: Error;
 }
 
@@ -86,7 +91,15 @@ interface IChatDataContext {
 
 const ChatDataContext = createContext<IChatDataContext | null>(null);
 
-export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
+// TODO divide into several contexts [pagination, typing, scrollPosition, messages]
+// export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
+export function ChatDataProvider({
+  children,
+  pageLimit,
+}: {
+  children: React.ReactNode | undefined;
+  pageLimit: number;
+}) {
   const initialStateChatData: IChatData[] = [];
   const [chatData, dispatch] = useReducer(
     chatDataReducer,
@@ -115,8 +128,9 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 pagination: {
                   historyLoadedState: "success",
                   hasMore: true,
-                  limit: PAGE_LIMIT ? Number(PAGE_LIMIT) : 10,
+                  limit: pageLimit,
                 },
+                typing: [],
               },
             ]
           : chatData;
@@ -196,6 +210,27 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                   ...room.pagination,
                   hasMore: action.hasMore,
                 },
+              }
+            : room
+        );
+      case "addTypingUser":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? {
+                ...room,
+                typing: [
+                  ...room.typing.filter((user) => user !== action.user),
+                  action.user,
+                ],
+              }
+            : room
+        );
+      case "removeTypingUser":
+        return chatData.map((room) =>
+          room.room_id === action.room_id
+            ? {
+                ...room,
+                typing: [...room.typing.filter((user) => user !== action.user)],
               }
             : room
         );

@@ -1,7 +1,7 @@
 import {
   IChatData,
   IChatData_MessageExtended,
-} from "@/context/ChatDataProvider";
+} from "@/context/innerContexts/ChatDataProvider";
 import { format } from "date-fns";
 import ChatBodyLIElement from "./ChatBodyLIElement";
 import ChatBodyMessageHeader from "./ChatBodyMessageHeader";

@@ -56,7 +56,7 @@ type TChatDataStateLiteral = "loading" | "success" | "error";
 
 interface IScrollPosition {
   currentPosition: number;
-  isPreviousBottom: boolean; // move up from scrollPosition
+  isPreviousBottom: boolean;
   previousUnreadMsgCount: number;
 }
 
@@ -69,4 +69,9 @@ interface IChatDataPagination {
   historyLoadedState: TChatDataStateLiteral; // states for fetching history page
   limit: number; // amount to fetch per page
   hasMore: boolean; // flag for data availability
+}
+
+interface ITypingUserTimeout {
+  id: string;
+  timeout: NodeJS.Timeout;
 }

@@ -1,8 +1,6 @@
-import { z } from "zod";
-import { schemaApiV1PusherMessagePost } from "../validators/pusher/message";
+import { TSchemaApiV1PusherMessagePost } from "../validators/pusher/generatedTypes";
 
-type TSchemaPusherMessagePost = z.infer<typeof schemaApiV1PusherMessagePost>;
-export function sendMessageEvent(body: TSchemaPusherMessagePost) {
+export function sendMessageEvent(body: TSchemaApiV1PusherMessagePost) {
   fetch("/api/v1/pusher/message", {
     method: "POST",
     headers: {

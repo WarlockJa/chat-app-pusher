@@ -1,13 +1,7 @@
-import { z } from "zod";
-import { schemaApiV1dbMessagesHistoryPOST } from "../validators/db/history";
-
-// inferring api endpoints expected types from zod models
-type TSchemaDBMessagesHistoryPOST = z.infer<
-  typeof schemaApiV1dbMessagesHistoryPOST
->;
+import { TSchemaApiV1dbMessagesHistoryPOST } from "../validators/db/generatedTypes";
 
 // adding message to the messages array at channel collection in DB
-export function addChannelMessage(body: TSchemaDBMessagesHistoryPOST) {
+export function addChannelMessage(body: TSchemaApiV1dbMessagesHistoryPOST) {
   fetch("/api/v1/db/messages/history", {
     method: "POST",
     headers: {

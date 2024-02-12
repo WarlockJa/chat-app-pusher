@@ -2,7 +2,8 @@ import ChatBody from "./ChatBody/ChatBody";
 import ChatRooms from "./ChatRooms";
 import SendForm from "./SendForm";
 import SubscriptionsHookWrapper from "./SubscriptionsHookWrapper";
-import { PusherPresence } from "@/context/PusherProvider";
+import { PusherPresence } from "@/context/outerContexts/PusherProvider";
+import TypingNotifications from "./TypingNotifications/TypingNotifications";
 
 export default function Chat({
   userId,
@@ -21,6 +22,7 @@ export default function Chat({
       <ChatRooms />
       <div className="chat__wrapper">
         <ChatBody userId={userId} pageLimit={pageLimit} />
+        <TypingNotifications />
         <SendForm userId={userId} pusher={pusher} />
       </div>
     </div>

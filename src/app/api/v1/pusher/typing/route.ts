@@ -1,18 +1,16 @@
 import { pusherServer } from "@/lib/pusher/pusher";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
+import { schemaApiV1PusherTypingPost } from "@/lib/validators/pusher/typing";
 
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
     // vaidating request body
-    const data = schemaApiV1PusherMessagePost.parse(reqBody);
+    const data = schemaApiV1PusherTypingPost.parse(reqBody);
 
-    pusherServer.trigger(data.activeRoom, "message", {
-      message: data.message,
+    pusherServer.trigger(data.activeRoom, "typing", {
       author: data.author,
-      id: data.id,
     });
 
     return NextResponse.json({ statusText: "OK", status: 200 });

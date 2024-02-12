@@ -1,4 +1,4 @@
-import { IChatData_MessageExtended } from "@/context/ChatDataProvider";
+import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvider";
 import { format } from "date-fns";
 
 // TODO try making mutually exclusive refLastRead and refUnread

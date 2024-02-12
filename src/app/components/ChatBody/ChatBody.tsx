@@ -1,6 +1,9 @@
 import "./chatbody.scss";
-import { IChatData, useChatDataContext } from "@/context/ChatDataProvider";
-import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import {
+  IChatData,
+  useChatDataContext,
+} from "@/context/innerContexts/ChatDataProvider";
+import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import Spinner from "@/util/spinners/Spinner";
 import { useRef, useState } from "react";
 import ChatBodyReadMessages from "./ChatBodyReadMessages";
@@ -25,6 +28,7 @@ export default function ChatBody({
     (room) => room.room_id === activeRoom
   );
 
+  // TODO why is this here? It should not exist
   const data: IChatData = chatData_ActiveRoom
     ? chatData_ActiveRoom
     : {
@@ -41,6 +45,7 @@ export default function ChatBody({
           limit: pageLimit,
           hasMore: true,
         },
+        typing: [],
       };
 
   // pagination marker

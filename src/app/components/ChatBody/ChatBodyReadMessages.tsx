@@ -1,4 +1,4 @@
-import { IChatData_MessageExtended } from "@/context/ChatDataProvider";
+import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvider";
 import ChatBodyLIElement from "./ChatBodyLIElement";
 import { format } from "date-fns";
 import ChatBodyMessageHeader from "./ChatBodyMessageHeader";

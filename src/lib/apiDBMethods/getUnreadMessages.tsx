@@ -1,20 +1,16 @@
-import { z } from "zod";
-import { schemaApiV1dbMessagesNewGET } from "../validators/db/new";
 import {
   IChatDataAddRoomMessages,
   IChatDataSetRoomError,
   IChatData_MessageExtended,
 } from "@/context/ChatDataProvider";
 import { Message } from "@prisma/client";
-
-// inferring api endpoints expected types from zod models
-type TSchemaDBMessagesNewGet = z.infer<typeof schemaApiV1dbMessagesNewGET>;
+import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/generatedTypes";
 
 export function getUnreadMessages({
   params,
   dispatchChatData,
 }: {
-  params: TSchemaDBMessagesNewGet;
+  params: TSchemaApiV1dbMessagesNewGET;
   dispatchChatData: (
     action: IChatDataAddRoomMessages | IChatDataSetRoomError
   ) => void;

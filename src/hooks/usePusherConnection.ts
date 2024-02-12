@@ -1,6 +1,9 @@
-import { PusherPresence, usePusherContext } from "@/context/PusherProvider";
-import { useUserIdContext } from "@/context/UserIdProvider";
-import { pusherClient } from "@/lib/pusher";
+import {
+  PusherPresence,
+  usePusherContext,
+} from "@/context/outerContexts/PusherProvider";
+import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
+import { pusherClient } from "@/lib/pusher/pusher";
 import { useEffect } from "react";
 
 // establishing pusher connection

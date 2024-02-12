@@ -1,4 +1,4 @@
-import { pusherServer } from "@/lib/pusher";
+import { pusherServer } from "@/lib/pusher/pusher";
 import { schemaApiV1PusherAuthPOST } from "@/lib/validators/pusher/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { PresenceChannelData } from "pusher";

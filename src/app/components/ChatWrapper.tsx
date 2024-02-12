@@ -4,10 +4,10 @@ import NoUserPlug from "./plugs/NoUserPlug";
 import LoadingPlug from "./plugs/LoadingPlug";
 import usePusherConnection from "@/hooks/usePusherConnection";
 import useUserId from "@/hooks/useUserId";
-import { usePusherContext } from "@/context/PusherProvider";
-import { useUserIdContext } from "@/context/UserIdProvider";
-import { ChatRoomsProvider } from "@/context/ChatRoomsProvider";
-import { ChatDataProvider } from "@/context/ChatDataProvider";
+import { usePusherContext } from "@/context/outerContexts/PusherProvider";
+import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
+import { ChatRoomsProvider } from "@/context/innerContexts/ChatRoomsProvider";
+import { ChatDataProvider } from "@/context/innerContexts/ChatDataProvider";
 import Chat from "./Chat";
 
 export default function ChatWrapper({
@@ -40,7 +40,7 @@ export default function ChatWrapper({
 
   return (
     <ChatRoomsProvider userId={userId}>
-      <ChatDataProvider>
+      <ChatDataProvider pageLimit={pageLimit ? pageLimit : 30}>
         <Chat
           userId={userId}
           pusher={pusher}

@@ -1,6 +1,6 @@
-import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
+import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import "./chatrooms.scss";
-import { useChatDataContext } from "@/context/ChatDataProvider";
+import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 
 export default function ChatRooms() {
   // context data

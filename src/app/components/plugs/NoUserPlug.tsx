@@ -1,7 +1,7 @@
 import "../chat.scss";
 import "../sendform.scss";
 import { writeLocalStorage } from "@/util/localStorageRW";
-import { useUserIdContext } from "@/context/UserIdProvider";
+import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
 
 // gathering anonymous user data and saving it to state and localStorage
 export default function NoUserPlug({

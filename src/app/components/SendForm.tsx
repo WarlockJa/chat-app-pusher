@@ -1,11 +1,12 @@
 "use client";
-import { useChatRoomsContext } from "@/context/ChatRoomsProvider";
-import { PusherPresence } from "@/context/PusherProvider";
 import { useState } from "react";
 import "./sendform.scss";
-import { useChatDataContext } from "@/context/ChatDataProvider";
+import { sendTypingEvent } from "@/lib/apiPusherMethods/sendTypingEvent";
 import { sendMessageEvent } from "@/lib/apiPusherMethods/sendMessageEvent";
 import { addChannelMessage } from "@/lib/apiDBMethods/addChannelMessage";
+import { PusherPresence } from "@/context/outerContexts/PusherProvider";
+import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
+import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 
 export default function SendForm({
   userId,
@@ -64,6 +65,17 @@ export default function SendForm({
     setMessage("");
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // changing local state inut value
+    setMessage(e.target.value);
+
+    // triggering "typing" event for Pusher
+    sendTypingEvent({
+      author: userId.user_name,
+      activeRoom,
+    });
+  };
+
   return (
     <>
       <form className="sendForm" onSubmit={(e) => handleSubmit(e)}>
@@ -74,7 +86,7 @@ export default function SendForm({
           id="chat-input"
           value={message}
           maxLength={400}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => handleChange(e)}
         />
         <button
           className="sendForm__button"
