@@ -1,4 +1,5 @@
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
+import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import { getChannelHistoryMessages } from "@/lib/apiDBMethods/getChannelHistoryMessages";
 
@@ -14,19 +15,21 @@ export default function PaginationMarker({
   message_id: string | null;
 }) {
   const { dispatchChatData } = useChatDataContext();
+  const { dispatchPagination } = usePaginationContext();
 
   // callback for the pagination marker intersection event
   const handleMarkerIntersection = () => {
-    // chat history loaded flag
-    dispatchChatData({
-      type: "setPaginationState",
+    // changing pagination state to loading
+    dispatchPagination({
+      type: "setPaginationData",
       room_id: channel_name,
-      newState: "loading",
+      historyLoadedState: "loading",
     });
 
     // fetching new chat data history page
     getChannelHistoryMessages({
       dispatchChatData,
+      dispatchPagination,
       params: {
         channel_name,
         limit,

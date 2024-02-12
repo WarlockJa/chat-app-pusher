@@ -1,26 +1,23 @@
 import {
   IChatDataAddRoomMessages,
-  IChatDataSetPaginationState,
-  IChatDataSetPaginationHasMore,
   IChatDataSetRoomError,
   IChatData_MessageExtended,
 } from "@/context/innerContexts/ChatDataProvider";
 import { Message } from "@prisma/client";
 import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/generatedTypes";
+import { IPaginationSetPaginationData } from "@/context/innerContexts/PaginationProvider";
 
 // get messages from DB for channel collection
 export function getChannelHistoryMessages({
   params,
   dispatchChatData,
+  dispatchPagination,
 }: {
   params: TSchemaApiV1dbMessagesHistoryGET;
   dispatchChatData: (
-    action:
-      | IChatDataAddRoomMessages
-      | IChatDataSetRoomError
-      | IChatDataSetPaginationState
-      | IChatDataSetPaginationHasMore
+    action: IChatDataAddRoomMessages | IChatDataSetRoomError
   ) => void;
+  dispatchPagination: (action: IPaginationSetPaginationData) => void;
 }) {
   fetch(
     `/api/v1/db/messages/history?channel_name=${params.channel_name}${
@@ -33,18 +30,12 @@ export function getChannelHistoryMessages({
         ? result.messages.map((message) => ({ ...message, unread: false }))
         : [];
 
-      // setting totalCount for available history messages on first fetch
-      dispatchChatData({
-        type: "setPaginationHasMore",
+      // writing new pagination data
+      dispatchPagination({
+        type: "setPaginationData",
         room_id: params.channel_name,
         hasMore: result.hasMore,
-      });
-
-      // chat history loaded flag
-      dispatchChatData({
-        type: "setPaginationState",
-        room_id: params.channel_name,
-        newState: "success",
+        historyLoadedState: "success",
       });
 
       // adding history messages to the room chatData
@@ -58,11 +49,11 @@ export function getChannelHistoryMessages({
       // error check 'result is null'. No channel found in the DB
       // not actually an error, means no messages were ever created for this room
 
-      // chat history loaded flag
-      dispatchChatData({
-        type: "setPaginationState",
+      // writing error to pagination context
+      dispatchPagination({
+        type: "setPaginationData",
         room_id: params.channel_name,
-        newState: "error",
+        historyLoadedState: "error",
       });
 
       // TODO move this check to api?

@@ -65,12 +65,6 @@ interface ICurrentRoomScrollData {
   scrollPosition: IScrollPosition;
 }
 
-interface IChatDataPagination {
-  historyLoadedState: TChatDataStateLiteral; // states for fetching history page
-  limit: number; // amount to fetch per page
-  hasMore: boolean; // flag for data availability
-}
-
 interface ITypingUserTimeout {
   id: string;
   timeout: NodeJS.Timeout;

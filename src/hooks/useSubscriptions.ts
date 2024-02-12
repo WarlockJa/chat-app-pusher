@@ -9,6 +9,7 @@ import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
+import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -26,6 +27,8 @@ export default function useSubscriptions({
   const { dispatchChatData } = useChatDataContext();
   // users typing data
   const { dispatchUsersTyping } = useUsersTypingContext();
+  // pagination data
+  const { dispatchPagination } = usePaginationContext();
   // timeouts array for typing users. Using ref because bind makes a snapshot of useState and can't access new data
   const typingUsers = useRef<ITypingUserTimeout[]>([]);
 
@@ -159,6 +162,10 @@ export default function useSubscriptions({
             type: "UsersTyping_addRoom",
             room_id: newChannel.name,
           });
+          dispatchPagination({
+            type: "Pagination_addRoom",
+            room_id: newChannel.name,
+          });
 
           // fetching unread messages on subscription_succeeded
           getUnreadMessages({
@@ -214,7 +221,7 @@ export default function useSubscriptions({
 
     // cleanup
     return () => {
-      // clearing typing timouts
+      // clearing users typing timouts
       typingUsers.current.forEach((user) => clearTimeout(user.timeout));
     };
     // cleanup function for subscriptions is not required

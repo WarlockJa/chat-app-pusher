@@ -140,7 +140,9 @@ export default function SendForm({
           //     .then((response) => response.json())
           //     .then((result) => console.log(result));
           // }
-          () => console.log(navigator.onLine)
+          () => {
+            console.log();
+          }
         }
       >
         TEST

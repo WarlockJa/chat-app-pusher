@@ -1,6 +1,11 @@
 "use client";
 import { Message } from "@prisma/client";
-import { createContext, useContext, useReducer } from "react";
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useReducer,
+} from "react";
 
 export interface IChatData_MessageExtended extends Message {
   unread: boolean;
@@ -30,38 +35,19 @@ export interface IChatDataSetScrollPosition {
   room_id: string;
   scrollPosition: IScrollPosition;
 }
-export interface IChatDataSetPaginationState {
-  type: "setPaginationState";
-  room_id: string;
-  newState: TChatDataStateLiteral;
-}
-export interface IChatDataSetPaginationLimit {
-  type: "setPaginationLimit";
-  room_id: string;
-  limit: number;
-}
-export interface IChatDataSetPaginationHasMore {
-  type: "setPaginationHasMore";
-  room_id: string;
-  hasMore: boolean;
-}
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
   | IChatDataSetRoomError
   | IChatDataAddRoomMessages
   | IChatDataSetMessageAsRead
-  | IChatDataSetScrollPosition
-  | IChatDataSetPaginationState
-  | IChatDataSetPaginationHasMore
-  | IChatDataSetPaginationLimit;
+  | IChatDataSetScrollPosition;
 
 export interface IChatData {
   room_id: string; // Pusher channel name
   messages: IChatData_MessageExtended[]; // array of messages type from Prisma
   state: TChatDataStateLiteral; // current room loading state
   scrollPosition: IScrollPosition;
-  pagination: IChatDataPagination;
   error?: Error;
 }
 
@@ -81,13 +67,7 @@ const ChatDataContext = createContext<IChatDataContext | null>(null);
 
 // TODO divide into several contexts [pagination, typing, scrollPosition, messages]
 // export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
-export function ChatDataProvider({
-  children,
-  pageLimit,
-}: {
-  children: React.ReactNode | undefined;
-  pageLimit: number;
-}) {
+export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
   const initialStateChatData: IChatData[] = [];
   const [chatData, dispatchChatData] = useReducer(
     chatDataReducer,
@@ -105,11 +85,6 @@ export function ChatDataProvider({
         currentPosition: 999999,
         isPreviousBottom: false,
         previousUnreadMsgCount: 0,
-      },
-      pagination: {
-        historyLoadedState: "success",
-        hasMore: true,
-        limit: pageLimit,
       },
     };
     return roomData ? roomData : emptyRoom;
@@ -134,11 +109,6 @@ export function ChatDataProvider({
                   currentPosition: 999999,
                   isPreviousBottom: false,
                   previousUnreadMsgCount: 0,
-                },
-                pagination: {
-                  historyLoadedState: "success",
-                  hasMore: true,
-                  limit: pageLimit,
                 },
               },
             ]
@@ -184,42 +154,6 @@ export function ChatDataProvider({
         return chatData.map((room) =>
           room.room_id === action.room_id
             ? { ...room, scrollPosition: action.scrollPosition }
-            : room
-        );
-      case "setPaginationState":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? {
-                ...room,
-                pagination: {
-                  ...room.pagination,
-                  historyLoadedState: action.newState,
-                },
-              }
-            : room
-        );
-      case "setPaginationLimit":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? {
-                ...room,
-                pagination: {
-                  ...room.pagination,
-                  limit: action.limit,
-                },
-              }
-            : room
-        );
-      case "setPaginationHasMore":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? {
-                ...room,
-                pagination: {
-                  ...room.pagination,
-                  hasMore: action.hasMore,
-                },
-              }
             : room
         );
       default:

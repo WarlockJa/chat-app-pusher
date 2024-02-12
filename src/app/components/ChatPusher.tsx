@@ -10,6 +10,7 @@ import { ChatRoomsProvider } from "@/context/innerContexts/ChatRoomsProvider";
 import { ChatDataProvider } from "@/context/innerContexts/ChatDataProvider";
 import Chat from "./Chat/Chat";
 import { UsersTypingProvider } from "@/context/innerContexts/UsersTypingProvider";
+import { PaginationProvider } from "@/context/innerContexts/PaginationProvider";
 
 export default function ChatPusher({
   user_id,
@@ -41,13 +42,11 @@ export default function ChatPusher({
 
   return (
     <ChatRoomsProvider userId={userId}>
-      <ChatDataProvider pageLimit={pageLimit ? pageLimit : 30}>
+      <ChatDataProvider>
         <UsersTypingProvider>
-          <Chat
-            userId={userId}
-            pusher={pusher}
-            pageLimit={pageLimit ? pageLimit : 30}
-          />
+          <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
+            <Chat userId={userId} pusher={pusher} />
+          </PaginationProvider>
         </UsersTypingProvider>
       </ChatDataProvider>
     </ChatRoomsProvider>

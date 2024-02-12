@@ -8,11 +8,9 @@ import TypingNotifications from "./TypingNotifications/TypingNotifications";
 export default function Chat({
   userId,
   pusher,
-  pageLimit,
 }: {
   userId: IUserId;
   pusher: PusherPresence;
-  pageLimit: number;
 }) {
   // console.log("------------Chat rerender-------------");
 
@@ -21,7 +19,7 @@ export default function Chat({
       <SubscriptionsHookWrapper pusher={pusher} userId={userId} />
       <ChatRooms />
       <div className="chat__wrapper">
-        <ChatBody userId={userId} pageLimit={pageLimit} />
+        <ChatBody userId={userId} />
         <TypingNotifications />
         <SendForm userId={userId} pusher={pusher} />
       </div>
