@@ -56,7 +56,7 @@ export default function SendForm({
           text: message,
           author: userId.user_name,
           timestamp: new Date(),
-          unread: true,
+          unread: true, // default state is unread for scroll events
         },
       ],
     });

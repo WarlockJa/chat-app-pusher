@@ -10,7 +10,6 @@ type TTimestampResponse =
       }
     ]
   | [];
-// TODO make it accept message ID and replace timestamp in last access with the timestamp for the message with the ID we sent
 // updating last access array for a channel in DB
 export async function POST(req: Request) {
   try {

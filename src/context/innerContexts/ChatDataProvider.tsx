@@ -1,11 +1,7 @@
 "use client";
+import { updateLastAccessTimestamp } from "@/lib/apiDBMethods/updateLastAccessTimestamp";
 import { Message } from "@prisma/client";
-import {
-  PropsWithChildren,
-  createContext,
-  useContext,
-  useReducer,
-} from "react";
+import { createContext, useContext, useReducer } from "react";
 
 export interface IChatData_MessageExtended extends Message {
   unread: boolean;
@@ -20,6 +16,13 @@ export interface IChatDataSetRoomError {
   room_id: string;
   error: Error;
 }
+// for optimistic update handling
+export interface IChatDataAddRoomMessage {
+  type: "addRoomMessage";
+  room_id: string;
+  message: IChatData_MessageExtended;
+}
+// for bulk messages handling
 export interface IChatDataAddRoomMessages {
   type: "addRoomMessages";
   room_id: string;
@@ -34,6 +37,7 @@ export interface IChatDataSetMessageAsRead {
 type TChatDataProviderActions =
   | IChatDataAddRoom
   | IChatDataSetRoomError
+  | IChatDataAddRoomMessage
   | IChatDataAddRoomMessages
   | IChatDataSetMessageAsRead;
 
@@ -59,7 +63,13 @@ interface IChatDataContext {
 const ChatDataContext = createContext<IChatDataContext | null>(null);
 
 // export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
-export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
+export function ChatDataProvider({
+  children,
+  user_id,
+}: {
+  children: React.ReactNode | undefined;
+  user_id: string;
+}) {
   const initialStateChatData: IChatData[] = [];
   const [chatData, dispatchChatData] = useReducer(
     chatDataReducer,
@@ -95,6 +105,36 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
               },
             ]
           : chatData;
+      case "addRoomMessage":
+        // finding room in chatData for the message
+        const messageRoom = chatData.find(
+          (room) => room.room_id === action.room_id
+        );
+        // if message with action.message.id already present it was added as an optimistic update
+        const isMessageOptimistic =
+          messageRoom?.messages.findIndex(
+            (message) => message.id === action.message.id
+          ) !== -1;
+        // if message was optimistically added, updating lastaccess in DB
+        if (isMessageOptimistic) {
+          updateLastAccessTimestamp({
+            channel_name: action.room_id,
+            user_id,
+            message_id: action.message.id,
+          });
+
+          return chatData;
+        }
+        // otherwise if message is new adding message to the chatData
+        else
+          return chatData.map((room) =>
+            room.room_id === action.room_id
+              ? {
+                  ...room,
+                  messages: [...room.messages, action.message],
+                }
+              : room
+          );
       case "addRoomMessages":
         return chatData.map((room) =>
           room.room_id === action.room_id
@@ -106,7 +146,7 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 messages: [...room.messages, ...action.messages]
                   .filter(
                     (message, index, self) =>
-                      index === self.findIndex((msg) => msg.id === message.id) // add optimistic update handling
+                      index === self.findIndex((msg) => msg.id === message.id) // TODO add optimistic update handling
                   )
                   .sort((a, b) => (a.timestamp >= b.timestamp ? 1 : -1)),
                 state: "success",

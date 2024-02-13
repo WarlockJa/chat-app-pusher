@@ -88,7 +88,10 @@ export default function useIOUnreadMsgsArray({
         // }
       });
       // updating lastaccess array in DB for the user with debounced last read message timestamp
-      if (debouncedLastAccessUpdate)
+      if (debouncedLastAccessUpdate) {
+        // TEST TODO check if message author is the user_id and not update last access
+
+        console.log("lastaccess update");
         updateLastAccessTimestamp({
           channel_name: activeRoom,
           user_id,
@@ -96,6 +99,7 @@ export default function useIOUnreadMsgsArray({
           // @ts-ignore
           message_id: debouncedLastAccessUpdate.message_id,
         });
+      }
     };
 
     // console.log("Observer init");

@@ -19,6 +19,7 @@ import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvi
 import {
   IScrollPositionData,
   IScrollPositionSetScrollPosition,
+  useScrollPositionDataContext,
 } from "@/context/innerContexts/ScrollPositionProvider";
 import { useLayoutEffect, useRef } from "react";
 
@@ -50,6 +51,9 @@ export default function useChatBodyScroll({
   readMessages,
   unreadMessagesCount,
 }: IUseChatBodyScrollProps) {
+  // TEST
+  const { getRoomScrollPositionData } = useScrollPositionDataContext();
+
   // reference to be used in scenario 5 to navigate to the previous top comment
   const previousTopMsgRef = useRef<HTMLDivElement | null>(null);
 
@@ -130,20 +134,10 @@ export default function useChatBodyScroll({
         // Scenario 5 (SAME ROOM + NEW HISTORY PAGE)
         previousTopMsgRef.current.scrollIntoView();
 
-        // post header offset on history page load. For smooth transition.
-        // In order to avoid collision with scenario 1 (scrolling to bottom on activeRoom change)
-        // checking that activeRoomScrollPosition is set to a default value
-        // This way we ensure that conditions are correct for the scenario 5
-        const appliedOffset = activeRoomScrollPosition !== 999999 ? 45 : 0;
-        // updating ScrollPositionContext data for the room for proper scenario 1 function
-        dispatchScrollPosition({
-          type: "setScrollPosition",
-          ...currentRoomScrollData,
-        });
         // scrolling to offset post header height
         const tempScrollTopData = chatBodyRef.current.scrollTop;
         chatBodyRef.current.scrollTo({
-          top: tempScrollTopData - appliedOffset,
+          top: tempScrollTopData - 45,
         });
       } else {
         // console.log("Scenario 6");

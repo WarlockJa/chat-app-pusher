@@ -60,17 +60,15 @@ export default function useSubscriptions({
           ) {
             // adding new message to the chatData
             dispatchChatData({
-              type: "addRoomMessages",
+              type: "addRoomMessage",
               room_id: newChannel.name,
-              messages: [
-                {
-                  id: data.id,
-                  text: data.message,
-                  author: data.author,
-                  timestamp: new Date(),
-                  unread: true,
-                },
-              ],
+              message: {
+                id: data.id,
+                text: data.message,
+                author: data.author,
+                timestamp: new Date(),
+                unread: true,
+              },
             });
           }
         );

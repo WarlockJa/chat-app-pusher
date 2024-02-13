@@ -43,7 +43,7 @@ export default function ChatPusher({
 
   return (
     <ChatRoomsProvider userId={userId}>
-      <ChatDataProvider>
+      <ChatDataProvider user_id={userId.user_id}>
         <UsersTypingProvider>
           <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
             <ScrollPositionDataProvider>
