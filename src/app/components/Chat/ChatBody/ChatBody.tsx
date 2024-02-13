@@ -10,16 +10,22 @@ import PaginationMarker from "./components/PaginationMarker";
 import useChatBodyScroll from "@/hooks/ChatBody/useChatBodyScroll";
 import SpinnerFlat from "@/util/spinners/SpinnerFlat";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
+import {
+  IScrollPositionData,
+  useScrollPositionDataContext,
+} from "@/context/innerContexts/ScrollPositionProvider";
 
 export default function ChatBody({ userId }: { userId: IUserId }) {
   const { activeRoom } = useChatRoomsContext();
-  const { dispatchChatData, getRoomChatData } = useChatDataContext();
+  const { getRoomChatData } = useChatDataContext();
   const { getRoomPaginationData } = usePaginationContext();
+  const { getRoomScrollPositionData, dispatchScrollPosition } =
+    useScrollPositionDataContext();
 
   // getting active room chat data
   const dataMessages = getRoomChatData(activeRoom);
   const dataPagination = getRoomPaginationData(activeRoom);
-  // const dataScrollPosition = getRoomScrollPositionData(activeRoom);
+  const dataScrollPosition = getRoomScrollPositionData(activeRoom);
 
   // pagination marker
   const paginationMarker = useRef<HTMLDivElement>(null);
@@ -29,15 +35,14 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   const topReadMessageMarker = useRef<HTMLDivElement>(null);
   // scrolling position of the chat__body div element
   const chatBodyRef = useRef<HTMLDivElement>(null);
+
   // current room state used to save last scroll position on activeRoom change
   const [currentRoomScrollData, setCurrentRoomScrollData] =
-    useState<ICurrentRoomScrollData>({
-      currentRoom: "",
-      scrollPosition: {
-        currentPosition: 999999,
-        isPreviousBottom: false,
-        previousUnreadMsgCount: 0,
-      },
+    useState<IScrollPositionData>({
+      room_id: "",
+      currentPosition: 999999,
+      isPreviousBottom: false,
+      previousUnreadMsgCount: 0,
     });
 
   // collecting scroll data for chat__body div element
@@ -45,11 +50,8 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
     if (e.target instanceof HTMLDivElement) {
       setCurrentRoomScrollData({
         ...currentRoomScrollData,
-        scrollPosition: {
-          ...currentRoomScrollData.scrollPosition,
-          currentPosition: e.target.scrollTop,
-          isPreviousBottom: isScrolledBottom(e.target),
-        },
+        currentPosition: e.target.scrollTop,
+        isPreviousBottom: isScrolledBottom(e.target),
       });
     }
   };
@@ -67,10 +69,10 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
     activeRoom,
     chatBodyRef,
     currentRoomScrollData,
-    dispatchChatData,
+    dispatchScrollPosition,
     setCurrentRoomScrollData,
     unreadMessagesRefsArray,
-    activeRoomScrollPosition: dataMessages.scrollPosition.currentPosition,
+    activeRoomScrollPosition: dataScrollPosition.currentPosition,
     topReadMessageMarker,
     readMessages,
     unreadMessagesCount: unreadMessages.length,
@@ -103,14 +105,16 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
               <SpinnerFlat />
             </div>
           ) : dataPagination.hasMore ? (
-            <PaginationMarker
-              paginationMarker={paginationMarker}
-              channel_name={activeRoom}
-              limit={dataPagination.limit}
-              message_id={
-                dataMessages.messages[0] ? dataMessages.messages[0].id : null
-              }
-            />
+            currentRoomScrollData.room_id === activeRoom ? (
+              <PaginationMarker
+                paginationMarker={paginationMarker}
+                channel_name={activeRoom}
+                limit={dataPagination.limit}
+                message_id={
+                  dataMessages.messages[0] ? dataMessages.messages[0].id : null
+                }
+              />
+            ) : null
           ) : null
         }
         <ChatBodyReadMessages

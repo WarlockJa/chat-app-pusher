@@ -15,19 +15,20 @@
     6 - History page is loaded and there are no other messages to scoll to (SAME ROOM + NEW HISTORY PAGE + NO DATA):
       scrolling to the bottom
   */
+import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvider";
 import {
-  IChatDataSetScrollPosition,
-  IChatData_MessageExtended,
-} from "@/context/innerContexts/ChatDataProvider";
+  IScrollPositionData,
+  IScrollPositionSetScrollPosition,
+} from "@/context/innerContexts/ScrollPositionProvider";
 import { useLayoutEffect, useRef } from "react";
 
 interface IUseChatBodyScrollProps {
   // 1-2
   chatBodyRef: React.RefObject<HTMLDivElement>;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
-  currentRoomScrollData: ICurrentRoomScrollData;
-  setCurrentRoomScrollData: (data: ICurrentRoomScrollData) => void;
-  dispatchChatData: (action: IChatDataSetScrollPosition) => void;
+  currentRoomScrollData: IScrollPositionData;
+  setCurrentRoomScrollData: (data: IScrollPositionData) => void;
+  dispatchScrollPosition: (action: IScrollPositionSetScrollPosition) => void;
   activeRoom: string;
   activeRoomScrollPosition: number;
   // 3-4
@@ -42,7 +43,7 @@ export default function useChatBodyScroll({
   activeRoomScrollPosition,
   chatBodyRef,
   currentRoomScrollData,
-  dispatchChatData,
+  dispatchScrollPosition,
   setCurrentRoomScrollData,
   unreadMessagesRefsArray,
   topReadMessageMarker,
@@ -58,20 +59,21 @@ export default function useChatBodyScroll({
     if (!chatBodyRef.current) return;
 
     // active room change. Scenarios 1-2
-    if (activeRoom !== currentRoomScrollData.currentRoom) {
+    if (activeRoom !== currentRoomScrollData.room_id) {
       // Updating last scroll position for the active room that is about to change
-      if (currentRoomScrollData.currentRoom !== "") {
+      if (currentRoomScrollData.room_id !== "") {
         // saving scroll data to previous room if existed
-        dispatchChatData({
+        dispatchScrollPosition({
           type: "setScrollPosition",
-          room_id: currentRoomScrollData.currentRoom,
-          scrollPosition: currentRoomScrollData.scrollPosition,
+          ...currentRoomScrollData,
         });
       }
+
       // changing current room to activeRoom
       setCurrentRoomScrollData({
         ...currentRoomScrollData,
-        currentRoom: activeRoom,
+        room_id: activeRoom,
+        // scrollPosition: currentRoomScrollData.scrollPosition,
       });
       // reset previous top message ref on activeRoom change
       previousTopMsgRef.current = null;
@@ -96,11 +98,8 @@ export default function useChatBodyScroll({
 
     // Scenarios 3-4
     // checking that added unread message is a new one
-    if (
-      currentRoomScrollData.scrollPosition.previousUnreadMsgCount !==
-      unreadMessagesCount
-    ) {
-      if (currentRoomScrollData.scrollPosition.isPreviousBottom) {
+    if (currentRoomScrollData.previousUnreadMsgCount !== unreadMessagesCount) {
+      if (currentRoomScrollData.isPreviousBottom) {
         // Scenario 3: (SAME ROOM + NEW MESSAGE + SCROLLED TO BOTTOM)
         // scrolling first unread message into view, in case it is larger than viewport
         if (unreadMessagesRefsArray.current[0])
@@ -113,10 +112,7 @@ export default function useChatBodyScroll({
       // saving new previousUnreadMsgCount
       setCurrentRoomScrollData({
         ...currentRoomScrollData,
-        scrollPosition: {
-          ...currentRoomScrollData.scrollPosition,
-          previousUnreadMsgCount: unreadMessagesCount,
-        },
+        previousUnreadMsgCount: unreadMessagesCount,
       });
 
       // preventing code from further execution
@@ -134,10 +130,20 @@ export default function useChatBodyScroll({
         // Scenario 5 (SAME ROOM + NEW HISTORY PAGE)
         previousTopMsgRef.current.scrollIntoView();
 
+        // post header offset on history page load. For smooth transition.
+        // In order to avoid collision with scenario 1 (scrolling to bottom on activeRoom change)
+        // checking that activeRoomScrollPosition is set to a default value
+        // This way we ensure that conditions are correct for the scenario 5
+        const appliedOffset = activeRoomScrollPosition !== 999999 ? 45 : 0;
+        // updating ScrollPositionContext data for the room for proper scenario 1 function
+        dispatchScrollPosition({
+          type: "setScrollPosition",
+          ...currentRoomScrollData,
+        });
         // scrolling to offset post header height
         const tempScrollTopData = chatBodyRef.current.scrollTop;
         chatBodyRef.current.scrollTo({
-          top: tempScrollTopData - 45,
+          top: tempScrollTopData - appliedOffset,
         });
       } else {
         // console.log("Scenario 6");

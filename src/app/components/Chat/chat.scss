@@ -8,12 +8,8 @@
 
   display: flex;
 
-  // border: 1px solid green;
-
   .chat__wrapper {
     flex: 1;
-
-    // border: 1px solid coral;
   }
 
   @include media.min-width(medium) {

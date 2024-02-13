@@ -11,6 +11,7 @@ import { ChatDataProvider } from "@/context/innerContexts/ChatDataProvider";
 import Chat from "./Chat/Chat";
 import { UsersTypingProvider } from "@/context/innerContexts/UsersTypingProvider";
 import { PaginationProvider } from "@/context/innerContexts/PaginationProvider";
+import { ScrollPositionDataProvider } from "@/context/innerContexts/ScrollPositionProvider";
 
 export default function ChatPusher({
   user_id,
@@ -45,7 +46,9 @@ export default function ChatPusher({
       <ChatDataProvider>
         <UsersTypingProvider>
           <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
-            <Chat userId={userId} pusher={pusher} />
+            <ScrollPositionDataProvider>
+              <Chat userId={userId} pusher={pusher} />
+            </ScrollPositionDataProvider>
           </PaginationProvider>
         </UsersTypingProvider>
       </ChatDataProvider>

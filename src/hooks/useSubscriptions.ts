@@ -10,6 +10,7 @@ import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
+import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -29,6 +30,8 @@ export default function useSubscriptions({
   const { dispatchUsersTyping } = useUsersTypingContext();
   // pagination data
   const { dispatchPagination } = usePaginationContext();
+  // scroll position data
+  const { dispatchScrollPosition } = useScrollPositionDataContext();
   // timeouts array for typing users. Using ref because bind makes a snapshot of useState and can't access new data
   const typingUsers = useRef<ITypingUserTimeout[]>([]);
 
@@ -154,6 +157,7 @@ export default function useSubscriptions({
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
+          // creating rooms in contexts
           dispatchChatData({
             type: "ChatData_addRoom",
             room_id: newChannel.name,
@@ -164,6 +168,10 @@ export default function useSubscriptions({
           });
           dispatchPagination({
             type: "Pagination_addRoom",
+            room_id: newChannel.name,
+          });
+          dispatchScrollPosition({
+            type: "ScrollPosition_addRoom",
             room_id: newChannel.name,
           });
 

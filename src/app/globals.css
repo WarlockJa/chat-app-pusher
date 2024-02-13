@@ -1,4 +1,6 @@
 :root {
+  --typingNotification-height: 1.3rem;
+  --sendForm-height: 2.25em;
   --clr-main-font: #bfbfbf;
 }
 

@@ -54,17 +54,6 @@ type IChannelGetMember = [string, { user_admin: boolean; user_name: string }];
 
 type TChatDataStateLiteral = "loading" | "success" | "error";
 
-interface IScrollPosition {
-  currentPosition: number;
-  isPreviousBottom: boolean;
-  previousUnreadMsgCount: number;
-}
-
-interface ICurrentRoomScrollData {
-  currentRoom: string;
-  scrollPosition: IScrollPosition;
-}
-
 interface ITypingUserTimeout {
   id: string;
   timeout: NodeJS.Timeout;

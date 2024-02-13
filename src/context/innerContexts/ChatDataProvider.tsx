@@ -30,24 +30,17 @@ export interface IChatDataSetMessageAsRead {
   room_id: string;
   message_id: string;
 }
-export interface IChatDataSetScrollPosition {
-  type: "setScrollPosition";
-  room_id: string;
-  scrollPosition: IScrollPosition;
-}
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
   | IChatDataSetRoomError
   | IChatDataAddRoomMessages
-  | IChatDataSetMessageAsRead
-  | IChatDataSetScrollPosition;
+  | IChatDataSetMessageAsRead;
 
 export interface IChatData {
   room_id: string; // Pusher channel name
   messages: IChatData_MessageExtended[]; // array of messages type from Prisma
   state: TChatDataStateLiteral; // current room loading state
-  scrollPosition: IScrollPosition;
   error?: Error;
 }
 
@@ -65,7 +58,6 @@ interface IChatDataContext {
 
 const ChatDataContext = createContext<IChatDataContext | null>(null);
 
-// TODO divide into several contexts [pagination, typing, scrollPosition, messages]
 // export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
 export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
   const initialStateChatData: IChatData[] = [];
@@ -81,11 +73,6 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
       room_id,
       messages: [],
       state: "loading",
-      scrollPosition: {
-        currentPosition: 999999,
-        isPreviousBottom: false,
-        previousUnreadMsgCount: 0,
-      },
     };
     return roomData ? roomData : emptyRoom;
   }
@@ -105,11 +92,6 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                 room_id: action.room_id,
                 messages: [],
                 state: "loading",
-                scrollPosition: {
-                  currentPosition: 999999,
-                  isPreviousBottom: false,
-                  previousUnreadMsgCount: 0,
-                },
               },
             ]
           : chatData;
@@ -148,12 +130,6 @@ export function ChatDataProvider({ children }: PropsWithChildren<{}>) {
                     : message
                 ),
               }
-            : room
-        );
-      case "setScrollPosition":
-        return chatData.map((room) =>
-          room.room_id === action.room_id
-            ? { ...room, scrollPosition: action.scrollPosition }
             : room
         );
       default:
