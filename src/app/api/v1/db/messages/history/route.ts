@@ -139,7 +139,10 @@ export async function POST(req: Request) {
       update: "channel",
       updates: [
         {
-          q: { name: data.channel_name },
+          q: {
+            name: data.channel_name,
+            "messages.id": { $ne: data.message_id },
+          },
           u: {
             $push: {
               messages: {

@@ -19,7 +19,6 @@ import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvi
 import {
   IScrollPositionData,
   IScrollPositionSetScrollPosition,
-  useScrollPositionDataContext,
 } from "@/context/innerContexts/ScrollPositionProvider";
 import { useLayoutEffect, useRef } from "react";
 
@@ -51,9 +50,6 @@ export default function useChatBodyScroll({
   readMessages,
   unreadMessagesCount,
 }: IUseChatBodyScrollProps) {
-  // TEST
-  const { getRoomScrollPositionData } = useScrollPositionDataContext();
-
   // reference to be used in scenario 5 to navigate to the previous top comment
   const previousTopMsgRef = useRef<HTMLDivElement | null>(null);
 
@@ -84,7 +80,7 @@ export default function useChatBodyScroll({
 
       // scrolling to first unread message if exists
       if (unreadMessagesRefsArray.current[0]) {
-        // console.log("Scenario 1");
+        console.log("Scenario 1");
         // Scenario 1: (ACTIVE ROOM + NEW MESSAGES)
         unreadMessagesRefsArray.current[0].scrollIntoView();
       } else {
@@ -106,6 +102,7 @@ export default function useChatBodyScroll({
       if (currentRoomScrollData.isPreviousBottom) {
         // Scenario 3: (SAME ROOM + NEW MESSAGE + SCROLLED TO BOTTOM)
         // scrolling first unread message into view, in case it is larger than viewport
+        // console.log("Scenario 3");
         if (unreadMessagesRefsArray.current[0])
           unreadMessagesRefsArray.current[0].scrollIntoView();
       }
@@ -134,21 +131,28 @@ export default function useChatBodyScroll({
         // Scenario 5 (SAME ROOM + NEW HISTORY PAGE)
         previousTopMsgRef.current.scrollIntoView();
 
+        // TODO adjust offset ONLY if date changes
+        const offsetScroll = 45;
+
         // scrolling to offset post header height
         const tempScrollTopData = chatBodyRef.current.scrollTop;
         chatBodyRef.current.scrollTo({
-          top: tempScrollTopData - 45,
+          top: tempScrollTopData - offsetScroll,
         });
       } else {
-        // console.log("Scenario 6");
         // In order to avoid collision with scenario 2 (scrolling to saved position on activeRoom change)
         // checking that activeRoomScrollPosition is set to a default value
         // This way we ensure that conditions are correct for the scenario 6
-        if (activeRoomScrollPosition === 999999)
+        if (
+          activeRoomScrollPosition === 999999 &&
+          !unreadMessagesRefsArray.current[0]
+        ) {
+          // console.log("Scenario 6");
           // Scenario 6 (SAME ROOM + NEW HISTORY PAGE + NO DATA)
           chatBodyRef.current?.scrollTo({
             top: chatBodyRef.current.scrollHeight,
           });
+        }
       }
       // saving current top message ref to previousTopMsgRef
       previousTopMsgRef.current = topReadMessageMarker.current;
