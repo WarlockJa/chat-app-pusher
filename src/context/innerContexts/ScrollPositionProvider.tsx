@@ -52,7 +52,7 @@ export function ScrollPositionDataProvider({
     initialStateScrollPositionData
   );
 
-  // state methods
+  // state actions
   function getRoomScrollPositionData(room_id: string) {
     const roomData = scrollPositionData.find(
       (room) => room.room_id === room_id

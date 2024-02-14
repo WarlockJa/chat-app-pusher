@@ -50,7 +50,7 @@ export function PaginationProvider({
     initialStateChatData
   );
 
-  // state methods
+  // state actions
   function getRoomPaginationData(room_id: string) {
     const roomData = paginationData.find((room) => room.room_id === room_id);
     const emptyRoom: IPaginationData = {

@@ -27,22 +27,22 @@ export default function SendForm({
     // generating message uuid to be used in both Pusher message event and written in DB
     // using front-end generation method because it is a faster alternative to
     // DB generation of the message uuid with the following use in Pusher message event
-    const messageId = crypto.randomUUID();
+    const message_id = crypto.randomUUID();
 
     // triggering "message" event for Pusher
     sendMessageEvent({
       message,
       author: userId.user_name,
       activeRoom,
-      id: messageId,
+      id: message_id,
     });
 
     // writing message to DB
     addChannelMessage({
-      message,
-      userId: userId.user_id,
-      room: activeRoom,
-      message_id: messageId,
+      message_text: message,
+      user_id: userId.user_id,
+      channel_name: activeRoom,
+      message_id,
     });
 
     // Optimistic chat message post. Adding message directly to the local ChatData context.
@@ -52,7 +52,7 @@ export default function SendForm({
       room_id: activeRoom,
       messages: [
         {
-          id: messageId,
+          id: message_id,
           text: message,
           author: userId.user_name,
           timestamp: new Date(),

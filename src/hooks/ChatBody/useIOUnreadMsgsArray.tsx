@@ -27,7 +27,6 @@ export default function useIOUnreadMsgsArray({
   // observer.
   const observerRef = useRef<IntersectionObserver | null>(null);
   // handleIntersection dependencies
-  // TODO pass a props
   const { dispatchChatData } = useChatDataContext();
 
   // initializing observer
@@ -44,7 +43,7 @@ export default function useIOUnreadMsgsArray({
       observer
     ) => {
       // preparing an object to store data about latest message observed for debounced DB update lastaccess query
-      let debouncedLastAccessUpdate: IIODebouncedEntry | undefined = undefined;
+      let debouncedLastAccessUpdate: IIODebouncedEntry | undefined;
 
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -89,14 +88,10 @@ export default function useIOUnreadMsgsArray({
       });
       // updating lastaccess array in DB for the user with debounced last read message timestamp
       if (debouncedLastAccessUpdate) {
-        // TEST TODO check if message author is the user_id and not update last access
-
-        console.log("lastaccess update");
+        // TODO handle the unnecessary call during an optimistic updates.
         updateLastAccessTimestamp({
           channel_name: activeRoom,
           user_id,
-          // TODO fix TS
-          // @ts-ignore
           message_id: debouncedLastAccessUpdate.message_id,
         });
       }

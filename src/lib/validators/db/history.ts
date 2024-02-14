@@ -72,7 +72,7 @@ export const schemaApiV1dbMessagesHistoryPOST = z
       .uuid({ message: "Message ID must be UUIDv4" }),
     // TODO replace after TEST
     // userId: z.string().uuid()
-    userId: z
+    user_id: z
       .string({
         required_error: "UserId is required",
         invalid_type_error: "Required type for userId is string",
@@ -81,11 +81,11 @@ export const schemaApiV1dbMessagesHistoryPOST = z
       .regex(regexAlphanumericWithDash, {
         message: "UserId may only contains alphanumerical characters and dash",
       }),
-    message: z
+    message_text: z
       .string()
       .min(1)
       .max(400, { message: "Message exceeds 400 characters" }),
-    room: z
+    channel_name: z
       .string({
         required_error: "ActiveRoom is required",
         invalid_type_error: "Required type for activeRoom is string",

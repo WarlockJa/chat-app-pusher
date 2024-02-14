@@ -52,7 +52,7 @@ export function UsersTypingProvider({ children }: PropsWithChildren<{}>) {
     initialUsersTypingData
   );
 
-  // state methods
+  // state actions
   function getRoomTypingUsers(room_id: string) {
     const roomData = usersTyping.find((room) => room.room_id === room_id);
     const emptyRoom: IUsersTypingData = { room_id, users: [] };

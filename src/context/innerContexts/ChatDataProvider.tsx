@@ -76,7 +76,7 @@ export function ChatDataProvider({
     initialStateChatData
   );
 
-  // state methods
+  // state actions
   function getRoomChatData(room_id: string) {
     const roomData = chatData.find((room) => room.room_id === room_id);
     const emptyRoom: IChatData = {
