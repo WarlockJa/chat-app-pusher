@@ -19,8 +19,6 @@ export default function NoUserPlug({
   // reading UserId context
   const { setUserId } = useUserIdContext();
   // roomsList state to assing default rooms for the user
-  // TODO delete
-  // const { setRoomsList } = useChatRoomsContext();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -1,31 +1,16 @@
 import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvider";
 import { format } from "date-fns";
 
-// TODO try making mutually exclusive refLastRead and refUnread
 interface IChatBodyLIElementProps {
   userIsMsgAuthor: boolean;
-  refUnread?: {
-    ref: React.RefObject<HTMLLIElement[]>;
-    index: number;
-  };
   msg: IChatData_MessageExtended;
 }
 
 export default function ChatBodyLIElement(props: IChatBodyLIElementProps) {
-  const { userIsMsgAuthor, refUnread, msg } = props;
+  const { userIsMsgAuthor, msg } = props;
 
   return (
-    <li
-      className={`post ${userIsMsgAuthor ? "post--left" : "post--right"}`}
-      // id={id}
-      // ref={(el: HTMLLIElement) => {
-      //   refUnread
-      //     ? refUnread.ref.current
-      //       ? (refUnread.ref.current[refUnread.index] = el)
-      //       : null
-      //     : null;
-      // }}
-    >
+    <li className={`post ${userIsMsgAuthor ? "post--left" : "post--right"}`}>
       <div
         className={`post__header ${
           userIsMsgAuthor ? "post__header--user" : "post__header--reply"

@@ -146,7 +146,7 @@ export function ChatDataProvider({
                 messages: [...room.messages, ...action.messages]
                   .filter(
                     (message, index, self) =>
-                      index === self.findIndex((msg) => msg.id === message.id) // TODO add optimistic update handling
+                      index === self.findIndex((msg) => msg.id === message.id)
                   )
                   .sort((a, b) => (a.timestamp >= b.timestamp ? 1 : -1)),
                 state: "success",

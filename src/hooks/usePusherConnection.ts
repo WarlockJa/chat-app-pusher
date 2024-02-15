@@ -15,7 +15,6 @@ export default function usePusherConnection() {
 
   useEffect(() => {
     // processing change of authenticated user data from the parent
-    // TODO test if being passed as a rerendering child would break something
     if (pusher) {
       pusher.disconnect();
       setPusher(null);
@@ -25,7 +24,6 @@ export default function usePusherConnection() {
 
     try {
       // TODO replace TEST
-      // TODO fix TS
       // establishing pusher connection
       // TEST
       if (userId.user_name === "WJ" || userId.user_name === "Mike") {
