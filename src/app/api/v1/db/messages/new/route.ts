@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma/globalForPrisma";
 import { TMessageDB } from "@/lib/prisma/prisma";
-import { schemaApiV1dbMessagesNewGET } from "@/lib/validators/db/new";
+import { schemaApiV1dbMessagesNewGET } from "@/lib/validators/db/messages/new";
 import { Message } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";

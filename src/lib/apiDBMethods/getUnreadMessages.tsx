@@ -4,7 +4,7 @@ import {
   IChatData_MessageExtended,
 } from "@/context/innerContexts/ChatDataProvider";
 import { Message } from "@prisma/client";
-import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/generatedTypes";
+import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/messages/generatedTypes";
 
 export function getUnreadMessages({
   params,

@@ -1,4 +1,4 @@
-import { TSchemaApiV1dbMessagesHistoryPOST } from "../validators/db/generatedTypes";
+import { TSchemaApiV1dbMessagesHistoryPOST } from "../validators/db/messages/generatedTypes";
 
 // adding message to the messages array at channel collection in DB
 export function addChannelMessage(body: TSchemaApiV1dbMessagesHistoryPOST) {

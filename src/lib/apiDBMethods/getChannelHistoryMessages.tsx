@@ -4,7 +4,7 @@ import {
   IChatData_MessageExtended,
 } from "@/context/innerContexts/ChatDataProvider";
 import { Message } from "@prisma/client";
-import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/generatedTypes";
+import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/messages/generatedTypes";
 import { IPaginationSetPaginationData } from "@/context/innerContexts/PaginationProvider";
 
 // get messages from DB for channel collection

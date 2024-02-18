@@ -3,7 +3,7 @@ import { TMessageDB } from "@/lib/prisma/prisma";
 import {
   schemaApiV1dbMessagesHistoryGET,
   schemaApiV1dbMessagesHistoryPOST,
-} from "@/lib/validators/db/history";
+} from "@/lib/validators/db/messages/history";
 import { Message } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";

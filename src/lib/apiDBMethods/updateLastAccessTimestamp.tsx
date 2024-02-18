@@ -1,4 +1,4 @@
-import { TSchemaApiV1dbMessagesLastaccessPOST } from "../validators/db/generatedTypes";
+import { TSchemaApiV1dbMessagesLastaccessPOST } from "../validators/db/messages/generatedTypes";
 
 // updates user timestamp at lastaccess array for channel collection in DB
 export function updateLastAccessTimestamp(

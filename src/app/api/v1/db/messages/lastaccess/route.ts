@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma/globalForPrisma";
-import { schemaApiV1dbMessagesLastaccessPOST } from "@/lib/validators/db/lastaccess";
+import { schemaApiV1dbMessagesLastaccessPOST } from "@/lib/validators/db/messages/lastaccess";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 

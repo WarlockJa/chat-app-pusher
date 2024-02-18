@@ -1,13 +1,9 @@
-import {
-  schemaApiDBPOST,
-  schemaApiDBGET,
-  schemaPusherAuthPOST,
-} from "@/lib/validators";
+import { schemaApiV1PusherAuthPOST } from "@/lib/validators/pusher/auth";
 import { describe, expect, it } from "vitest";
 
 // testing schemaPusherAuthPOST. POST request params validation
 const testSchemaPusherAuthPost = (params: any) => {
-  return schemaPusherAuthPOST.parse(params);
+  return schemaApiV1PusherAuthPOST.parse(params);
 };
 
 describe("Validating schemaPusherAuthPOST", () => {
@@ -16,9 +12,59 @@ describe("Validating schemaPusherAuthPOST", () => {
       socket_id: "socket_id",
       channel_name: "channel_name",
       user_id: "abc123",
+      user_admin: "false",
+      user_name: "abc123",
     };
+    const expectedResult = {
+      socket_id: "socket_id",
+      channel_name: "channel_name",
+      user_id: "abc123",
+      user_admin: false,
+      user_name: "abc123",
+    };
+
     const result = testSchemaPusherAuthPost(params);
-    expect(result).toEqual(params);
+    expect(result).toEqual(expectedResult);
+  });
+
+  it("should return the parsed params when given a valid params object", () => {
+    const params = {
+      socket_id: "socket_id",
+      channel_name: "channel_name",
+      user_id: "abc123",
+      user_admin: "0",
+      user_name: "abc123",
+    };
+    const expectedResult = {
+      socket_id: "socket_id",
+      channel_name: "channel_name",
+      user_id: "abc123",
+      user_admin: false,
+      user_name: "abc123",
+    };
+
+    const result = testSchemaPusherAuthPost(params);
+    expect(result).toEqual(expectedResult);
+  });
+
+  it("should return the parsed params when given a valid params object", () => {
+    const params = {
+      socket_id: "socket_id",
+      channel_name: "channel_name",
+      user_id: "abc123",
+      user_admin: "true",
+      user_name: "abc123",
+    };
+    const expectedResult = {
+      socket_id: "socket_id",
+      channel_name: "channel_name",
+      user_id: "abc123",
+      user_admin: true,
+      user_name: "abc123",
+    };
+
+    const result = testSchemaPusherAuthPost(params);
+    expect(result).toEqual(expectedResult);
   });
 
   it("should throw an error when given an empty params object", () => {
@@ -32,6 +78,8 @@ describe("Validating schemaPusherAuthPOST", () => {
     const params = {
       socket_id: "socket_id",
       user_id: "abc123",
+      user_admin: "0",
+      user_name: "abc123",
     };
     expect(() => {
       testSchemaPusherAuthPost(params);
@@ -42,6 +90,8 @@ describe("Validating schemaPusherAuthPOST", () => {
     const params = {
       socket_id: "socket_id",
       channel_name: "channel_name",
+      user_admin: "0",
+      user_name: "abc123",
     };
     expect(() => {
       testSchemaPusherAuthPost(params);
@@ -53,6 +103,8 @@ describe("Validating schemaPusherAuthPOST", () => {
       socket_id: "socket_id",
       channel_name: "channel_name",
       user_id: "abc@123",
+      user_admin: "0",
+      user_name: "abc123",
     };
     expect(() => {
       testSchemaPusherAuthPost(params);
@@ -64,6 +116,8 @@ describe("Validating schemaPusherAuthPOST", () => {
       socket_id: "socket_id",
       channel_name: "channel_name",
       user_id: "a".repeat(37),
+      user_admin: "0",
+      user_name: "abc123",
     };
     expect(() => {
       testSchemaPusherAuthPost(params);
@@ -72,9 +126,11 @@ describe("Validating schemaPusherAuthPOST", () => {
 
   it("should throw an error when given a params object with an empty string for user_id", () => {
     const params = {
-      userId: "",
       socket_id: "socket_id",
       channel_name: "channel_name",
+      user_id: "",
+      user_admin: "0",
+      user_name: "abc123",
     };
     expect(() => testSchemaPusherAuthPost(params)).toThrow();
   });
