@@ -52,6 +52,8 @@ interface IChatDataContext {
   chatData: IChatData[] | null;
   dispatchChatData: (action: TChatDataProviderActions) => void;
   getRoomChatData: (room_id: string) => IChatData;
+  getRoomUnreadMessagesCount: (room_id: string) => number;
+  getRoomLastMessageTimestamp: (room_id: string) => Date | null;
   // setChatData: (
   //   newChatData:
   //     | ((prev: IChatData[] | null) => IChatData[] | null) // figuring out this type took a while
@@ -85,6 +87,24 @@ export function ChatDataProvider({
       state: "loading",
     };
     return roomData ? roomData : emptyRoom;
+  }
+  function getRoomUnreadMessagesCount(room_id: string) {
+    const roomData = chatData.find((room) => room.room_id === room_id);
+    const unreadMessagesCount = roomData
+      ? roomData.messages.filter((msg) => msg.unread).length
+      : 0;
+    return unreadMessagesCount;
+  }
+  function getRoomLastMessageTimestamp(room_id: string) {
+    const roomData = chatData.find((room) => room.room_id === room_id);
+    // const unreadMessages = roomData
+    //   ? roomData.messages.filter((msg) => msg.unread)
+    //   : null;
+    const lastUnreadMessageTimestamp =
+      roomData && roomData?.messages.length > 0
+        ? roomData.messages[roomData.messages.length - 1].timestamp
+        : null;
+    return lastUnreadMessageTimestamp;
   }
 
   // reducers
@@ -179,7 +199,13 @@ export function ChatDataProvider({
 
   return (
     <ChatDataContext.Provider
-      value={{ chatData, dispatchChatData, getRoomChatData }}
+      value={{
+        chatData,
+        dispatchChatData,
+        getRoomChatData,
+        getRoomUnreadMessagesCount,
+        getRoomLastMessageTimestamp,
+      }}
     >
       {children}
     </ChatDataContext.Provider>

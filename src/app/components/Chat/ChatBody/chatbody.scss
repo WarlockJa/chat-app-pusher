@@ -1,11 +1,13 @@
 .chat__body {
-  border: 1px solid purple;
   border-radius: 1em 1em 0 0;
 
   height: calc(
-    100% - var(--sendForm-height) - var(--typingNotification-height)
+    100% - var(--sendForm-height) - var(--chatHeader-height)
   ); // removing heights of the SendForm and TypingNotifications elements
   overflow-y: scroll;
+
+  // background-image: url("../../../../assets/chatbody-bgpattern.jpg");
+  // background-size: cover;
 
   .chat__body--spinnerWrapper {
     display: flex;

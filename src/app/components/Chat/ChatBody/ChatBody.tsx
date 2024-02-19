@@ -134,20 +134,8 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
     );
   }
   return (
-    <>
-      {/* <button
-        onClick={() => {
-          // chatBodyRef.current?.scrollTo({
-          //   top: 891,
-          // });
-          console.log(data.scrollPosition.currentPosition);
-        }}
-      >
-        TEST
-      </button> */}
-      <div className="chat__body" ref={chatBodyRef} onScroll={handleScroll}>
-        {chatContent}
-      </div>
-    </>
+    <div className="chat__body" ref={chatBodyRef} onScroll={handleScroll}>
+      {chatContent}
+    </div>
   );
 }

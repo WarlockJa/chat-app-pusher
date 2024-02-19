@@ -7,6 +7,7 @@ import { addChannelMessage } from "@/lib/apiDBMethods/addChannelMessage";
 import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
+import ArrowRight from "@/assets/svg/ArrowRight";
 
 export default function SendForm({
   userId,
@@ -93,7 +94,7 @@ export default function SendForm({
           type="submit"
           disabled={message === ""}
         >
-          Send
+          <ArrowRight />
         </button>
       </form>
       {/* <button

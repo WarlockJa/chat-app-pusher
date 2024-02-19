@@ -1,7 +1,12 @@
 :root {
-  --typingNotification-height: 1.3rem;
-  --sendForm-height: 2.25em;
+  --border-radius: 0.8em;
+  --chatHeader-height: 4.435em;
+  --sendForm-height: 2.19em;
+  --sendForm-height: 1.95em;
   --clr-main-font: #bfbfbf;
+  --clr-bg-main: #1d5680;
+  --clr-border: #2f7aa5;
+  --clr-indicatorOff: #ca4949;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,6 +20,19 @@
 *::before {
   box-sizing: border-box;
   margin: 0;
+}
+
+/* changing text vertical alignment for react-avatar component */
+.sb-avatar {
+  .sb-avatar__text {
+    div {
+      span {
+        span {
+          vertical-align: sub;
+        }
+      }
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
