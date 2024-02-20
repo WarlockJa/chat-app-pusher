@@ -1,8 +1,13 @@
 import { IChatData } from "@/context/innerContexts/ChatDataProvider";
 
+interface IIOObject {
+  message_id: string;
+  entryTimestamp: number;
+}
+
 interface IGetOlderMessageProps {
-  first: { message_id: string; entryTimestamp: number };
-  second: { message_id: string; entryTimestamp: number };
+  first: IIOObject;
+  second: IIOObject;
   activeRoom_chatData: IChatData;
 }
 
@@ -14,10 +19,8 @@ export default function getOlderMessage({
   first,
   second,
   activeRoom_chatData,
-}: IGetOlderMessageProps):
-  | { message_id: string; entryTimestamp: number }
-  | undefined {
-  if (!activeRoom_chatData) return;
+}: IGetOlderMessageProps): IIOObject | undefined {
+  if (!activeRoom_chatData || !activeRoom_chatData.messages) return;
 
   const firstMessage = activeRoom_chatData.messages.find(
     (message) => message.id === first.message_id

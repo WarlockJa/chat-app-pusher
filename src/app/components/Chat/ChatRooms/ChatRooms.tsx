@@ -42,7 +42,7 @@ export default function ChatRooms({
       const lastMsgTimestamp = getRoomLastMessageTimestamp(currentRoom.roomId);
       // getting active room typing users data
       const data = getRoomTypingUsers(currentRoom.roomId);
-      const roomTypingUsersString = getTypingUsersString({ data, user_id });
+      const roomTypingUsersString = getTypingUsersString({ data, user_name });
       return (
         <li
           className={

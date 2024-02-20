@@ -16,6 +16,7 @@ function stringToRGB(inputString: string) {
 }
 
 export function generateColor(inputString: string) {
-  const [red, green, blue] = stringToRGB(inputString);
+  const stringToProcess = inputString ? inputString : "";
+  const [red, green, blue] = stringToRGB(stringToProcess);
   return `rgb(${red}, ${green}, ${blue})`;
 }

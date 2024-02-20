@@ -13,11 +13,6 @@ interface IUseIntersectionObserverArrayProps {
   activeRoom_chatData: IChatData;
 }
 
-interface IIODebouncedEntry {
-  message_id: string;
-  entryTimestamp: number;
-}
-
 export default function useIOUnreadMsgsArray({
   unreadMessagesRefsArray,
   activeRoom,

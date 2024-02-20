@@ -17,7 +17,7 @@ export default function ChatHeader({
   // getting active room typing users data
   // TODO replace with channel owner data
   const data = getRoomTypingUsers(activeRoom);
-  const usersTyping = getTypingUsersString({ data, user_id });
+  const usersTyping = getTypingUsersString({ data, user_name });
 
   return (
     <div className="chatHeader">

@@ -58,3 +58,9 @@ interface ITypingUserTimeout {
   id: string;
   timeout: NodeJS.Timeout;
 }
+
+// useIOUnreadMsgsArray interface for the debounced lastaccess update object
+interface IIODebouncedEntry {
+  message_id: string;
+  entryTimestamp: number;
+}

@@ -1,22 +1,23 @@
 import { IUsersTypingData } from "@/context/innerContexts/UsersTypingProvider";
 
-interface IGetTypingUsersData {
+export interface IGetTypingUsersData {
   data: IUsersTypingData;
-  user_id: string;
+  user_name: string;
 }
 
 export default function getTypingUsersString({
   data,
-  user_id,
+  user_name,
 }: IGetTypingUsersData) {
+  if (!data || !data.users) return;
   // forming output string
-  const typingUsers: string = data.users.reduce(
-    (users, user, index) =>
-      user !== user_id
-        ? users.concat(index === 0 ? `${user}` : `, ${user}`)
-        : "",
-    ""
-  );
+  const typingUsers: string = data.users
+    .filter((user) => user !== user_name)
+    .reduce(
+      (users, user, index) =>
+        users.concat(index === 0 ? `${user}` : `, ${user}`),
+      ""
+    );
 
   const content =
     typingUsers !== ""
