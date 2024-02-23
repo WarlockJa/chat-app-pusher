@@ -11,7 +11,11 @@ export async function POST(req: Request) {
 
     pusherServer.trigger(data.activeRoom, "message", {
       message: data.message,
-      author: data.author,
+      author: {
+        user_id: data.user_id,
+        user_name: data.user_name,
+        user_admin: data.user_admin,
+      },
       id: data.id,
     });
 

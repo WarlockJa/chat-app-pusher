@@ -13,7 +13,10 @@ export async function GET(req: NextRequest) {
     const channel_name = url.searchParams.get("channel_name");
 
     // validating params
-    const data = schemaApiV1dbMessagesNewGET.parse({ user_id, channel_name });
+    const data = schemaApiV1dbMessagesNewGET.parse({
+      user_id,
+      channel_name,
+    });
 
     // fetching unread messages from the channel using lastaccess timestamp
     const unreadMessagesFromDB = (await prisma.channel.aggregateRaw({

@@ -1,6 +1,6 @@
 // returns true if element is scrolled to the bottom otherwise returns false
 export function isScrolledBottom(element: HTMLDivElement) {
-  if (!element) return;
+  if (!element) return false;
 
   return (
     Math.abs(

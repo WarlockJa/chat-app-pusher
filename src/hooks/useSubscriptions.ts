@@ -11,6 +11,7 @@ import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
+import createChannel from "@/lib/apiDBMethods/createChannel";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -65,7 +66,11 @@ export default function useSubscriptions({
               message: {
                 id: data.id,
                 text: data.message,
-                author: data.author,
+                author: {
+                  user_id: data.user_id,
+                  user_name: data.user_name,
+                  user_admin: data.user_admin,
+                },
                 timestamp: new Date(),
                 unread: true,
               },
@@ -155,6 +160,15 @@ export default function useSubscriptions({
 
         // fetching list of currently active user rooms upon initial load
         newChannel.bind("pusher:subscription_succeeded", () => {
+          // creating a collection in DB with user data if does not exist
+          if (newChannel.name !== "presence-system") {
+            createChannel({
+              user_id: userId.user_id,
+              user_name: userId.user_name,
+              user_admin: userId.user_admin,
+              channel_name: newChannel.name,
+            });
+          }
           // creating rooms in contexts
           dispatchChatData({
             type: "ChatData_addRoom",

@@ -97,9 +97,6 @@ export function ChatDataProvider({
   }
   function getRoomLastMessageTimestamp(room_id: string) {
     const roomData = chatData.find((room) => room.room_id === room_id);
-    // const unreadMessages = roomData
-    //   ? roomData.messages.filter((msg) => msg.unread)
-    //   : null;
     const lastUnreadMessageTimestamp =
       roomData && roomData?.messages.length > 0
         ? roomData.messages[roomData.messages.length - 1].timestamp

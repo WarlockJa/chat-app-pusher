@@ -147,7 +147,7 @@ export async function POST(req: Request) {
             $push: {
               messages: {
                 id: data.message_id,
-                author: data.user_id,
+                author: { user_id: data.user_id, user_name: data.user_name },
                 text: data.message_text,
                 timestamp: { $date: new Date() },
               },
@@ -156,14 +156,23 @@ export async function POST(req: Request) {
           upsert: true,
         },
         // creating empty lastaccess array if it does not exist
-        {
-          q: { name: data.channel_name, lastaccess: { $exists: false } },
-          u: {
-            $set: {
-              lastaccess: [],
-            },
-          },
-        },
+        // {
+        //   q: { name: data.channel_name, lastaccess: { $exists: false } },
+        //   u: {
+        //     $set: {
+        //       lastaccess: [],
+        //     },
+        //   },
+        // },
+        // // creating owner object if it does not exist
+        // {
+        //   q: { name: data.channel_name, owner: { $exists: false } },
+        //   u: {
+        //     $set: {
+        //       owner: { user_id: data.user_id, user_name: data.user_name },
+        //     },
+        //   },
+        // },
       ],
     });
 

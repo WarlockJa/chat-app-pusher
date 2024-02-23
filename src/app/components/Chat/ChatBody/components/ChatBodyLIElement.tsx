@@ -16,7 +16,7 @@ export default function ChatBodyLIElement(props: IChatBodyLIElementProps) {
           userIsMsgAuthor ? "post__header--user" : "post__header--reply"
         }`}
       >
-        <span className="post__header--name">{msg.author}</span>
+        <span className="post__header--name">{msg.author.user_name}</span>
         <span className="post__header--time">
           {format(msg.timestamp, "k:mm")}
         </span>

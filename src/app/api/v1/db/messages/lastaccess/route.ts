@@ -54,14 +54,14 @@ export async function POST(req: Request) {
       updates: [
         {
           q: { name: data.channel_name },
-          u: { $pull: { lastaccess: { user: data.user_id } } },
+          u: { $pull: { lastaccess: { user_id: data.user_id } } },
         },
         {
           q: { name: data.channel_name },
           u: {
             $push: {
               lastaccess: {
-                user: data.user_id,
+                user_id: data.user_id,
                 timestamp: messageTimestamp,
               },
             },

@@ -10,21 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+type User {
+  user_id    String
+  user_name  String
+  user_admin Boolean
+}
+
 type Message {
   id        String   @default(uuid())
-  author    String
+  author    User
   text      String
   timestamp DateTime @default(now())
 }
 
 type UserTimestamp {
-  user      String
+  user_id   String
   timestamp DateTime @default(now())
 }
 
 model channel {
   id         String          @id @default(auto()) @map("_id") @db.ObjectId
   name       String          @unique
+  owner      User
   messages   Message[]
   lastaccess UserTimestamp[]
 }

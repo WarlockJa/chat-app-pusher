@@ -1,4 +1,7 @@
-import { regexAlphanumericWithDash } from "@/util/regExes";
+import {
+  regexAlphanumericWithDash,
+  regexStartLetterContainsLettersNumbersUnderscore,
+} from "@/util/regExes";
 import { z } from "zod";
 
 export const schemaApiV1dbMessagesHistoryGET = z.object({
@@ -22,7 +25,6 @@ export const schemaApiV1dbMessagesHistoryGET = z.object({
     }),
   limit: z
     .number({
-      // required_error: "Limit of messages to return required",
       invalid_type_error: "Must be a number",
     })
     .nullable(),
@@ -44,6 +46,19 @@ export const schemaApiV1dbMessagesHistoryPOST = z.object({
     .max(36, { message: "Maximum length for user_id is 36" })
     .regex(regexAlphanumericWithDash, {
       message: "user_id must be uuidv4",
+    }),
+  user_name: z
+    .string({
+      required_error: "user_id is required",
+      invalid_type_error: "Required type for user_id is string",
+    })
+    .min(3, {
+      message: "user_name must be at least 3 characters long",
+    })
+    .max(36, { message: "Maximum length for user_id is 36" })
+    .regex(regexStartLetterContainsLettersNumbersUnderscore, {
+      message:
+        "user_name should start with a letter and may contain letters, digits, spaces, underscores, and dashes",
     }),
   message_text: z
     .string()

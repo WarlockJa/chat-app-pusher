@@ -33,7 +33,9 @@ export default function SendForm({
     // triggering "message" event for Pusher
     sendMessageEvent({
       message,
-      author: userId.user_name,
+      user_id: userId.user_id,
+      user_name: userId.user_name,
+      user_admin: userId.user_admin,
       activeRoom,
       id: message_id,
     });
@@ -42,6 +44,7 @@ export default function SendForm({
     addChannelMessage({
       message_text: message,
       user_id: userId.user_id,
+      user_name: userId.user_name,
       channel_name: activeRoom,
       message_id,
     });
@@ -55,7 +58,7 @@ export default function SendForm({
         {
           id: message_id,
           text: message,
-          author: userId.user_name,
+          author: userId,
           timestamp: new Date(),
           unread: true, // default state is unread for scroll events
         },
