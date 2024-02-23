@@ -1,4 +1,4 @@
-import "../chat.scss";
+import "../..";
 
 export default function LoadingPlug({ message }: { message: string }) {
   return (

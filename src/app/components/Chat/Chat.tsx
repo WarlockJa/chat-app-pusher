@@ -1,28 +1,16 @@
-import ChatBody from "./ChatBody/ChatBody";
-import ChatRooms from "./ChatRooms/ChatRooms";
-import SendForm from "./SendForm/SendForm";
-import SubscriptionsHookWrapper from "./ChatBody/components/SubscriptionsHookWrapper";
-import { PusherPresence } from "@/context/outerContexts/PusherProvider";
-import ChatHeader from "./ChatHeader/ChatHeader";
+import { PusherConnectionProvider } from "@/context/outerContexts/PusherProvider";
+import { UserIdProvider } from "@/context/outerContexts/UserIdProvider";
+import OuterContextsWrapper from "./OuterContextsWrapper/OuterContextsWrapper";
 
-export default function Chat({
-  userId,
-  pusher,
-}: {
-  userId: IUserId;
-  pusher: PusherPresence;
-}) {
-  // console.log("------------Chat rerender-------------");
-
+export default function Chat() {
   return (
-    <div className="chat">
-      <SubscriptionsHookWrapper pusher={pusher} userId={userId} />
-      <ChatRooms user_name={userId.user_name} user_id={userId.user_id} />
-      <div className="chat__wrapper">
-        <ChatHeader user_id={userId.user_id} user_name={userId.user_name} />
-        <ChatBody userId={userId} />
-        <SendForm userId={userId} pusher={pusher} />
-      </div>
-    </div>
+    <UserIdProvider>
+      <PusherConnectionProvider>
+        <OuterContextsWrapper
+          storage_uuid={process.env.NEXT_PUBLIC_LOCAL_STORAGE_UUID}
+          pageLimit={10}
+        />
+      </PusherConnectionProvider>
+    </UserIdProvider>
   );
 }

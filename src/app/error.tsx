@@ -1,5 +1,5 @@
 "use client"; // Error components must be Client Components
-import "./components/Chat/chat.scss";
+import "./components/Chat/OuterContextsWrapper/InnerContextsWrapper/innercontextswrapper.scss";
 
 export default function Error({
   error,

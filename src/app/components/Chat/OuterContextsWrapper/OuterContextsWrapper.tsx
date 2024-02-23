@@ -1,19 +1,18 @@
 "use client";
-import "./Chat/chat.scss";
-import NoUserPlug from "./Chat/plugs/NoUserPlug";
-import LoadingPlug from "./Chat/plugs/LoadingPlug";
+import NoUserPlug from "./InnerContextsWrapper/plugs/NoUserPlug";
+import LoadingPlug from "./InnerContextsWrapper/plugs/LoadingPlug";
 import usePusherConnection from "@/hooks/usePusherConnection";
 import useUserId from "@/hooks/useUserId";
 import { usePusherContext } from "@/context/outerContexts/PusherProvider";
 import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
 import { ChatRoomsProvider } from "@/context/innerContexts/ChatRoomsProvider";
 import { ChatDataProvider } from "@/context/innerContexts/ChatDataProvider";
-import Chat from "./Chat/Chat";
 import { UsersTypingProvider } from "@/context/innerContexts/UsersTypingProvider";
 import { PaginationProvider } from "@/context/innerContexts/PaginationProvider";
 import { ScrollPositionDataProvider } from "@/context/innerContexts/ScrollPositionProvider";
+import InnerContextsWrapper from "./InnerContextsWrapper/InnerContextsWrapper";
 
-export default function ChatPusher({
+export default function OuterContextsWrapper({
   user_id,
   user_name,
   user_admin,
@@ -47,7 +46,7 @@ export default function ChatPusher({
         <UsersTypingProvider>
           <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
             <ScrollPositionDataProvider>
-              <Chat userId={userId} pusher={pusher} />
+              <InnerContextsWrapper userId={userId} pusher={pusher} />
             </ScrollPositionDataProvider>
           </PaginationProvider>
         </UsersTypingProvider>
