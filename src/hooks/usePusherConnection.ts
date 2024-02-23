@@ -23,24 +23,12 @@ export default function usePusherConnection() {
     if (!userId?.user_id) return;
 
     try {
-      // TODO replace TEST
-      // establishing pusher connection
-      // TEST
-      if (userId.user_name === "WJ" || userId.user_name === "Mike") {
-        const pusherInstance = pusherClient({
-          user_id: userId.user_name,
-          user_admin: userId.user_admin,
-          user_name: userId.user_name,
-        }) as PusherPresence;
-        setPusher(pusherInstance);
-      } else {
-        const pusherInstance = pusherClient({
-          user_id: userId.user_id,
-          user_admin: userId.user_admin,
-          user_name: userId.user_name,
-        }) as PusherPresence;
-        setPusher(pusherInstance);
-      }
+      const pusherInstance = pusherClient({
+        user_id: userId.user_id,
+        user_admin: userId.user_admin,
+        user_name: userId.user_name,
+      }) as PusherPresence;
+      setPusher(pusherInstance);
     } catch (error) {
       // TODO check for zod of pusher error
       console.log(error);

@@ -36,26 +36,18 @@ export const schemaApiV1dbMessagesHistoryPOST = z.object({
       required_error: "Message ID required",
     })
     .uuid({ message: "Message ID must be UUIDv4" }),
-  // TODO replace after TEST
-  // userId: z.string().uuid()
   user_id: z
-    .string({
-      required_error: "user_id is required",
-      invalid_type_error: "Required type for user_id is string",
-    })
-    .max(36, { message: "Maximum length for user_id is 36" })
-    .regex(regexAlphanumericWithDash, {
-      message: "user_id must be uuidv4",
-    }),
+    .string({ required_error: "user_id is required" })
+    .uuid({ message: "user_id must be UUIDv4" }),
   user_name: z
     .string({
-      required_error: "user_id is required",
-      invalid_type_error: "Required type for user_id is string",
+      required_error: "user_name is required",
+      invalid_type_error: "Required type for user_name is string",
     })
     .min(3, {
       message: "user_name must be at least 3 characters long",
     })
-    .max(36, { message: "Maximum length for user_id is 36" })
+    .max(36, { message: "Maximum length for user_name is 36" })
     .regex(regexStartLetterContainsLettersNumbersUnderscore, {
       message:
         "user_name should start with a letter and may contain letters, digits, spaces, underscores, and dashes",

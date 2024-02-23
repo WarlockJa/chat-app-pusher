@@ -64,3 +64,8 @@ interface IIODebouncedEntry {
   message_id: string;
   entryTimestamp: number;
 }
+
+interface IChatProps extends IInitUserId {
+  storage_uuid: string;
+  pageLimit?: number;
+}

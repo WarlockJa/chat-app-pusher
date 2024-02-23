@@ -1,10 +1,10 @@
+import ChatTestUsersWrapper from "./components/ChatTestUsersWrapper/ChatTestUsersWrapper";
 import styles from "./page.module.css";
-import Chat from "@/app/components/Chat/Chat";
 
 export default function Home() {
   return (
     <main className={styles.main}>
-      <Chat />
+      <ChatTestUsersWrapper />
     </main>
   );
 }

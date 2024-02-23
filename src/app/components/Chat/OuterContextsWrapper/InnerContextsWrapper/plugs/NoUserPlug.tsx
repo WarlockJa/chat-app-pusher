@@ -1,6 +1,6 @@
 import "../innercontextswrapper.scss";
 import "../SendForm/sendform.scss";
-import { writeLocalStorage } from "@/util/localStorageRW";
+import { readLocalStorage, writeLocalStorage } from "@/util/localStorageRW";
 import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
 
 // gathering anonymous user data and saving it to state and localStorage
@@ -31,35 +31,18 @@ export default function NoUserPlug({
     // generating random user_id
     const user_id = crypto.randomUUID();
 
-    // TODO replace TEST
-    // setUserId({ user_id, user_name });
-    // assigning default rooms for the user
-    // setRoomsList(['presence-system', `presence-${user_id}`])
-    // TEST TODO replace with actual id
-    // setUserId({ user_id: user_name, user_name, user_admin: false });
     setUserId({
-      user_id: user_name,
+      user_id,
       user_name,
-      user_admin: user_name === "WJ" || user_name === "Mike" ? true : false,
+      user_admin: false,
     });
-
-    // TODO delete
-    // setRoomsList([
-    //   { roomName: "presence-system", users: [user_name] },
-    //   { roomName: `presence-${user_name}`, users: [user_name] },
-    // ]);
 
     // saving anonymous data to localStorage
     writeLocalStorage({
-      user_id: user_name,
+      user_id,
       user_name,
       storage_uuid,
     });
-    // writeLocalStorage({
-    //   user_id,
-    //   user_name,
-    //   storage_uuid,
-    // });
   };
 
   return (

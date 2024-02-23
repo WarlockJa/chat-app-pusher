@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   const [socket_id, channel_name, user_id, user_admin, user_name] = data
     .split("&")
-    .map((str) => str.split("=")[1]);
+    .map((str) => decodeURIComponent(str.split("=")[1]));
 
   try {
     // data validation
@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
       user_admin,
       user_name,
     });
+
+    console.log(validatedData);
 
     const presenceData: PresenceChannelData = {
       user_id: validatedData.user_id,

@@ -13,18 +13,12 @@ import { ScrollPositionDataProvider } from "@/context/innerContexts/ScrollPositi
 import InnerContextsWrapper from "./InnerContextsWrapper/InnerContextsWrapper";
 
 export default function OuterContextsWrapper({
-  user_id,
-  user_name,
-  user_admin,
   storage_uuid,
   pageLimit,
 }: IChatProps) {
-  // populating state with user data
+  // displaying loading state while reading data from localStorage
   const { loadingUserId } = useUserId({
     storage_uuid,
-    user_id,
-    user_name,
-    user_admin,
   });
   const { userId } = useUserIdContext();
   const { pusher } = usePusherContext();

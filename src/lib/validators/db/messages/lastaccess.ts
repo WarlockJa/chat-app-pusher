@@ -8,17 +8,9 @@ export const schemaApiV1dbMessagesLastaccessPOST = z
         required_error: "Message ID required",
       })
       .uuid({ message: "Message ID must be UUIDv4" }),
-    // TODO replace after TEST
-    // userId: z.string().uuid()
     user_id: z
-      .string({
-        required_error: "UserId is required",
-        invalid_type_error: "Required type for userId is string",
-      })
-      .max(36, { message: "Maximum length for userId is 36" })
-      .regex(regexAlphanumericWithDash, {
-        message: "UserId may only contains alphanumerical characters and dash",
-      }),
+      .string({ required_error: "user_id is required" })
+      .uuid({ message: "user_id must be UUIDv4" }),
     channel_name: z
       .string({
         required_error: "Channel name is required",

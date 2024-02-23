@@ -1,0 +1,48 @@
+.chatWrapper {
+  margin: auto;
+
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  text-align: center;
+
+  border: 1px solid;
+  border-radius: 12px;
+  box-shadow: 0 0 3px 3px;
+
+  overflow: hidden;
+
+  h1 {
+    font-size: 3rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+
+  .divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+  }
+
+  .selectWrapper {
+    font-size: 1.1rem;
+
+    select {
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  .formButton {
+    font-size: 1rem;
+    width: 102%;
+  }
+}

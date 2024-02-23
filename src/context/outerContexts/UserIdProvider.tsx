@@ -8,8 +8,14 @@ interface IUserIdContext {
 
 const UserIdContext = createContext<IUserIdContext | null>(null);
 
-export function UserIdProvider({ children }: PropsWithChildren<{}>) {
-  const [userId, setUserId] = useState<IUserId | null>(null);
+export function UserIdProvider({
+  children,
+  userIdToken,
+}: {
+  children: React.ReactNode | undefined;
+  userIdToken: IUserId | null;
+}) {
+  const [userId, setUserId] = useState<IUserId | null>(userIdToken);
 
   return (
     <UserIdContext.Provider value={{ userId, setUserId }}>
