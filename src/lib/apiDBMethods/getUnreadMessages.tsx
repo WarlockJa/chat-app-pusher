@@ -23,7 +23,6 @@ export function getUnreadMessages({
       const unreadMessages: IChatData_MessageExtended[] = result.map(
         (message) => ({ ...message, unread: true })
       );
-      console.log(result);
 
       dispatchChatData({
         type: "addRoomMessages",

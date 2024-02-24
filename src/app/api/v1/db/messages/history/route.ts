@@ -155,25 +155,6 @@ export async function POST(req: Request) {
           },
           upsert: true,
         },
-        // TODO delete after test
-        // creating empty lastaccess array if it does not exist
-        // {
-        //   q: { name: data.channel_name, lastaccess: { $exists: false } },
-        //   u: {
-        //     $set: {
-        //       lastaccess: [],
-        //     },
-        //   },
-        // },
-        // // creating owner object if it does not exist
-        // {
-        //   q: { name: data.channel_name, owner: { $exists: false } },
-        //   u: {
-        //     $set: {
-        //       owner: { user_id: data.user_id, user_name: data.user_name },
-        //     },
-        //   },
-        // },
       ],
     });
 

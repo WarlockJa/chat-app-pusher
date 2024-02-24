@@ -2,9 +2,24 @@ import {
   regexAlphanumericWithDash,
   regexStartLetterContainsLettersNumbersUnderscore,
 } from "@/util/regExes";
-import { coerce, z } from "zod";
+import { z } from "zod";
 
-export const schemaApiV1dbMessagesChannelPOST = z.object({
+export const schemaApiV1dbChannelGET = z.object({
+  channel_name: z
+    .string({
+      required_error: "ActiveRoom is required",
+      invalid_type_error: "Required type for activeRoom is string",
+    })
+    .startsWith("presence-", {
+      message: "ActiveRoom must start with 'presence-'",
+    })
+    .max(45)
+    .regex(regexAlphanumericWithDash, {
+      message: "UserId may only contains alphanumerical characters and dash",
+    }),
+});
+
+export const schemaApiV1dbChannelPOST = z.object({
   user_id: z
     .string({ required_error: "user_id is required" })
     .uuid({ message: "user_id must be UUIDv4" }),

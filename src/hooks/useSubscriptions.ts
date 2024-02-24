@@ -12,6 +12,7 @@ import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvid
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 import createChannel from "@/lib/apiDBMethods/createChannel";
+import { getRoomOwner } from "@/lib/apiDBMethods/getRoomOwner";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -24,7 +25,7 @@ export default function useSubscriptions({
 }) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
   // roomsList context and useReducer dispatch methods
-  const { roomsList, dispatch: dispatchChatRooms } = useChatRoomsContext();
+  const { roomsList, dispatchChatRooms } = useChatRoomsContext();
   // local chat data
   const { dispatchChatData } = useChatDataContext();
   // users typing data
@@ -162,6 +163,7 @@ export default function useSubscriptions({
         newChannel.bind("pusher:subscription_succeeded", () => {
           // creating a collection in DB with user data if does not exist
           if (newChannel.name !== "presence-system") {
+            // attempting to create a new channel in DB with owner data
             createChannel({
               user_id: userId.user_id,
               user_name: userId.user_name,
@@ -185,6 +187,14 @@ export default function useSubscriptions({
           dispatchScrollPosition({
             type: "ScrollPosition_addRoom",
             room_id: newChannel.name,
+          });
+
+          // fetching room owner data
+          getRoomOwner({
+            params: {
+              channel_name: newChannel.name,
+            },
+            dispatchChatRooms,
           });
 
           // fetching unread messages on subscription_succeeded

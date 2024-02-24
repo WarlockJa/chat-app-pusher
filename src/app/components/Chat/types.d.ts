@@ -38,7 +38,9 @@ interface ITriggerEventData {
 
 interface IChatRoom {
   roomId: string;
+  owner: IUserId | null;
   users: IUserId[];
+  state: TChatDataStateLiteral;
 }
 
 // pusher.channel("channel-name").members.members
@@ -52,6 +54,7 @@ interface IChannelMembers {
 // Object.values(pusher.channel("channel-name").members.members.get("user_name"))
 type IChannelGetMember = [string, { user_admin: boolean; user_name: string }];
 
+// TODO rename excluding ChatData
 type TChatDataStateLiteral = "loading" | "success" | "error";
 
 interface ITypingUserTimeout {

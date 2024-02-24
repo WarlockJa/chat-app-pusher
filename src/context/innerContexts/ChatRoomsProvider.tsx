@@ -1,8 +1,16 @@
 import { createContext, useContext, useReducer, useState } from "react";
 
+export interface IChatRoomsSetRoomData {
+  type: "setRoomData";
+  room_id: string;
+  owner?: IUserId;
+  state?: TChatDataStateLiteral;
+}
+
 type TChatRoomsProviderActions =
   | { type: "addNewRoom"; room_id: string }
   | { type: "removeRoom"; room_id: string }
+  | IChatRoomsSetRoomData
   | { type: "removeUserFromRoomUsersList"; user_id: string; room_id: string }
   | { type: "addUserToRoomUsersList"; user: IUserId; room_id: string };
 
@@ -11,7 +19,8 @@ interface IChatRoomsContext {
   setActiveRoom: (newActiveRooms: string) => void;
 
   roomsList: IChatRoom[];
-  dispatch: (action: TChatRoomsProviderActions) => void;
+  dispatchChatRooms: (action: TChatRoomsProviderActions) => void;
+  getRoomOwnerData: (room_id: string) => IUserId | null;
 }
 
 const ChatRoomsContext = createContext<IChatRoomsContext | null>(null);
@@ -29,20 +38,32 @@ export function ChatRoomsProvider({
   const initialStateRoomsList: IChatRoom[] = [
     {
       roomId: "presence-system",
+      owner: null,
       users: [userId],
+      state: "success",
     },
     {
       roomId: `presence-${userId.user_id}`,
+      owner: userId,
       users: [userId],
+      state: "success",
     },
   ];
 
   const [activeRoom, setActiveRoom] = useState<string>(initialStateActiveRoom);
-  const [roomsList, dispatch] = useReducer(
+  const [roomsList, dispatchChatRooms] = useReducer(
     roomsListReducer,
     initialStateRoomsList
   );
 
+  // actions
+  function getRoomOwnerData(room_id: string) {
+    const roomData = roomsList.find((room) => room.roomId === room_id);
+    const roomOwner = roomData ? roomData.owner : null;
+    return roomOwner;
+  }
+
+  // reducers
   function roomsListReducer(
     roomsList: IChatRoom[],
     action: TChatRoomsProviderActions
@@ -56,12 +77,23 @@ export function ChatRoomsProvider({
               ...roomsList,
               {
                 roomId: action.room_id,
+                owner: null,
                 users: [],
+                state: "loading",
               },
             ]
           : roomsList;
       case "removeRoom":
         return roomsList.filter((room) => room.roomId !== action.room_id);
+      case "setRoomData":
+        return roomsList.map((room) =>
+          room.roomId === action.room_id
+            ? {
+                ...room,
+                ...action,
+              }
+            : room
+        );
       case "removeUserFromRoomUsersList":
         return roomsList.map((room) =>
           room.roomId === action.room_id
@@ -101,7 +133,8 @@ export function ChatRoomsProvider({
         activeRoom,
         setActiveRoom,
         roomsList,
-        dispatch,
+        dispatchChatRooms,
+        getRoomOwnerData,
       }}
     >
       {children}

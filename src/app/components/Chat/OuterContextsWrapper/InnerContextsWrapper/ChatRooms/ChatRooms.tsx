@@ -15,7 +15,8 @@ export default function ChatRooms({
   user_id: string;
 }) {
   // context data
-  const { activeRoom, setActiveRoom, roomsList } = useChatRoomsContext();
+  const { activeRoom, setActiveRoom, roomsList, getRoomOwnerData } =
+    useChatRoomsContext();
   const { getRoomUnreadMessagesCount, getRoomLastMessageTimestamp } =
     useChatDataContext();
   const { getRoomTypingUsers } = useUsersTypingContext();
@@ -31,14 +32,15 @@ export default function ChatRooms({
   const content = roomsList
     // hiding rooms system and userId from the list
     // TEST
-    // .filter(
-    //   (item) =>
-    //     item !== "presence-system" && item !== `presence-${userId}`
-    // )
+    // filtering out presence-system
+    .filter((item) => item.roomId !== "presence-system")
     .map((currentRoom) => {
       const unreadMessagesCount = getRoomUnreadMessagesCount(
         currentRoom.roomId
       );
+      // TEST
+      // getting room owner data
+      const owner = getRoomOwnerData(currentRoom.roomId);
       const lastMsgTimestamp = getRoomLastMessageTimestamp(currentRoom.roomId);
       // getting active room typing users data
       const data = getRoomTypingUsers(currentRoom.roomId);
@@ -63,7 +65,8 @@ export default function ChatRooms({
             color={generateColor(currentRoom.roomId.slice(9))}
           />
           {/* <span>{JSON.stringify(currentRoom.users.length)}</span>{" "} */}
-          {currentRoom.roomId.slice(9)} {/* TODO get last seen timestamp */}
+          {/* {currentRoom.roomId.slice(9)} TODO get last seen timestamp */}
+          {owner?.user_name}
           {lastMsgTimestamp ? (
             <div className="chat__rooms--lastMsgTimestamp">
               {formatDistanceToNowStrict(
@@ -90,9 +93,9 @@ export default function ChatRooms({
   return (
     <ul className="chat__rooms">
       <li className="chat__rooms__header chat__rooms--avatarContainer">
-        <Avatar name="Warlock Ja" round size="3em" textSizeRatio={2} />
+        <Avatar name={user_name} round size="3em" textSizeRatio={2} />
         <p className="chat__rooms__header--userName" title={user_name}>
-          The longest name ever
+          {user_name}
         </p>
       </li>
       {content}
