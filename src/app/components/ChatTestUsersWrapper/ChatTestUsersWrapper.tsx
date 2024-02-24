@@ -51,31 +51,41 @@ export default function ChatTestUsersWrapper() {
     />
   ) : (
     <form className="chatWrapper" onSubmit={handleSubmit}>
-      <h1>Support Chat</h1>
-      <p>
-        This is a testing suite for a support chat component. Utilizing Pusher
-        for web sockets events allows this chat to be deployed on a serverless
-        hosting that does not support web sockets naturally.
+      <h1 className="chatWrapper--header">Support Chat</h1>
+      <p className="chatWrapper--description">
+        This is a testing suite for a Pusher Support Chat component. Utilizing
+        Pusher for web sockets events allows this chat to be deployed on a
+        serverless hosting that does not support web sockets naturally.
       </p>
       <div className="divider"></div>
-      <p>To proceed to the chat select user from the menu below</p>
+      <p>To proceed to the chat select user role</p>
       <div className="selectWrapper">
-        <label htmlFor="chatUserSelect">Select User: </label>
-        <select
-          name="chatUserSelect"
-          id="chatUserSelect"
-          value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
+        <button
+          className="chatWrapper--submitButton"
+          type="submit"
+          onMouseOver={() => setValue(0)}
         >
-          <option value={0}>Anonymous User</option>
-          <option value={1}>Registered User</option>
-          <option value={2}>Administrator</option>
-        </select>
-        <p>{description}</p>
+          Anonymous User
+        </button>
+        <button
+          className="chatWrapper--submitButton"
+          type="submit"
+          onMouseOver={() => setValue(1)}
+        >
+          Registered User
+        </button>
+        <button
+          className="chatWrapper--submitButton"
+          type="submit"
+          onMouseOver={() => setValue(2)}
+        >
+          Administrator
+        </button>
       </div>
-      <button className="formButton" type="submit">
-        Proceed
-      </button>
+      <div className="divider"></div>
+      <p className={`chatWrapper--description animatedText${value}`}>
+        {description}
+      </p>
     </form>
   );
 }

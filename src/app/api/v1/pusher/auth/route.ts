@@ -25,8 +25,6 @@ export async function POST(req: NextRequest) {
       user_name,
     });
 
-    console.log(validatedData);
-
     const presenceData: PresenceChannelData = {
       user_id: validatedData.user_id,
       user_info: {

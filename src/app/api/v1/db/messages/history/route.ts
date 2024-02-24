@@ -155,6 +155,7 @@ export async function POST(req: Request) {
           },
           upsert: true,
         },
+        // TODO delete after test
         // creating empty lastaccess array if it does not exist
         // {
         //   q: { name: data.channel_name, lastaccess: { $exists: false } },

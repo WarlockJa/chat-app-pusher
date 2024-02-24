@@ -8,6 +8,7 @@
   justify-content: center;
   gap: 1em;
   text-align: center;
+  padding: 0 1em;
 
   border: 1px solid;
   border-radius: 12px;
@@ -15,12 +16,30 @@
 
   overflow: hidden;
 
-  h1 {
-    font-size: 3rem;
+  .chatWrapper--header {
+    font-size: 4rem;
+    padding: 0.5em;
   }
 
-  p {
+  .chatWrapper--description {
     font-size: 1.2rem;
+    min-height: 6em;
+  }
+
+  .animatedText1 {
+    opacity: 0;
+    animation: fadeIn0 300ms ease-out;
+    animation-fill-mode: forwards;
+  }
+  .animatedText2 {
+    opacity: 0;
+    animation: fadeIn1 300ms ease-out 1;
+    animation-fill-mode: forwards;
+  }
+  .animatedText0 {
+    opacity: 0;
+    animation: fadeIn2 300ms ease-out 1;
+    animation-fill-mode: forwards;
   }
 
   .divider {
@@ -32,17 +51,57 @@
   .selectWrapper {
     font-size: 1.1rem;
 
-    select {
-      font-size: 1rem;
+    .chatWrapper--submitButton {
+      margin: 0 1em;
+      font-size: 1.2rem;
+      width: 10em;
+      height: 8em;
+      border-radius: 1em;
+      cursor: pointer;
+      transition: box-shadow 300ms ease-out, transform 300ms ease-out;
     }
 
-    p {
-      font-size: 1rem;
+    .chatWrapper--submitButton:hover {
+      transform: translate(-3px, -3px);
+    }
+
+    .chatWrapper--submitButton:nth-child(1) {
+      background-color: #539e8e;
+
+      &:hover {
+        box-shadow: 4px 4px 5px 5px #539e8e;
+      }
+    }
+
+    .chatWrapper--submitButton:nth-child(2) {
+      background-color: #636da5;
+      &:hover {
+        box-shadow: 4px 4px 5px 5px #636da5;
+      }
+    }
+
+    .chatWrapper--submitButton:nth-child(3) {
+      background-color: #d43396;
+      &:hover {
+        box-shadow: 4px 4px 5px 5px #d43396;
+      }
     }
   }
+}
 
-  .formButton {
-    font-size: 1rem;
-    width: 102%;
+// if someone knows how to do it better tell me
+@keyframes fadeIn0 {
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn1 {
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn2 {
+  100% {
+    opacity: 1;
   }
 }
