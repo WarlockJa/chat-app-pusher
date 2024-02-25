@@ -21,6 +21,8 @@ interface IChatRoomsContext {
   roomsList: IChatRoom[];
   dispatchChatRooms: (action: TChatRoomsProviderActions) => void;
   getRoomOwnerData: (room_id: string) => IUserId | null;
+  isOwnerPresent: (room_id: string) => boolean | null;
+  getPresentAdmin: (room_id: string) => IUserId | undefined | null;
 }
 
 const ChatRoomsContext = createContext<IChatRoomsContext | null>(null);
@@ -61,6 +63,22 @@ export function ChatRoomsProvider({
     const roomData = roomsList.find((room) => room.roomId === room_id);
     const roomOwner = roomData ? roomData.owner : null;
     return roomOwner;
+  }
+  function isOwnerPresent(room_id: string) {
+    const roomData = roomsList.find((room) => room.roomId === room_id);
+    const ownerPresent = roomData
+      ? roomData.users.findIndex(
+          (user) => user.user_id === roomData.owner?.user_id
+        ) !== -1
+      : null;
+    return ownerPresent;
+  }
+  function getPresentAdmin(room_id: string) {
+    const roomData = roomsList.find((room) => room.roomId === room_id);
+    const ownerPresent = roomData
+      ? roomData.users.find((user) => user.user_admin)
+      : null;
+    return ownerPresent;
   }
 
   // reducers
@@ -135,6 +153,8 @@ export function ChatRoomsProvider({
         roomsList,
         dispatchChatRooms,
         getRoomOwnerData,
+        isOwnerPresent,
+        getPresentAdmin,
       }}
     >
       {children}

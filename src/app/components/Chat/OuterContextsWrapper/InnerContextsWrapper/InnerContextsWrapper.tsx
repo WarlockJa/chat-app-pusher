@@ -20,7 +20,10 @@ export default function InnerContextsWrapper({
       <SubscriptionsHookWrapper pusher={pusher} userId={userId} />
       <ChatRooms user_name={userId.user_name} user_id={userId.user_id} />
       <div className="chat__wrapper">
-        <ChatHeader user_id={userId.user_id} user_name={userId.user_name} />
+        <ChatHeader
+          user_name={userId.user_name}
+          user_admin={userId.user_admin}
+        />
         <ChatBody userId={userId} />
         <SendForm userId={userId} pusher={pusher} />
       </div>

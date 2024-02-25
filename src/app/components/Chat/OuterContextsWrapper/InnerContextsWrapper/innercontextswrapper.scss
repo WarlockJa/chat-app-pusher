@@ -9,7 +9,6 @@
   display: flex;
 
   box-shadow: 0.3em 0.3em 0.5em 0.3em var(--clr-border);
-  border-radius: var(--border-radius);
   overflow: hidden;
 
   .chat__wrapper {
@@ -18,9 +17,10 @@
 
   @include media.min-width(medium) {
     position: absolute;
+    border-radius: var(--border-radius);
     right: 1em;
     bottom: 1em;
-    max-width: 38em;
+    max-width: fit-content;
     max-height: 45em;
   }
 }

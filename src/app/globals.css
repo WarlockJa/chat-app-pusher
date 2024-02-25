@@ -3,10 +3,13 @@
   --chatHeader-height: 4.435em;
   --sendForm-height: 2.19em;
   --sendForm-height: 1.95em;
+  --chatBody-width: 30em;
+  --chatRooms-maxWidth: 12em;
   --clr-main-font: #bfbfbf;
   --clr-bg-main: #1d5680;
   --clr-border: #2f7aa5;
   --clr-indicatorOff: #ca4949;
+  --clr-indicatorOn: lightgreen;
 }
 
 @media (prefers-color-scheme: dark) {

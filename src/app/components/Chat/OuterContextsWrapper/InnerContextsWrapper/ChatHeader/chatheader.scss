@@ -18,6 +18,7 @@
     font-size: 1.5rem;
   }
 
+  // TODO repeated css
   .chatHeader__ownerPresence {
     position: absolute;
     right: 0.8em;
@@ -26,6 +27,9 @@
     height: 0.7rem;
     background-color: var(--clr-indicatorOff);
     border-radius: 50%;
+  }
+  .chatHeader__ownerPresenceOn {
+    background-color: var(--clr-indicatorOn);
   }
 
   .chatHeader--typingIndicator {

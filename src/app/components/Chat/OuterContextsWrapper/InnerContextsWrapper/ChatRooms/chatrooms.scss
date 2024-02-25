@@ -1,17 +1,15 @@
+@use "../../../../../media.scss";
+
 .chat__rooms {
   list-style: none;
   background-color: var(--clr-bg-main);
-  padding: 1em;
   overflow: scroll;
+  width: fit-content;
+  max-width: var(--chatRooms-maxWidth);
+  padding: 0;
 
-  .chat__rooms__header {
-    .chat__rooms__header--userName {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 8em;
-      font-size: 1rem;
-    }
+  .chat__rooms--mobileHidden {
+    display: none;
   }
 
   .chat__rooms--avatarContainer {
@@ -23,10 +21,11 @@
 
   .chat__rooms--room {
     position: relative;
-    margin-top: 0.3em;
+    margin-top: 0.2em;
     cursor: pointer;
     border: 1px solid var(--clr-border);
-    padding: 0.5em;
+    padding: 0.8em;
+    border-radius: 0.25em;
 
     .chat__rooms--ownerPresence {
       position: absolute;
@@ -36,6 +35,9 @@
       height: 0.5rem;
       background-color: var(--clr-indicatorOff);
       border-radius: 50%;
+    }
+    .chat__rooms--ownerPresenceOn {
+      background-color: var(--clr-indicatorOn);
     }
   }
 
@@ -72,5 +74,17 @@
     right: 0.3em;
     top: 0.3em;
     font-size: 0.8rem;
+  }
+
+  @include media.min-width(medium) {
+    .chat__rooms--room {
+      margin: 0.5em 0.5em 0 0.5em;
+      margin-top: 0.5em;
+      padding: 0.5em;
+    }
+
+    .chat__rooms--mobileHidden {
+      display: initial;
+    }
   }
 }

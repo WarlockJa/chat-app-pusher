@@ -15,8 +15,13 @@ export default function ChatRooms({
   user_id: string;
 }) {
   // context data
-  const { activeRoom, setActiveRoom, roomsList, getRoomOwnerData } =
-    useChatRoomsContext();
+  const {
+    activeRoom,
+    setActiveRoom,
+    roomsList,
+    getRoomOwnerData,
+    isOwnerPresent,
+  } = useChatRoomsContext();
   const { getRoomUnreadMessagesCount, getRoomLastMessageTimestamp } =
     useChatDataContext();
   const { getRoomTypingUsers } = useUsersTypingContext();
@@ -31,14 +36,16 @@ export default function ChatRooms({
 
   const content = roomsList
     // hiding rooms system and userId from the list
-    // TEST
     // filtering out presence-system
-    .filter((item) => item.roomId !== "presence-system")
+    .filter(
+      (item) =>
+        item.roomId !== "presence-system" &&
+        (item.owner?.user_id !== user_id || item.owner?.user_admin)
+    )
     .map((currentRoom) => {
       const unreadMessagesCount = getRoomUnreadMessagesCount(
         currentRoom.roomId
       );
-      // TEST
       // getting room owner data
       const owner = getRoomOwnerData(currentRoom.roomId);
       const lastMsgTimestamp = getRoomLastMessageTimestamp(currentRoom.roomId);
@@ -54,21 +61,25 @@ export default function ChatRooms({
           }
           key={currentRoom.roomId}
           onClick={() => handleRoomSwitch(currentRoom.roomId)}
+          title={owner?.user_name}
         >
-          {/* TODO replace name with Room Owner data*/}
-          <div className="chat__rooms--ownerPresence"></div>
+          <div
+            className={
+              isOwnerPresent(currentRoom.roomId)
+                ? "chat__rooms--ownerPresence chat__rooms--ownerPresenceOn"
+                : "chat__rooms--ownerPresence"
+            }
+          ></div>
           <Avatar
-            name={currentRoom.roomId.slice(9)}
+            name={owner?.user_name}
             round
             size="2em"
             textSizeRatio={2}
-            color={generateColor(currentRoom.roomId.slice(9))}
+            color={generateColor(owner?.user_name)}
           />
-          {/* <span>{JSON.stringify(currentRoom.users.length)}</span>{" "} */}
-          {/* {currentRoom.roomId.slice(9)} TODO get last seen timestamp */}
-          {owner?.user_name}
+          <div className="chat__rooms--mobileHidden">{owner?.user_name}</div>
           {lastMsgTimestamp ? (
-            <div className="chat__rooms--lastMsgTimestamp">
+            <div className="chat__rooms--lastMsgTimestamp chat__rooms--mobileHidden">
               {formatDistanceToNowStrict(
                 // overriding TS warning because we're already checking unreadMessagesCount
                 lastMsgTimestamp
@@ -83,22 +94,12 @@ export default function ChatRooms({
           ) : null}
           {/* TODO add some spinner */}
           {roomTypingUsersString ? (
-            <div className="chat__rooms--typingIndicator">
+            <div className="chat__rooms--typingIndicator chat__rooms--mobileHidden">
               {roomTypingUsersString}
             </div>
           ) : null}
         </li>
       );
     });
-  return (
-    <ul className="chat__rooms">
-      <li className="chat__rooms__header chat__rooms--avatarContainer">
-        <Avatar name={user_name} round size="3em" textSizeRatio={2} />
-        <p className="chat__rooms__header--userName" title={user_name}>
-          {user_name}
-        </p>
-      </li>
-      {content}
-    </ul>
-  );
+  return <ul className="chat__rooms">{content}</ul>;
 }

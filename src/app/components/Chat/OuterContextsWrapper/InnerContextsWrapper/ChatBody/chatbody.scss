@@ -1,6 +1,6 @@
-.chat__body {
-  border-radius: 1em 1em 0 0;
+@use "../../../../../media.scss";
 
+.chat__body {
   height: calc(
     100% - var(--sendForm-height) - var(--chatHeader-height)
   ); // removing heights of the SendForm and TypingNotifications elements
@@ -91,5 +91,11 @@
       background-clip: text;
       -webkit-background-clip: text;
     }
+  }
+
+  @include media.min-width(medium) {
+    width: var(--chatBody-width);
+
+    border-radius: 1em 1em 0 0;
   }
 }
