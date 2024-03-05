@@ -1,3 +1,5 @@
+@use "../../media.scss";
+
 .chatWrapper {
   margin: auto;
 
@@ -9,6 +11,7 @@
   gap: 1em;
   text-align: center;
   padding: 0 1em;
+  font-size: 1.2rem;
 
   border: 1px solid;
   border-radius: 12px;
@@ -22,7 +25,6 @@
   }
 
   .chatWrapper--description {
-    font-size: 1.2rem;
     min-height: 10em;
   }
 
@@ -49,41 +51,74 @@
   }
 
   .selectWrapper {
-    font-size: 1.1rem;
+    display: flex;
 
-    .chatWrapper--submitButton {
-      margin: 0 1em;
-      font-size: 1.2rem;
-      width: 10em;
-      height: 8em;
-      border-radius: 1em;
-      cursor: pointer;
-      transition: box-shadow 300ms ease-out, transform 300ms ease-out;
+    .selectWrapper__item {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+
+      .chatWrapper--submitButton {
+        align-self: center;
+        font-size: 1.2rem;
+        width: 10em;
+        height: 8em;
+        border-radius: 1em;
+        cursor: pointer;
+        transition: box-shadow 300ms ease-out, transform 300ms ease-out;
+      }
+
+      .chatWrapper--submitButton:hover {
+        transform: translate(-3px, -3px);
+      }
+
+      .selectWrapper__item--confingWrapper {
+        display: flex;
+        padding: 0 1em;
+        gap: 1em;
+        text-align: left;
+
+        input[type="checkbox"] {
+          transform: scale(2);
+        }
+      }
     }
+    .selectWrapper__item:nth-child(1) {
+      .chatWrapper--submitButton {
+        background-color: #539e8e;
 
-    .chatWrapper--submitButton:hover {
-      transform: translate(-3px, -3px);
-    }
-
-    .chatWrapper--submitButton:nth-child(1) {
-      background-color: #539e8e;
-
-      &:hover {
-        box-shadow: 4px 4px 5px 5px #539e8e;
+        &:hover {
+          box-shadow: 4px 4px 5px 5px #539e8e;
+        }
       }
     }
 
-    .chatWrapper--submitButton:nth-child(2) {
-      background-color: #636da5;
-      &:hover {
-        box-shadow: 4px 4px 5px 5px #636da5;
+    .selectWrapper__item:nth-child(2) {
+      .chatWrapper--submitButton {
+        background-color: #636da5;
+        &:hover {
+          box-shadow: 4px 4px 5px 5px #636da5;
+        }
       }
     }
 
-    .chatWrapper--submitButton:nth-child(3) {
-      background-color: #d43396;
-      &:hover {
-        box-shadow: 4px 4px 5px 5px #d43396;
+    .selectWrapper__item:nth-child(3) {
+      .chatWrapper--submitButton {
+        background-color: #d43396;
+        &:hover {
+          box-shadow: 4px 4px 5px 5px #d43396;
+        }
+      }
+    }
+  }
+
+  @include media.min-width(medium) {
+    .selectWrapper {
+      .selectWrapper__item {
+        .selectWrapper--submitButton {
+          width: 10em;
+          margin: 0 1em;
+        }
       }
     }
   }

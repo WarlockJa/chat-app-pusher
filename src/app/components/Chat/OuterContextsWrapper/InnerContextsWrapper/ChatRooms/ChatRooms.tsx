@@ -3,16 +3,18 @@ import "./chatrooms.scss";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import Avatar from "react-avatar";
 import { generateColor } from "@/util/generateColor";
-import { formatDistanceToNowStrict } from "date-fns";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 import getTypingUsersString from "@/util/getTypingUsersString";
+import lastMsgFormatted from "./utils/lastMsgFormatted";
 
 export default function ChatRooms({
   user_name,
   user_id,
+  user_admin,
 }: {
   user_name: string;
   user_id: string;
+  user_admin: boolean;
 }) {
   // context data
   const {
@@ -37,11 +39,8 @@ export default function ChatRooms({
   const content = roomsList
     // hiding rooms system and userId from the list
     // filtering out presence-system
-    .filter(
-      (item) =>
-        item.roomId !== "presence-system" &&
-        (item.owner?.user_id !== user_id || item.owner?.user_admin)
-    )
+    .filter((item) => item.roomId !== "presence-system")
+    .filter((item) => item.owner?.user_id !== user_id || user_admin)
     .map((currentRoom) => {
       const unreadMessagesCount = getRoomUnreadMessagesCount(
         currentRoom.roomId
@@ -77,14 +76,12 @@ export default function ChatRooms({
             textSizeRatio={2}
             color={generateColor(owner?.user_name)}
           />
-          <div className="chat__rooms--mobileHidden">{owner?.user_name}</div>
+          <div className="chat__rooms--userName chat__rooms--mobileHidden">
+            {owner?.user_name}
+          </div>
           {lastMsgTimestamp ? (
             <div className="chat__rooms--lastMsgTimestamp chat__rooms--mobileHidden">
-              {formatDistanceToNowStrict(
-                // overriding TS warning because we're already checking unreadMessagesCount
-                lastMsgTimestamp
-              )}{" "}
-              ago
+              {lastMsgFormatted(lastMsgTimestamp)}
             </div>
           ) : null}
           {unreadMessagesCount > 0 ? (

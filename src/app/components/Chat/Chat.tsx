@@ -12,7 +12,7 @@ export default function Chat(props: IChatProps) {
   try {
     const data: TSchemaChatProps | z.ZodError = schemaChatProps.parse({
       user_id: props.user_id,
-      user_name: props.user_name,
+      user_name: props.user_name?.slice(0, 36), // shortening name to max length acceptable
       user_admin: props.user_admin,
     });
 
@@ -20,6 +20,9 @@ export default function Chat(props: IChatProps) {
   } catch (error) {
     // console.log(error)
   }
+
+  // TODO delete
+  // console.log(userIdToken);
 
   return (
     <UserIdProvider userIdToken={userIdToken}>

@@ -24,7 +24,7 @@ export default function ChatHeader({
 
   // if user is an administrator displaying room owner data
   // otherwise displaying administrator data
-  // TODO show active administrator somehow
+  // TODO show active administrator somehow?
   const headerUserData = user_admin
     ? owner?.user_name
     : getPresentAdmin(activeRoom)?.user_name;

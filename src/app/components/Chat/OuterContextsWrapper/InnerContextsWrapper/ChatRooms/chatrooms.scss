@@ -2,7 +2,11 @@
 
 .chat__rooms {
   list-style: none;
-  background-color: var(--clr-bg-main);
+  background: linear-gradient(
+    270deg,
+    var(--clr-bg-main),
+    var(--clr-bg-secondary)
+  );
   overflow: scroll;
   width: fit-content;
   max-width: var(--chatRooms-maxWidth);
@@ -40,6 +44,11 @@
       background-color: var(--clr-indicatorOn);
     }
   }
+  .chat__rooms--userName {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 
   .chat__rooms--roomActive {
     color: goldenrod;
@@ -49,14 +58,14 @@
   .chat__rooms--lastMsgTimestamp {
     position: absolute;
     right: 2.5em;
-    bottom: 0.3em;
+    bottom: 0em;
     font-size: 0.8rem;
   }
 
   .chat__rooms--unreadMsgsIndicator {
     position: absolute;
-    right: 0.3em;
-    bottom: 0.3em;
+    right: 0.1em;
+    bottom: -0.3em;
     width: 1.4rem;
     height: 1.4rem;
     background-color: var(--clr-indicatorOff);

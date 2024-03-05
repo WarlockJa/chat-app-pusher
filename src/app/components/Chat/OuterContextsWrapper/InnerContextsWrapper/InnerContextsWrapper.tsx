@@ -18,7 +18,11 @@ export default function InnerContextsWrapper({
   return (
     <div className="chat">
       <SubscriptionsHookWrapper pusher={pusher} userId={userId} />
-      <ChatRooms user_name={userId.user_name} user_id={userId.user_id} />
+      <ChatRooms
+        user_name={userId.user_name}
+        user_id={userId.user_id}
+        user_admin={userId.user_admin}
+      />
       <div className="chat__wrapper">
         <ChatHeader
           user_name={userId.user_name}
