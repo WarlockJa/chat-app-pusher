@@ -1,14 +1,14 @@
 import { IChatRoomsSetRoomData } from "@/context/innerContexts/ChatRoomsProvider";
-import { TSchemaApiV1dbChannelGET } from "../validators/db/channel/generatedTypes";
+import { TSchemaApiV1dbChannelOwnerGET } from "../validators/db/channel/owner/generatedTypes";
 
 export function getRoomOwner({
   params,
   dispatchChatRooms,
 }: {
-  params: TSchemaApiV1dbChannelGET;
+  params: TSchemaApiV1dbChannelOwnerGET;
   dispatchChatRooms: (action: IChatRoomsSetRoomData) => void;
 }) {
-  fetch(`api/v1/db/channel?channel_name=${params.channel_name}`)
+  fetch(`api/v1/db/channel/owner?channel_name=${params.channel_name}`)
     .then((response) => response.json())
     .then((owner: IUserId | undefined) => {
       dispatchChatRooms({
