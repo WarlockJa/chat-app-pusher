@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
               $filter: {
                 input: "$lastaccess",
                 as: "access",
-                cond: { $eq: ["$$access.user", data.user_id] },
+                cond: { $eq: ["$$access.user_id", data.user_id] },
               },
             },
           },

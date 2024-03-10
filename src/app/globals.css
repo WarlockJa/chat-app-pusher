@@ -1,4 +1,5 @@
 :root {
+  --spinner-color: white;
   --border-radius: 0.8em;
   --chatHeader-height: 4.435em;
   --sendForm-height: 2.19em;
