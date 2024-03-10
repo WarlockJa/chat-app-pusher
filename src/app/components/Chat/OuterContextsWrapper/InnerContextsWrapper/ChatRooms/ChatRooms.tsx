@@ -39,8 +39,11 @@ export default function ChatRooms({
   const content = roomsList
     // hiding rooms system and userId from the list
     // filtering out presence-system
-    .filter((item) => item.roomId !== "presence-system")
-    .filter((item) => item.owner?.user_id !== user_id || user_admin)
+    .filter(
+      (item) =>
+        item.roomId !== "presence-system" &&
+        (item.owner?.user_id !== user_id || user_admin)
+    )
     .map((currentRoom) => {
       const unreadMessagesCount = getRoomUnreadMessagesCount(
         currentRoom.roomId
