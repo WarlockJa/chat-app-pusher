@@ -72,7 +72,7 @@ export async function DELETE(req: Request) {
     return error instanceof z.ZodError
       ? NextResponse.json(error, { status: 400 })
       : NextResponse.json(
-          { message: "Collection already exists" },
+          { message: "Collection does not exist" },
           { status: 201 }
         );
   }
