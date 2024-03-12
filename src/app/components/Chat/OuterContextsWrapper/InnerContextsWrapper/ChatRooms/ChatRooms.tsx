@@ -6,6 +6,7 @@ import { generateColor } from "@/util/generateColor";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 import getTypingUsersString from "@/util/getTypingUsersString";
 import lastMsgFormatted from "./utils/lastMsgFormatted";
+import LoadDBRoomsButton from "./components/LoadDBRoomsButton";
 
 export default function ChatRooms({
   user_name,
@@ -101,5 +102,10 @@ export default function ChatRooms({
         </li>
       );
     });
-  return <ul className="chat__rooms">{content}</ul>;
+  return (
+    <ul className="chat__rooms">
+      {content}
+      {user_admin && <LoadDBRoomsButton />}
+    </ul>
+  );
 }

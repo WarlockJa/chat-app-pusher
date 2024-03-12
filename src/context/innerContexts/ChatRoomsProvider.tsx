@@ -7,8 +7,14 @@ export interface IChatRoomsSetRoomData {
   state?: TChatDataStateLiteral;
 }
 
+export interface IChatRoomsAddNewRoom {
+  type: "addNewRoom";
+  room_id: string;
+  owner: IUserId;
+}
+
 type TChatRoomsProviderActions =
-  | { type: "addNewRoom"; room_id: string }
+  | IChatRoomsAddNewRoom
   | { type: "removeRoom"; room_id: string }
   | IChatRoomsSetRoomData
   | { type: "removeUserFromRoomUsersList"; user_id: string; room_id: string }
@@ -95,7 +101,7 @@ export function ChatRoomsProvider({
               ...roomsList,
               {
                 roomId: action.room_id,
-                owner: null,
+                owner: action.owner,
                 users: [],
                 state: "loading",
               },

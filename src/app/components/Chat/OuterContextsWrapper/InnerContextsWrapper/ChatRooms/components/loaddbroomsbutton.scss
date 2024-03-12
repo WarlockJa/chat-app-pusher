@@ -1,0 +1,36 @@
+@use "../../../../../../media.scss";
+
+.buttonWrrapper {
+  display: flex;
+  justify-content: center;
+
+  .loadDBRoomsButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    margin: 0.6em;
+    cursor: pointer;
+    border: 1px solid var(--clr-border);
+    padding: 0.2em 0.8em;
+    border-radius: 0.25em;
+
+    .loadDBRoomsButton--text {
+      display: none;
+    }
+
+    .svgWrapper {
+      width: 100%;
+      max-width: 2.7em;
+      height: 2.7em;
+      display: flex;
+      align-items: center;
+    }
+
+    @include media.min-width(medium) {
+      .loadDBRoomsButton--text {
+        display: initial;
+      }
+    }
+  }
+}

@@ -146,6 +146,11 @@ export default function useSubscriptions({
             dispatchChatRooms({
               type: "addNewRoom",
               room_id: `presence-${data.id}`,
+              owner: {
+                user_id: data.id,
+                user_name: data.info.user_name,
+                user_admin: data.info.user_admin,
+              },
             });
           }
         });
@@ -189,14 +194,6 @@ export default function useSubscriptions({
             room_id: newChannel.name,
           });
 
-          // fetching room owner data
-          getRoomOwner({
-            params: {
-              channel_name: newChannel.name,
-            },
-            dispatchChatRooms,
-          });
-
           // fetching unread messages on subscription_succeeded
           getUnreadMessages({
             params: {
@@ -230,6 +227,7 @@ export default function useSubscriptions({
               dispatchChatRooms({
                 type: "addNewRoom",
                 room_id: `presence-${user.user_id}`,
+                owner: user,
               })
             );
           }

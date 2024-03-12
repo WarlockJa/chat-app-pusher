@@ -87,7 +87,7 @@
 
   @include media.min-width(medium) {
     .chat__rooms--room {
-      margin: 0.5em 0.5em 0 0.5em;
+      margin: 0.5em;
       margin-top: 0.5em;
       padding: 0.5em;
     }

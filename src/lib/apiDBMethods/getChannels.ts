@@ -1,26 +1,21 @@
-import { IChatRoomsSetRoomData } from "@/context/innerContexts/ChatRoomsProvider";
+import { IChatRoomsAddNewRoom } from "@/context/innerContexts/ChatRoomsProvider";
 
-export function getRoomOwner({
+export function getChannels({
   dispatchChatRooms,
 }: {
-  dispatchChatRooms: (action: IChatRoomsSetRoomData) => void;
+  dispatchChatRooms: (action: IChatRoomsAddNewRoom) => void;
 }) {
   fetch(`api/v1/db/channel`)
     .then((response) => response.json())
-    .then((channels: IUserId | undefined) => {
-        // TODO add all channels to room data
-    //   dispatchChatRooms({
-    //     type: "setRoomData",
-    //     room_id: params.channel_name,
-    //     owner,
-    //     state: "success",
-    //   });
+    .then((channels: { name: string; owner: IUserId }[]) => {
+      // TODO add all channels to room data
+      channels.map((channel) => {
+        dispatchChatRooms({
+          type: "addNewRoom",
+          room_id: channel.name,
+          owner: channel.owner,
+        });
+      });
     })
-    .catch((error) =>
-    //   dispatchChatRooms({
-    //     type: "setRoomData",
-    //     room_id: params.channel_name,
-    //     state: "error",
-    //   })
-    )
+    .catch((error) => console.log(error)); // TODO error porcessing?
 }

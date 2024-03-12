@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     const result = await prisma.channel.findMany({
       select: {
         name: true,
+        owner: true,
       },
     });
 
