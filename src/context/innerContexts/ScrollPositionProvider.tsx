@@ -11,7 +11,7 @@ export interface IScrollPositionAddRoom {
   room_id: string;
 }
 export interface IScrollPositionRemoveRoom {
-  type: "ScrollPosition_removeRoom";
+  type: "ScrollPosition_deleteRoom";
   room_id: string;
 }
 export interface IScrollPositionSetScrollPosition {
@@ -87,7 +87,7 @@ export function ScrollPositionDataProvider({
             ]
           : scrollPositionData;
 
-      case "ScrollPosition_removeRoom":
+      case "ScrollPosition_deleteRoom":
         return scrollPositionData.filter(
           (room) => room.room_id !== action.room_id
         );

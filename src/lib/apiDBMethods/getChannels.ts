@@ -11,7 +11,7 @@ export function getChannels({
       // TODO add all channels to room data
       channels.map((channel) => {
         dispatchChatRooms({
-          type: "addNewRoom",
+          type: "ChatRooms_addNewRoom",
           room_id: channel.name,
           owner: channel.owner,
         });

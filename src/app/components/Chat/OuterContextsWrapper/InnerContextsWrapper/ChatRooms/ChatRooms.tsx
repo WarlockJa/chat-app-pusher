@@ -7,6 +7,8 @@ import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvid
 import getTypingUsersString from "@/util/getTypingUsersString";
 import lastMsgFormatted from "./utils/lastMsgFormatted";
 import LoadDBRoomsButton from "./components/LoadDBRoomsButton";
+import { useState } from "react";
+import DeleteRoomButton from "./components/DeleteRoomButton";
 
 export default function ChatRooms({
   user_name,
@@ -36,6 +38,8 @@ export default function ChatRooms({
     setActiveRoom(newActiveRoom);
   };
   // console.log("ChatRooms rerender");
+  // hovered item index
+  const [hoverIndex, setHoverIndex] = useState<number | undefined>(undefined);
 
   const content = roomsList
     // hiding rooms system and userId from the list
@@ -45,7 +49,14 @@ export default function ChatRooms({
         item.roomId !== "presence-system" &&
         (item.owner?.user_id !== user_id || user_admin)
     )
-    .map((currentRoom) => {
+    .sort((a, b) => {
+      const lastTimestampA = getRoomLastMessageTimestamp(a.roomId);
+      const lastTimestampB = getRoomLastMessageTimestamp(b.roomId);
+      if (!lastTimestampA) return 1;
+      if (!lastTimestampB) return -1;
+      return lastTimestampA < lastTimestampB ? 1 : -1;
+    })
+    .map((currentRoom, index) => {
       const unreadMessagesCount = getRoomUnreadMessagesCount(
         currentRoom.roomId
       );
@@ -65,6 +76,8 @@ export default function ChatRooms({
           key={currentRoom.roomId}
           onClick={() => handleRoomSwitch(currentRoom.roomId)}
           title={owner?.user_name}
+          onMouseEnter={() => setHoverIndex(index)}
+          onMouseLeave={() => setHoverIndex(undefined)}
         >
           <div
             className={
@@ -99,6 +112,15 @@ export default function ChatRooms({
               {roomTypingUsersString}
             </div>
           ) : null}
+          {hoverIndex === index &&
+            user_admin &&
+            currentRoom.users.length === 1 &&
+            !currentRoom.owner?.user_admin && (
+              <DeleteRoomButton
+                room_id={currentRoom.roomId}
+                user_id={user_id}
+              />
+            )}
         </li>
       );
     });

@@ -1,7 +1,10 @@
 import "../innercontextswrapper.scss";
 import "../SendForm/sendform.scss";
-import { readLocalStorage, writeLocalStorage } from "@/util/localStorageRW";
+import "../ChatBody/chatbody.scss";
+import { writeLocalStorage } from "@/util/localStorageRW";
 import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
+import ArrowRight from "@/assets/svg/ArrowRight";
+import { format } from "date-fns";
 
 // gathering anonymous user data and saving it to state and localStorage
 export default function NoUserPlug({
@@ -48,9 +51,23 @@ export default function NoUserPlug({
   return (
     <div className="chat">
       <div className="chat__wrapper">
+        <div className="chatHeader">
+          <p className="chatHeader--roomOwnerName">Welcome!</p>
+        </div>
         <div className="chat__body">
-          <ul className="chat-display">
-            <li className="post__text">Please enter your name:</li>
+          <ul className="chatDisplay">
+            <li
+              className="post post--left"
+              // style={{ color: `var(--clr-main-font)`, fontSize: "1.2rem" }}
+            >
+              <div className={"post__header post__header--user"}>
+                <span className="post__header--name"></span>
+                <span className="post__header--time">
+                  {format(new Date(), "k:mm")}
+                </span>
+              </div>
+              <div className="post__text">Please enter your name:</div>
+            </li>
           </ul>
         </div>
         <div>
@@ -63,7 +80,7 @@ export default function NoUserPlug({
               maxLength={20}
             />
             <button className="sendForm__button" type="submit">
-              Send
+              <ArrowRight />
             </button>
           </form>
         </div>

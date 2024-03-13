@@ -11,7 +11,7 @@ export interface IUsersTypingAddRoom {
   room_id: string;
 }
 export interface IUsersTypingRemoveRoom {
-  type: "UsersTyping_removeRoom";
+  type: "UsersTyping_deleteRoom";
   room_id: string;
 }
 export interface IUsersTypingAddTypingUser {
@@ -72,7 +72,7 @@ export function UsersTypingProvider({ children }: PropsWithChildren<{}>) {
           ? [...usersTyping, { room_id: action.room_id, users: [] }]
           : usersTyping;
 
-      case "UsersTyping_removeRoom":
+      case "UsersTyping_deleteRoom":
         return [
           ...usersTyping.filter((room) => room.room_id !== action.room_id),
         ];

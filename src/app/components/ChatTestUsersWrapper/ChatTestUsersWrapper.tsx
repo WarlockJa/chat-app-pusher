@@ -162,7 +162,7 @@ export default function ChatTestUsersWrapper() {
           </button>
           <div className="selectWrapper__item--confingWrapper">
             <label htmlFor="administratorNumberTwo">
-              Login as "Administrator Two"
+              Login as &quot;Administrator Two&quot;
             </label>
             <input
               type="checkbox"

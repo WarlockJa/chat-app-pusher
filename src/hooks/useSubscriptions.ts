@@ -12,7 +12,6 @@ import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvid
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 import createChannel from "@/lib/apiDBMethods/createChannel";
-import { getRoomOwner } from "@/lib/apiDBMethods/getRoomOwner";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -135,7 +134,7 @@ export default function useSubscriptions({
           // for user: admin subscribed to the user's own channel
           // for admin: user returns to the channel admin already subscribed to
           dispatchChatRooms({
-            type: "addUserToRoomUsersList",
+            type: "ChatRooms_addUserToRoomUsersList",
             user: newUser,
             room_id: newChannel.name,
           });
@@ -144,7 +143,7 @@ export default function useSubscriptions({
           if (newChannel.name === "presence-system") {
             // creating room based on member_added data
             dispatchChatRooms({
-              type: "addNewRoom",
+              type: "ChatRooms_addNewRoom",
               room_id: `presence-${data.id}`,
               owner: {
                 user_id: data.id,
@@ -158,7 +157,7 @@ export default function useSubscriptions({
         newChannel.bind("pusher:member_removed", (data: ITriggerEventData) => {
           // update users number for the binded channel when a member leaves
           dispatchChatRooms({
-            type: "removeUserFromRoomUsersList",
+            type: "ChatRooms_removeUserFromRoomUsersList",
             room_id: newChannel.name,
             user_id: data.id,
           });
@@ -215,7 +214,7 @@ export default function useSubscriptions({
           // adding found users to user list
           initialLoadUsersChannel_users.forEach((user) => {
             dispatchChatRooms({
-              type: "addUserToRoomUsersList",
+              type: "ChatRooms_addUserToRoomUsersList",
               room_id: newChannel.name,
               user,
             });
@@ -225,7 +224,7 @@ export default function useSubscriptions({
           if (newChannel.name === "presence-system") {
             initialLoadUsersChannel_users.map((user) =>
               dispatchChatRooms({
-                type: "addNewRoom",
+                type: "ChatRooms_addNewRoom",
                 room_id: `presence-${user.user_id}`,
                 owner: user,
               })

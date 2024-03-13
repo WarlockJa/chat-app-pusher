@@ -85,6 +85,14 @@
     font-size: 0.8rem;
   }
 
+  .chat__rooms--delete {
+    position: absolute;
+    right: 0;
+    top: 0em;
+    height: 1em;
+    width: 1em;
+  }
+
   @include media.min-width(medium) {
     .chat__rooms--room {
       margin: 0.5em;

@@ -11,6 +11,10 @@ export interface IChatDataAddRoom {
   type: "ChatData_addRoom";
   room_id: string;
 }
+export interface IChatDataDeleteRoom {
+  type: "ChatData_deleteRoom";
+  room_id: string;
+}
 export interface IChatDataSetRoomError {
   type: "setRoomError";
   room_id: string;
@@ -36,6 +40,7 @@ export interface IChatDataSetMessageAsRead {
 
 type TChatDataProviderActions =
   | IChatDataAddRoom
+  | IChatDataDeleteRoom
   | IChatDataSetRoomError
   | IChatDataAddRoomMessage
   | IChatDataAddRoomMessages
@@ -122,6 +127,8 @@ export function ChatDataProvider({
               },
             ]
           : chatData;
+      case "ChatData_deleteRoom":
+        return chatData.filter((room) => room.room_id !== action.room_id);
       case "addRoomMessage":
         // finding room in chatData for the message
         const messageRoom = chatData.find(

@@ -5,6 +5,10 @@ export interface IPaginationAddRoom {
   type: "Pagination_addRoom";
   room_id: string;
 }
+export interface IPaginationDeleteRoom {
+  type: "Pagination_deleteRoom";
+  room_id: string;
+}
 export interface IPaginationRemoveRoom {
   type: "Pagination_removeRoom";
   room_id: string;
@@ -19,6 +23,7 @@ export interface IPaginationSetPaginationData {
 
 type TPaginationProviderActions =
   | IPaginationAddRoom
+  | IPaginationDeleteRoom
   | IPaginationRemoveRoom
   | IPaginationSetPaginationData;
 
@@ -82,6 +87,9 @@ export function PaginationProvider({
               },
             ]
           : paginationData;
+
+      case "Pagination_deleteRoom":
+        return paginationData.filter((room) => room.room_id !== action.room_id);
 
       case "Pagination_removeRoom":
         return [

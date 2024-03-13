@@ -29,9 +29,10 @@ type UserTimestamp {
 }
 
 model channel {
-  id         String          @id @default(auto()) @map("_id") @db.ObjectId
-  name       String          @unique
-  owner      User
-  messages   Message[]
-  lastaccess UserTimestamp[]
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  name        String          @unique
+  owner       User
+  messages    Message[]
+  lastaccess  UserTimestamp[]
+  lastmessage DateTime
 }

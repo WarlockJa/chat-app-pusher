@@ -1,24 +1,33 @@
 import { createContext, useContext, useReducer, useState } from "react";
 
 export interface IChatRoomsSetRoomData {
-  type: "setRoomData";
+  type: "ChatRooms_setRoomData";
   room_id: string;
   owner?: IUserId;
   state?: TChatDataStateLiteral;
 }
 
+// TODO change type names to ChatRooms_***
 export interface IChatRoomsAddNewRoom {
-  type: "addNewRoom";
+  type: "ChatRooms_addNewRoom";
   room_id: string;
   owner: IUserId;
 }
 
 type TChatRoomsProviderActions =
   | IChatRoomsAddNewRoom
-  | { type: "removeRoom"; room_id: string }
+  | { type: "ChatRooms_deleteRoom"; room_id: string }
   | IChatRoomsSetRoomData
-  | { type: "removeUserFromRoomUsersList"; user_id: string; room_id: string }
-  | { type: "addUserToRoomUsersList"; user: IUserId; room_id: string };
+  | {
+      type: "ChatRooms_removeUserFromRoomUsersList";
+      user_id: string;
+      room_id: string;
+    }
+  | {
+      type: "ChatRooms_addUserToRoomUsersList";
+      user: IUserId;
+      room_id: string;
+    };
 
 interface IChatRoomsContext {
   activeRoom: string;
@@ -93,7 +102,7 @@ export function ChatRoomsProvider({
     action: TChatRoomsProviderActions
   ): IChatRoom[] {
     switch (action.type) {
-      case "addNewRoom":
+      case "ChatRooms_addNewRoom":
         // adding new room to the state with a precheck that it's not already there
         return roomsList.findIndex((room) => room.roomId === action.room_id) ===
           -1
@@ -107,9 +116,9 @@ export function ChatRoomsProvider({
               },
             ]
           : roomsList;
-      case "removeRoom":
+      case "ChatRooms_deleteRoom":
         return roomsList.filter((room) => room.roomId !== action.room_id);
-      case "setRoomData":
+      case "ChatRooms_setRoomData":
         return roomsList.map((room) =>
           room.roomId === action.room_id
             ? {
@@ -118,7 +127,7 @@ export function ChatRoomsProvider({
               }
             : room
         );
-      case "removeUserFromRoomUsersList":
+      case "ChatRooms_removeUserFromRoomUsersList":
         return roomsList.map((room) =>
           room.roomId === action.room_id
             ? {
@@ -129,7 +138,7 @@ export function ChatRoomsProvider({
               }
             : room
         );
-      case "addUserToRoomUsersList":
+      case "ChatRooms_addUserToRoomUsersList":
         // adding user to rooms users list with precheck that it's not already there
         return roomsList.map((room) =>
           room.roomId === action.room_id

@@ -12,6 +12,7 @@
   --clr-border: #2f7aa5;
   --clr-indicatorOff: #ca4949;
   --clr-indicatorOn: lightgreen;
+  --clr-delete: rgb(39, 11, 11);
 }
 
 @media (prefers-color-scheme: dark) {
