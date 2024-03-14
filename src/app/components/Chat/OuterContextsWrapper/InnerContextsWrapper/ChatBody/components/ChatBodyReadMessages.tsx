@@ -1,14 +1,14 @@
-import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvider";
 import ChatBodyLIElement from "./ChatBodyLIElement";
 import { format } from "date-fns";
 import ChatBodyMessageHeader from "./ChatBodyMessageHeader";
+import { IMessage } from "@/lib/prisma/prisma";
 
 export default function ChatBodyReadMessages({
   readMessages,
   user_id,
   topReadMessageMarker,
 }: {
-  readMessages: IChatData_MessageExtended[];
+  readMessages: IMessage[];
   user_id: string;
   topReadMessageMarker: React.RefObject<HTMLDivElement>;
 }) {

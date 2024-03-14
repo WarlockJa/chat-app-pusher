@@ -1,8 +1,6 @@
-import {
-  IChatData,
-  useChatDataContext,
-} from "@/context/innerContexts/ChatDataProvider";
+import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import { updateLastAccessTimestamp } from "@/lib/apiDBMethods/updateLastAccessTimestamp";
+import { TPrisma_ChatData } from "@/lib/prisma/prisma";
 import getOlderMessage from "@/util/getOlderMessage";
 import { useEffect, useRef } from "react";
 
@@ -10,7 +8,7 @@ interface IUseIntersectionObserverArrayProps {
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
   activeRoom: string;
   user_id: string;
-  activeRoom_chatData: IChatData;
+  activeRoom_chatData: TPrisma_ChatData;
 }
 
 export default function useIOUnreadMsgsArray({
@@ -51,7 +49,7 @@ export default function useIOUnreadMsgsArray({
           // updating status for the message as being read
           dispatchChatData({
             type: "setMessageAsRead",
-            room_id: activeRoom,
+            roomName: activeRoom,
             message_id: entry.target.id,
           });
 

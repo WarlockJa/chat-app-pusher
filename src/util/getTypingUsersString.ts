@@ -1,7 +1,7 @@
-import { IUsersTypingData } from "@/context/innerContexts/UsersTypingProvider";
+import { TPrisma_UsersTyping } from "@/lib/prisma/prisma";
 
-export interface IGetTypingUsersData {
-  data: IUsersTypingData;
+interface IGetTypingUsersData {
+  data: TPrisma_UsersTyping;
   user_name: string;
 }
 

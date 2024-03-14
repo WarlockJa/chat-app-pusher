@@ -1,4 +1,5 @@
 "use client";
+import { TPrisma_ScrollPosition } from "@/lib/prisma/prisma";
 import {
   PropsWithChildren,
   createContext,
@@ -8,15 +9,15 @@ import {
 
 export interface IScrollPositionAddRoom {
   type: "ScrollPosition_addRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IScrollPositionRemoveRoom {
   type: "ScrollPosition_deleteRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IScrollPositionSetScrollPosition {
   type: "setScrollPosition";
-  room_id: string;
+  name: string;
   currentPosition?: number;
   isPreviousBottom?: boolean;
   previousUnreadMsgCount?: number;
@@ -27,17 +28,10 @@ type TScrollPositionProviderActions =
   | IScrollPositionRemoveRoom
   | IScrollPositionSetScrollPosition;
 
-export interface IScrollPositionData {
-  room_id: string;
-  currentPosition: number;
-  isPreviousBottom: boolean;
-  previousUnreadMsgCount: number;
-}
-
 interface IScrollPositionDataContext {
-  scrollPositionData: IScrollPositionData[] | null;
+  scrollPositionData: TPrisma_ScrollPosition[] | null;
   dispatchScrollPosition: (action: TScrollPositionProviderActions) => void;
-  getRoomScrollPositionData: (room_id: string) => IScrollPositionData;
+  getRoomScrollPositionData: (roomName: string) => TPrisma_ScrollPosition;
 }
 
 const ScrollPositionDataContext =
@@ -46,19 +40,17 @@ const ScrollPositionDataContext =
 export function ScrollPositionDataProvider({
   children,
 }: PropsWithChildren<{}>) {
-  const initialStateScrollPositionData: IScrollPositionData[] = [];
+  const initialStateScrollPositionData: TPrisma_ScrollPosition[] = [];
   const [scrollPositionData, dispatchScrollPosition] = useReducer(
     chatDataReducer,
     initialStateScrollPositionData
   );
 
   // state actions
-  function getRoomScrollPositionData(room_id: string) {
-    const roomData = scrollPositionData.find(
-      (room) => room.room_id === room_id
-    );
-    const emptyRoom: IScrollPositionData = {
-      room_id,
+  function getRoomScrollPositionData(roomName: string) {
+    const roomData = scrollPositionData.find((room) => room.name === roomName);
+    const emptyRoom: TPrisma_ScrollPosition = {
+      name: roomName,
       currentPosition: 999999,
       isPreviousBottom: false,
       previousUnreadMsgCount: 0,
@@ -68,18 +60,18 @@ export function ScrollPositionDataProvider({
 
   // reducers
   function chatDataReducer(
-    scrollPositionData: IScrollPositionData[],
+    scrollPositionData: TPrisma_ScrollPosition[],
     action: TScrollPositionProviderActions
-  ): IScrollPositionData[] {
+  ): TPrisma_ScrollPosition[] {
     switch (action.type) {
       case "ScrollPosition_addRoom":
         return scrollPositionData.findIndex(
-          (room) => room.room_id === action.room_id
+          (room) => room.name === action.roomName
         ) === -1
           ? [
               ...scrollPositionData,
               {
-                room_id: action.room_id,
+                name: action.roomName,
                 currentPosition: 999999,
                 isPreviousBottom: false,
                 previousUnreadMsgCount: 0,
@@ -89,12 +81,12 @@ export function ScrollPositionDataProvider({
 
       case "ScrollPosition_deleteRoom":
         return scrollPositionData.filter(
-          (room) => room.room_id !== action.room_id
+          (room) => room.name !== action.roomName
         );
 
       case "setScrollPosition":
         return scrollPositionData.map((room) =>
-          room.room_id === action.room_id ? { ...room, ...action } : room
+          room.name === action.name ? { ...room, ...action } : room
         );
 
       default:

@@ -1,11 +1,11 @@
 import {
   IChatDataAddRoomMessages,
   IChatDataSetRoomError,
-  IChatData_MessageExtended,
 } from "@/context/innerContexts/ChatDataProvider";
 import { Message } from "@prisma/client";
 import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/messages/generatedTypes";
 import { IPaginationSetPaginationData } from "@/context/innerContexts/PaginationProvider";
+import { IMessage } from "../prisma/prisma";
 
 // get messages from DB for channel collection
 export function getChannelHistoryMessages({
@@ -26,22 +26,22 @@ export function getChannelHistoryMessages({
   )
     .then((response) => response.json())
     .then((result: { messages: Message[]; hasMore: boolean }) => {
-      const messages: IChatData_MessageExtended[] = result.messages
+      const messages: IMessage[] = result.messages
         ? result.messages.map((message) => ({ ...message, unread: false }))
         : [];
 
       // writing new pagination data
       dispatchPagination({
         type: "setPaginationData",
-        room_id: params.channel_name,
+        roomName: params.channel_name,
         hasMore: result.hasMore,
-        historyLoadedState: "success",
+        state: "success",
       });
 
       // adding history messages to the room chatData
       dispatchChatData({
         type: "addRoomMessages",
-        room_id: params.channel_name,
+        roomName: params.channel_name,
         messages,
       });
     })
@@ -52,20 +52,20 @@ export function getChannelHistoryMessages({
       // writing error to pagination context
       dispatchPagination({
         type: "setPaginationData",
-        room_id: params.channel_name,
-        historyLoadedState: "error",
+        roomName: params.channel_name,
+        state: "error",
       });
 
       // TODO move this check to api?
       error.message === "result is null"
         ? dispatchChatData({
             type: "addRoomMessages",
-            room_id: params.channel_name,
+            roomName: params.channel_name,
             messages: [],
           })
         : dispatchChatData({
             type: "setRoomError",
-            room_id: params.channel_name,
+            roomName: params.channel_name,
             error,
           });
     });

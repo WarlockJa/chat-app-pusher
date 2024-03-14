@@ -1,40 +1,36 @@
 "use client";
 import { updateLastAccessTimestamp } from "@/lib/apiDBMethods/updateLastAccessTimestamp";
-import { Message } from "@prisma/client";
+import { IMessage, TPrisma_ChatData } from "@/lib/prisma/prisma";
 import { createContext, useContext, useReducer } from "react";
-
-export interface IChatData_MessageExtended extends Message {
-  unread: boolean;
-}
 
 export interface IChatDataAddRoom {
   type: "ChatData_addRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IChatDataDeleteRoom {
   type: "ChatData_deleteRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IChatDataSetRoomError {
   type: "setRoomError";
-  room_id: string;
+  roomName: string;
   error: Error;
 }
 // for optimistic update handling
 export interface IChatDataAddRoomMessage {
   type: "addRoomMessage";
-  room_id: string;
-  message: IChatData_MessageExtended;
+  roomName: string;
+  message: IMessage;
 }
 // for bulk messages handling
 export interface IChatDataAddRoomMessages {
   type: "addRoomMessages";
-  room_id: string;
-  messages: IChatData_MessageExtended[];
+  roomName: string;
+  messages: IMessage[];
 }
 export interface IChatDataSetMessageAsRead {
   type: "setMessageAsRead";
-  room_id: string;
+  roomName: string;
   message_id: string;
 }
 
@@ -46,17 +42,10 @@ type TChatDataProviderActions =
   | IChatDataAddRoomMessages
   | IChatDataSetMessageAsRead;
 
-export interface IChatData {
-  room_id: string; // Pusher channel name
-  messages: IChatData_MessageExtended[]; // array of messages type from Prisma
-  state: TChatDataStateLiteral; // current room loading state
-  error?: Error;
-}
-
 interface IChatDataContext {
-  chatData: IChatData[] | null;
+  chatData: TPrisma_ChatData[] | null;
   dispatchChatData: (action: TChatDataProviderActions) => void;
-  getRoomChatData: (room_id: string) => IChatData;
+  getRoomChatData: (room_id: string) => TPrisma_ChatData;
   getRoomUnreadMessagesCount: (room_id: string) => number;
   getRoomLastMessageTimestamp: (room_id: string) => Date | null;
   // setChatData: (
@@ -77,31 +66,31 @@ export function ChatDataProvider({
   children: React.ReactNode | undefined;
   user_id: string;
 }) {
-  const initialStateChatData: IChatData[] = [];
+  const initialStateChatData: TPrisma_ChatData[] = [];
   const [chatData, dispatchChatData] = useReducer(
     chatDataReducer,
     initialStateChatData
   );
 
   // state actions
-  function getRoomChatData(room_id: string) {
-    const roomData = chatData.find((room) => room.room_id === room_id);
-    const emptyRoom: IChatData = {
-      room_id,
+  function getRoomChatData(roomName: string) {
+    const roomData = chatData.find((room) => room.name === roomName);
+    const emptyRoom: TPrisma_ChatData = {
+      name: roomName,
       messages: [],
       state: "loading",
     };
     return roomData ? roomData : emptyRoom;
   }
-  function getRoomUnreadMessagesCount(room_id: string) {
-    const roomData = chatData.find((room) => room.room_id === room_id);
+  function getRoomUnreadMessagesCount(roomName: string) {
+    const roomData = chatData.find((room) => room.name === roomName);
     const unreadMessagesCount = roomData
       ? roomData.messages.filter((msg) => msg.unread).length
       : 0;
     return unreadMessagesCount;
   }
-  function getRoomLastMessageTimestamp(room_id: string) {
-    const roomData = chatData.find((room) => room.room_id === room_id);
+  function getRoomLastMessageTimestamp(roomName: string) {
+    const roomData = chatData.find((room) => room.name === roomName);
     const lastUnreadMessageTimestamp =
       roomData && roomData?.messages.length > 0
         ? roomData.messages[roomData.messages.length - 1].timestamp
@@ -111,28 +100,28 @@ export function ChatDataProvider({
 
   // reducers
   function chatDataReducer(
-    chatData: IChatData[],
+    chatData: TPrisma_ChatData[],
     action: TChatDataProviderActions
-  ): IChatData[] {
+  ): TPrisma_ChatData[] {
     switch (action.type) {
       case "ChatData_addRoom":
-        return chatData.findIndex((room) => room.room_id === action.room_id) ===
+        return chatData.findIndex((room) => room.name === action.roomName) ===
           -1
           ? [
               ...chatData,
               {
-                room_id: action.room_id,
+                name: action.roomName,
                 messages: [],
                 state: "loading",
               },
             ]
           : chatData;
       case "ChatData_deleteRoom":
-        return chatData.filter((room) => room.room_id !== action.room_id);
+        return chatData.filter((room) => room.name !== action.roomName);
       case "addRoomMessage":
         // finding room in chatData for the message
         const messageRoom = chatData.find(
-          (room) => room.room_id === action.room_id
+          (room) => room.name === action.roomName
         );
         // if message with action.message.id already present it was added as an optimistic update
         const isMessageOptimistic =
@@ -142,7 +131,7 @@ export function ChatDataProvider({
         // if message was optimistically added, updating lastaccess in DB
         if (isMessageOptimistic) {
           updateLastAccessTimestamp({
-            channel_name: action.room_id,
+            channel_name: action.roomName,
             user_id,
             message_id: action.message.id,
           });
@@ -152,7 +141,7 @@ export function ChatDataProvider({
         // otherwise if message is new adding message to the chatData
         else
           return chatData.map((room) =>
-            room.room_id === action.room_id
+            room.name === action.roomName
               ? {
                   ...room,
                   messages: [...room.messages, action.message],
@@ -161,7 +150,7 @@ export function ChatDataProvider({
           );
       case "addRoomMessages":
         return chatData.map((room) =>
-          room.room_id === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 // filtering possible duplicates.
@@ -179,13 +168,13 @@ export function ChatDataProvider({
         );
       case "setRoomError":
         return chatData.map((room) =>
-          room.room_id === action.room_id
+          room.name === action.roomName
             ? { ...room, error: action.error, state: "error" }
             : room
         );
       case "setMessageAsRead":
         return chatData.map((room) =>
-          room.room_id === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 messages: room.messages.map((message) =>

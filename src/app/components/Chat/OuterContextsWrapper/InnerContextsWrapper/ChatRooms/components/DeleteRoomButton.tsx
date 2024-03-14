@@ -8,10 +8,10 @@ import deleteChannel from "@/lib/apiDBMethods/deleteChannel";
 import React from "react";
 
 export default function DeleteRoomButton({
-  room_id,
+  roomName,
   user_id,
 }: {
-  room_id: string;
+  roomName: string;
   user_id: string;
 }) {
   const { dispatchChatData } = useChatDataContext();
@@ -26,19 +26,28 @@ export default function DeleteRoomButton({
       title="delete room"
       onClick={(e) => {
         e.stopPropagation();
-        if (activeRoom === room_id) setActiveRoom(`presence-${user_id}`);
+        if (activeRoom === roomName) setActiveRoom(`presence-${user_id}`);
         // delete room from DB
-        deleteChannel({ channel_name: room_id });
+        deleteChannel({ channel_name: roomName });
         // delete room from ChatData
-        dispatchChatData({ type: "ChatData_deleteRoom", room_id });
+        dispatchChatData({ type: "ChatData_deleteRoom", roomName });
         // delete room from ChatRooms
-        dispatchChatRooms({ type: "ChatRooms_deleteRoom", room_id });
+        dispatchChatRooms({ type: "ChatRooms_deleteRoom", roomName });
         // delete room from Pagination
-        dispatchPagination({ type: "Pagination_deleteRoom", room_id });
+        dispatchPagination({
+          type: "Pagination_deleteRoom",
+          roomName: roomName,
+        });
         // delete room from ScrollPosition
-        dispatchScrollPosition({ type: "ScrollPosition_deleteRoom", room_id });
+        dispatchScrollPosition({
+          type: "ScrollPosition_deleteRoom",
+          roomName,
+        });
         // delete room from UsersTyping
-        dispatchUsersTyping({ type: "UsersTyping_deleteRoom", room_id });
+        dispatchUsersTyping({
+          type: "UsersTyping_deleteRoom",
+          roomName,
+        });
       }}
     >
       <DeleteCross />

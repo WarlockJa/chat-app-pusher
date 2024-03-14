@@ -1,22 +1,23 @@
 "use client";
+import { TPrisma_PaginationData } from "@/lib/prisma/prisma";
 import { createContext, useContext, useReducer } from "react";
 
 export interface IPaginationAddRoom {
   type: "Pagination_addRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IPaginationDeleteRoom {
   type: "Pagination_deleteRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IPaginationRemoveRoom {
   type: "Pagination_removeRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IPaginationSetPaginationData {
   type: "setPaginationData";
-  room_id: string;
-  historyLoadedState?: TChatDataStateLiteral;
+  roomName: string;
+  state?: TStateLiteral;
   limit?: number;
   hasMore?: boolean;
 }
@@ -27,17 +28,10 @@ type TPaginationProviderActions =
   | IPaginationRemoveRoom
   | IPaginationSetPaginationData;
 
-interface IPaginationData {
-  room_id: string;
-  historyLoadedState: TChatDataStateLiteral; // states for fetching history page
-  limit: number; // amount to fetch per page
-  hasMore: boolean; // flag for data availability
-}
-
 interface IPaginationContext {
-  paginationData: IPaginationData[] | null;
+  paginationData: TPrisma_PaginationData[] | null;
   dispatchPagination: (action: TPaginationProviderActions) => void;
-  getRoomPaginationData: (room_id: string) => IPaginationData;
+  getRoomPaginationData: (roomName: string) => TPrisma_PaginationData;
 }
 
 const PaginationContext = createContext<IPaginationContext | null>(null);
@@ -49,56 +43,56 @@ export function PaginationProvider({
   children: React.ReactNode | undefined;
   pageLimit: number;
 }) {
-  const initialStateChatData: IPaginationData[] = [];
+  const initialStateChatData: TPrisma_PaginationData[] = [];
   const [paginationData, dispatchPagination] = useReducer(
     paginationDataReducer,
     initialStateChatData
   );
 
   // state actions
-  function getRoomPaginationData(room_id: string) {
-    const roomData = paginationData.find((room) => room.room_id === room_id);
-    const emptyRoom: IPaginationData = {
-      room_id,
+  function getRoomPaginationData(roomName: string) {
+    const roomData = paginationData.find((room) => room.name === roomName);
+    const emptyRoom: TPrisma_PaginationData = {
+      name: roomName,
       limit: pageLimit,
       hasMore: true,
-      historyLoadedState: "success",
+      state: "success",
     };
     return roomData ? roomData : emptyRoom;
   }
 
   // reducers
   function paginationDataReducer(
-    paginationData: IPaginationData[],
+    paginationData: TPrisma_PaginationData[],
     action: TPaginationProviderActions
-  ): IPaginationData[] {
+  ): TPrisma_PaginationData[] {
     switch (action.type) {
       case "Pagination_addRoom":
         return paginationData.findIndex(
-          (room) => room.room_id === action.room_id
+          (room) => room.name === action.roomName
         ) === -1
           ? [
               ...paginationData,
               {
-                room_id: action.room_id,
+                name: action.roomName,
                 limit: pageLimit,
                 hasMore: true,
-                historyLoadedState: "success",
+                state: "success",
               },
             ]
           : paginationData;
 
       case "Pagination_deleteRoom":
-        return paginationData.filter((room) => room.room_id !== action.room_id);
+        return paginationData.filter((room) => room.name !== action.roomName);
 
       case "Pagination_removeRoom":
         return [
-          ...paginationData.filter((room) => room.room_id !== action.room_id),
+          ...paginationData.filter((room) => room.name !== action.roomName),
         ];
 
       case "setPaginationData":
         return paginationData.map((room) =>
-          room.room_id === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 ...action,

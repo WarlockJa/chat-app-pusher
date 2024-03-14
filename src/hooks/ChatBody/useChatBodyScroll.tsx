@@ -15,19 +15,16 @@
     6 - History page is loaded and there are no other messages to scoll to (SAME ROOM + NEW HISTORY PAGE + NO DATA):
       scrolling to the bottom
   */
-import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvider";
-import {
-  IScrollPositionData,
-  IScrollPositionSetScrollPosition,
-} from "@/context/innerContexts/ScrollPositionProvider";
+import { IScrollPositionSetScrollPosition } from "@/context/innerContexts/ScrollPositionProvider";
+import { IMessage, TPrisma_ScrollPosition } from "@/lib/prisma/prisma";
 import { useLayoutEffect, useRef } from "react";
 
 interface IUseChatBodyScrollProps {
   // 1-2
   chatBodyRef: React.RefObject<HTMLDivElement>;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
-  currentRoomScrollData: IScrollPositionData;
-  setCurrentRoomScrollData: (data: IScrollPositionData) => void;
+  currentRoomScrollData: TPrisma_ScrollPosition;
+  setCurrentRoomScrollData: (data: TPrisma_ScrollPosition) => void;
   dispatchScrollPosition: (action: IScrollPositionSetScrollPosition) => void;
   activeRoom: string;
   activeRoomScrollPosition: number;
@@ -35,7 +32,7 @@ interface IUseChatBodyScrollProps {
   unreadMessagesCount: number;
   // 5-6
   topReadMessageMarker: React.RefObject<HTMLDivElement>;
-  readMessages: IChatData_MessageExtended[];
+  readMessages: IMessage[];
 }
 
 export default function useChatBodyScroll({
@@ -59,9 +56,9 @@ export default function useChatBodyScroll({
     if (!chatBodyRef.current) return;
 
     // active room change. Scenarios 1-2
-    if (activeRoom !== currentRoomScrollData.room_id) {
+    if (activeRoom !== currentRoomScrollData.name) {
       // Updating last scroll position for the active room that is about to change
-      if (currentRoomScrollData.room_id !== "") {
+      if (currentRoomScrollData.name !== "") {
         // saving scroll data to previous room if existed
         dispatchScrollPosition({
           type: "setScrollPosition",
@@ -72,7 +69,7 @@ export default function useChatBodyScroll({
       // changing current room to activeRoom
       setCurrentRoomScrollData({
         ...currentRoomScrollData,
-        room_id: activeRoom,
+        name: activeRoom,
         // scrollPosition: currentRoomScrollData.scrollPosition,
       });
       // reset previous top message ref on activeRoom change

@@ -1,44 +1,45 @@
+import { TPrisma_ChatRooms, TPrisma_User } from "@/lib/prisma/prisma";
 import { createContext, useContext, useReducer, useState } from "react";
 
 export interface IChatRoomsSetRoomData {
   type: "ChatRooms_setRoomData";
-  room_id: string;
-  owner?: IUserId;
-  state?: TChatDataStateLiteral;
+  roomName: string;
+  owner?: TPrisma_User;
+  state?: TStateLiteral;
   lastmessage?: Date | null;
 }
 
 export interface IChatRoomsAddNewRoom {
   type: "ChatRooms_addNewRoom";
-  room_id: string;
-  owner: IUserId;
+  roomName: string;
+  owner: TPrisma_User;
   lastmessage: Date | null;
 }
 
 type TChatRoomsProviderActions =
   | IChatRoomsAddNewRoom
-  | { type: "ChatRooms_deleteRoom"; room_id: string }
+  | { type: "ChatRooms_deleteRoom"; roomName: string }
   | IChatRoomsSetRoomData
   | {
       type: "ChatRooms_removeUserFromRoomUsersList";
       user_id: string;
-      room_id: string;
+      roomName: string;
     }
   | {
       type: "ChatRooms_addUserToRoomUsersList";
-      user: IUserId;
-      room_id: string;
+      user: TPrisma_User;
+      roomName: string;
     };
 
 interface IChatRoomsContext {
   activeRoom: string;
   setActiveRoom: (newActiveRooms: string) => void;
 
-  roomsList: IChatRoom[];
+  roomsList: TPrisma_ChatRooms[];
   dispatchChatRooms: (action: TChatRoomsProviderActions) => void;
-  getRoomOwnerData: (room_id: string) => IUserId | null;
-  isOwnerPresent: (room_id: string) => boolean | null;
-  getPresentAdmin: (room_id: string) => IUserId | undefined | null;
+  getRoomOwnerData: (roomName: string) => TPrisma_User | null;
+  isOwnerPresent: (roomName: string) => boolean | null;
+  getPresentAdmin: (roomName: string) => TPrisma_User | undefined | null;
 }
 
 const ChatRoomsContext = createContext<IChatRoomsContext | null>(null);
@@ -48,21 +49,21 @@ export function ChatRoomsProvider({
   userId,
 }: {
   children: React.ReactNode | undefined;
-  userId: IUserId;
+  userId: TPrisma_User;
 }) {
   // reading userId from higher level UserIdProvider context.
   // in this app userId will always be populated when ChatRoomProvider initiated
   const initialStateActiveRoom = `presence-${userId.user_id}`;
-  const initialStateRoomsList: IChatRoom[] = [
+  const initialStateRoomsList: TPrisma_ChatRooms[] = [
     {
-      roomId: "presence-system",
+      name: "presence-system",
       owner: null,
       users: [userId],
       lastmessage: null,
       state: "success",
     },
     {
-      roomId: `presence-${userId.user_id}`,
+      name: `presence-${userId.user_id}`,
       owner: userId,
       users: [userId],
       lastmessage: null,
@@ -77,13 +78,13 @@ export function ChatRoomsProvider({
   );
 
   // actions
-  function getRoomOwnerData(room_id: string) {
-    const roomData = roomsList.find((room) => room.roomId === room_id);
+  function getRoomOwnerData(roomName: string) {
+    const roomData = roomsList.find((room) => room.name === roomName);
     const roomOwner = roomData ? roomData.owner : null;
     return roomOwner;
   }
-  function isOwnerPresent(room_id: string) {
-    const roomData = roomsList.find((room) => room.roomId === room_id);
+  function isOwnerPresent(roomName: string) {
+    const roomData = roomsList.find((room) => room.name === roomName);
     const ownerPresent = roomData
       ? roomData.users.findIndex(
           (user) => user.user_id === roomData.owner?.user_id
@@ -91,8 +92,8 @@ export function ChatRoomsProvider({
       : null;
     return ownerPresent;
   }
-  function getPresentAdmin(room_id: string) {
-    const roomData = roomsList.find((room) => room.roomId === room_id);
+  function getPresentAdmin(roomName: string) {
+    const roomData = roomsList.find((room) => room.name === roomName);
     const ownerPresent = roomData
       ? roomData.users.find((user) => user.user_admin)
       : null;
@@ -101,18 +102,18 @@ export function ChatRoomsProvider({
 
   // reducers
   function roomsListReducer(
-    roomsList: IChatRoom[],
+    roomsList: TPrisma_ChatRooms[],
     action: TChatRoomsProviderActions
-  ): IChatRoom[] {
+  ): TPrisma_ChatRooms[] {
     switch (action.type) {
       case "ChatRooms_addNewRoom":
         // adding new room to the state with a precheck that it's not already there
-        return roomsList.findIndex((room) => room.roomId === action.room_id) ===
+        return roomsList.findIndex((room) => room.name === action.roomName) ===
           -1
           ? [
               ...roomsList,
               {
-                roomId: action.room_id,
+                name: action.roomName,
                 owner: action.owner,
                 users: [],
                 lastmessage: action.lastmessage,
@@ -121,10 +122,10 @@ export function ChatRoomsProvider({
             ]
           : roomsList;
       case "ChatRooms_deleteRoom":
-        return roomsList.filter((room) => room.roomId !== action.room_id);
+        return roomsList.filter((room) => room.name !== action.roomName);
       case "ChatRooms_setRoomData":
         return roomsList.map((room) =>
-          room.roomId === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 ...action,
@@ -133,7 +134,7 @@ export function ChatRoomsProvider({
         );
       case "ChatRooms_removeUserFromRoomUsersList":
         return roomsList.map((room) =>
-          room.roomId === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 users: room.users.filter(
@@ -145,7 +146,7 @@ export function ChatRoomsProvider({
       case "ChatRooms_addUserToRoomUsersList":
         // adding user to rooms users list with precheck that it's not already there
         return roomsList.map((room) =>
-          room.roomId === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 users:

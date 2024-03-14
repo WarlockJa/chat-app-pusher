@@ -22,8 +22,8 @@ export default function PaginationMarker({
     // changing pagination state to loading
     dispatchPagination({
       type: "setPaginationData",
-      room_id: channel_name,
-      historyLoadedState: "loading",
+      roomName: channel_name,
+      state: "loading",
     });
 
     // fetching new chat data history page

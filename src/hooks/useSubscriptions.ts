@@ -12,6 +12,7 @@ import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvid
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 import createChannel from "@/lib/apiDBMethods/createChannel";
+import { TPrisma_User } from "@/lib/prisma/prisma";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -19,7 +20,7 @@ export default function useSubscriptions({
   userId,
   pusher,
 }: {
-  userId: IUserId;
+  userId: TPrisma_User;
   pusher: PusherPresence;
 }) {
   const [subscriptions, setSubscriptions] = useState<PresenceChannel[]>([]);
@@ -43,15 +44,14 @@ export default function useSubscriptions({
     roomsList.forEach((room) => {
       // found subscription channel present in roomsList but not in subscriptions
       if (
-        subscriptions.findIndex((channel) => channel.name === room.roomId) ===
-        -1
+        subscriptions.findIndex((channel) => channel.name === room.name) === -1
       ) {
         // subscribing to channel with room name, modifying subscriptions state
-        const newChannel = pusher.subscribe(room.roomId);
+        const newChannel = pusher.subscribe(room.name);
         setSubscriptions((prev) => [...prev, newChannel]);
 
         // if user is not an administrator no further interactions with presence-system required
-        if (room.roomId === "presence-system" && !user_admin) return;
+        if (room.name === "presence-system" && !user_admin) return;
 
         // binding to the "message" event
         newChannel.bind(
@@ -62,7 +62,7 @@ export default function useSubscriptions({
             // adding new message to the chatData
             dispatchChatData({
               type: "addRoomMessage",
-              room_id: newChannel.name,
+              roomName: newChannel.name,
               message: {
                 id: data.id,
                 text: data.message,
@@ -87,7 +87,7 @@ export default function useSubscriptions({
             // sending typing information to the chatData
             dispatchUsersTyping({
               type: "addTypingUser",
-              room_id: newChannel.name,
+              roomName: newChannel.name,
               user: data.author,
             });
 
@@ -106,7 +106,7 @@ export default function useSubscriptions({
                 () =>
                   dispatchUsersTyping({
                     type: "removeTypingUser",
-                    room_id: newChannel.name,
+                    roomName: newChannel.name,
                     user: data.author,
                   }),
                 1000
@@ -125,7 +125,7 @@ export default function useSubscriptions({
         // i.e. allows to monitor if admin/user is present
         newChannel.bind("pusher:member_added", (data: ITriggerEventData) => {
           // a new member added to the channel
-          const newUser: IUserId = {
+          const newUser: TPrisma_User = {
             user_id: data.id,
             user_name: data.info.user_name,
             user_admin: data.info.user_admin,
@@ -136,7 +136,7 @@ export default function useSubscriptions({
           dispatchChatRooms({
             type: "ChatRooms_addUserToRoomUsersList",
             user: newUser,
-            room_id: newChannel.name,
+            roomName: newChannel.name,
           });
 
           // admin only logic. users are not subscribed to member_added event on presence-system
@@ -144,7 +144,7 @@ export default function useSubscriptions({
             // creating room based on member_added data
             dispatchChatRooms({
               type: "ChatRooms_addNewRoom",
-              room_id: `presence-${data.id}`,
+              roomName: `presence-${data.id}`,
               owner: {
                 user_id: data.id,
                 user_name: data.info.user_name,
@@ -159,7 +159,7 @@ export default function useSubscriptions({
           // update users number for the binded channel when a member leaves
           dispatchChatRooms({
             type: "ChatRooms_removeUserFromRoomUsersList",
-            room_id: newChannel.name,
+            roomName: newChannel.name,
             user_id: data.id,
           });
         });
@@ -179,19 +179,19 @@ export default function useSubscriptions({
           // creating rooms in contexts
           dispatchChatData({
             type: "ChatData_addRoom",
-            room_id: newChannel.name,
+            roomName: newChannel.name,
           });
           dispatchUsersTyping({
             type: "UsersTyping_addRoom",
-            room_id: newChannel.name,
+            roomName: newChannel.name,
           });
           dispatchPagination({
             type: "Pagination_addRoom",
-            room_id: newChannel.name,
+            roomName: newChannel.name,
           });
           dispatchScrollPosition({
             type: "ScrollPosition_addRoom",
-            room_id: newChannel.name,
+            roomName: newChannel.name,
           });
 
           // fetching unread messages on subscription_succeeded
@@ -204,7 +204,7 @@ export default function useSubscriptions({
           });
 
           // getting users subscribed to the channel
-          const initialLoadUsersChannel_users: IUserId[] = Object.entries(
+          const initialLoadUsersChannel_users: TPrisma_User[] = Object.entries(
             pusher.channel(newChannel.name).members.members as IChannelMembers
           ).map(([user_id, user_info]) => ({
             user_id,
@@ -216,7 +216,7 @@ export default function useSubscriptions({
           initialLoadUsersChannel_users.forEach((user) => {
             dispatchChatRooms({
               type: "ChatRooms_addUserToRoomUsersList",
-              room_id: newChannel.name,
+              roomName: newChannel.name,
               user,
             });
           });
@@ -226,7 +226,7 @@ export default function useSubscriptions({
             initialLoadUsersChannel_users.map((user) =>
               dispatchChatRooms({
                 type: "ChatRooms_addNewRoom",
-                room_id: `presence-${user.user_id}`,
+                roomName: `presence-${user.user_id}`,
                 owner: user,
                 lastmessage: null,
               })
@@ -239,7 +239,7 @@ export default function useSubscriptions({
     // unsubscribing from channels removed from roomsList
     subscriptions.forEach((channel) => {
       // found channel that exists in subscriptions but not in roomsList
-      if (roomsList.findIndex((room) => room.roomId === channel.name) === -1) {
+      if (roomsList.findIndex((room) => room.name === channel.name) === -1) {
         // unsubscribing from channel modifying subscriptions state
         channel.unsubscribe();
         setSubscriptions((prev) =>

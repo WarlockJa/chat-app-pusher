@@ -8,12 +8,13 @@ import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import ArrowRight from "@/assets/svg/ArrowRight";
+import { TPrisma_User } from "@/lib/prisma/prisma";
 
 export default function SendForm({
   userId,
   pusher,
 }: {
-  userId: IUserId;
+  userId: TPrisma_User;
   pusher: PusherPresence;
 }) {
   // console.log("SendForm rerender");
@@ -55,7 +56,7 @@ export default function SendForm({
     // Once received again via Pusher "message" event this message's will be filtered by id
     dispatchChatData({
       type: "addRoomMessages",
-      room_id: activeRoom,
+      roomName: activeRoom,
       messages: [
         {
           id: message_id,
@@ -70,7 +71,7 @@ export default function SendForm({
     // updating lastmessage field in ChatRooms context for the room
     dispatchChatRooms({
       type: "ChatRooms_setRoomData",
-      room_id: activeRoom,
+      roomName: activeRoom,
       lastmessage: messageTimestamp,
     });
 

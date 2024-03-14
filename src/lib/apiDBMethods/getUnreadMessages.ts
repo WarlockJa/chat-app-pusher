@@ -1,10 +1,10 @@
 import {
   IChatDataAddRoomMessages,
   IChatDataSetRoomError,
-  IChatData_MessageExtended,
 } from "@/context/innerContexts/ChatDataProvider";
 import { Message } from "@prisma/client";
 import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/messages/generatedTypes";
+import { IMessage } from "../prisma/prisma";
 
 export function getUnreadMessages({
   params,
@@ -20,20 +20,21 @@ export function getUnreadMessages({
   )
     .then((response) => response.json())
     .then((result: Message[]) => {
-      const unreadMessages: IChatData_MessageExtended[] = result.map(
-        (message) => ({ ...message, unread: true })
-      );
+      const unreadMessages: IMessage[] = result.map((message) => ({
+        ...message,
+        unread: true,
+      }));
 
       dispatchChatData({
         type: "addRoomMessages",
-        room_id: params.channel_name,
+        roomName: params.channel_name,
         messages: unreadMessages,
       });
     })
     .catch((error) =>
       dispatchChatData({
         type: "setRoomError",
-        room_id: params.channel_name,
+        roomName: params.channel_name,
         error,
       })
     );

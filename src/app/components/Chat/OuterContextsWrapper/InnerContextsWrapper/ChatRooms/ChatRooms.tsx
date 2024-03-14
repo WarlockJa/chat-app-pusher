@@ -46,7 +46,7 @@ export default function ChatRooms({
     // filtering out presence-system
     .filter(
       (item) =>
-        item.roomId !== "presence-system" &&
+        item.name !== "presence-system" &&
         (item.owner?.user_id !== user_id || user_admin)
     )
     // sorting by the last message timestamp
@@ -56,32 +56,30 @@ export default function ChatRooms({
       return a.lastmessage < b.lastmessage ? 1 : -1;
     })
     .map((currentRoom, index) => {
-      const unreadMessagesCount = getRoomUnreadMessagesCount(
-        currentRoom.roomId
-      );
+      const unreadMessagesCount = getRoomUnreadMessagesCount(currentRoom.name);
       // getting room owner data
-      const owner = getRoomOwnerData(currentRoom.roomId);
+      const owner = getRoomOwnerData(currentRoom.name);
       // getting active room typing users data
-      const typingUsersData = getRoomTypingUsers(
-        currentRoom.roomId
-      ).users.filter((user) => user !== user_name);
+      const typingUsersData = getRoomTypingUsers(currentRoom.name).users.filter(
+        (user) => user !== user_name
+      );
       // const roomTypingUsersString = getTypingUsersString({ data, user_name });
       return (
         <li
           className={
-            activeRoom === currentRoom.roomId
+            activeRoom === currentRoom.name
               ? "chat__rooms--room chat__rooms--roomActive chat__rooms--avatarContainer"
               : "chat__rooms--room chat__rooms--avatarContainer"
           }
-          key={currentRoom.roomId}
-          onClick={() => handleRoomSwitch(currentRoom.roomId)}
+          key={currentRoom.name}
+          onClick={() => handleRoomSwitch(currentRoom.name)}
           title={owner?.user_name}
           onMouseEnter={() => setHoverIndex(index)}
           onMouseLeave={() => setHoverIndex(undefined)}
         >
           <div
             className={
-              isOwnerPresent(currentRoom.roomId)
+              isOwnerPresent(currentRoom.name)
                 ? "chat__rooms--ownerPresence chat__rooms--ownerPresenceOn"
                 : "chat__rooms--ownerPresence"
             }
@@ -116,10 +114,7 @@ export default function ChatRooms({
             user_admin &&
             currentRoom.users.length === 1 &&
             !currentRoom.owner?.user_admin && (
-              <DeleteRoomButton
-                room_id={currentRoom.roomId}
-                user_id={user_id}
-              />
+              <DeleteRoomButton roomName={currentRoom.name} user_id={user_id} />
             )}
         </li>
       );

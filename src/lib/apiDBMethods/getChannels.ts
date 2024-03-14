@@ -1,4 +1,5 @@
 import { IChatRoomsAddNewRoom } from "@/context/innerContexts/ChatRoomsProvider";
+import { TPrisma_User } from "../prisma/prisma";
 
 export function getChannels({
   dispatchChatRooms,
@@ -9,12 +10,16 @@ export function getChannels({
     .then((response) => response.json())
     .then(
       (
-        channels: { name: string; owner: IUserId; lastmessage: Date | null }[]
+        channels: {
+          name: string;
+          owner: TPrisma_User;
+          lastmessage: Date | null;
+        }[]
       ) => {
         channels.map((channel) => {
           dispatchChatRooms({
             type: "ChatRooms_addNewRoom",
-            room_id: channel.name,
+            roomName: channel.name,
             owner: channel.owner,
             lastmessage: channel.lastmessage,
           });

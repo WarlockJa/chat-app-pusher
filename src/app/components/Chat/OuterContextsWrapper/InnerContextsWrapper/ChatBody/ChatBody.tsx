@@ -10,12 +10,10 @@ import PaginationMarker from "./components/PaginationMarker";
 import useChatBodyScroll from "@/hooks/ChatBody/useChatBodyScroll";
 import SpinnerFlat from "@/util/spinners/SpinnerFlat";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
-import {
-  IScrollPositionData,
-  useScrollPositionDataContext,
-} from "@/context/innerContexts/ScrollPositionProvider";
+import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
+import { TPrisma_ScrollPosition, TPrisma_User } from "@/lib/prisma/prisma";
 
-export default function ChatBody({ userId }: { userId: IUserId }) {
+export default function ChatBody({ userId }: { userId: TPrisma_User }) {
   const { activeRoom } = useChatRoomsContext();
   const { getRoomChatData } = useChatDataContext();
   const { getRoomPaginationData } = usePaginationContext();
@@ -38,8 +36,8 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
 
   // current room state used to save last scroll position on activeRoom change
   const [currentRoomScrollData, setCurrentRoomScrollData] =
-    useState<IScrollPositionData>({
-      room_id: "",
+    useState<TPrisma_ScrollPosition>({
+      name: "",
       currentPosition: 999999,
       isPreviousBottom: false,
       previousUnreadMsgCount: 0,
@@ -100,12 +98,12 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
       <ul className="chatDisplay">
         {
           // pagintaion marker for chat data history
-          dataPagination.historyLoadedState === "loading" ? (
+          dataPagination.state === "loading" ? (
             <div className="chat__body--spinnerWrapper">
               <SpinnerFlat />
             </div>
           ) : dataPagination.hasMore ? (
-            currentRoomScrollData.room_id === activeRoom ? (
+            currentRoomScrollData.name === activeRoom ? (
               <PaginationMarker
                 paginationMarker={paginationMarker}
                 channel_name={activeRoom}

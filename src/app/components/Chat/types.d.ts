@@ -15,12 +15,6 @@ interface IInitUserId {
   user_admin?: boolean;
 }
 
-interface IUserId {
-  user_id: string;
-  user_name: string;
-  user_admin: boolean;
-}
-
 interface IChatProps extends IInitUserId {
   storage_uuid?: string;
   pageLimit?: number;
@@ -36,15 +30,6 @@ interface ITriggerEventData {
   info: IUserInfo;
 }
 
-// TODO export from Prisma? and extend with state?
-interface IChatRoom {
-  roomId: string;
-  owner: IUserId | null;
-  users: IUserId[];
-  lastmessage: Date | null;
-  state: TChatDataStateLiteral;
-}
-
 // pusher.channel("channel-name").members.members
 interface IChannelMembers {
   [user_id: string]: {
@@ -56,8 +41,7 @@ interface IChannelMembers {
 // Object.values(pusher.channel("channel-name").members.members.get("user_name"))
 type IChannelGetMember = [string, { user_admin: boolean; user_name: string }];
 
-// TODO rename excluding ChatData
-type TChatDataStateLiteral = "loading" | "success" | "error";
+type TStateLiteral = "loading" | "success" | "error";
 
 interface ITypingUserTimeout {
   id: string;

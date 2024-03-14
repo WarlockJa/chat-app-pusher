@@ -1,9 +1,9 @@
-import { IChatData_MessageExtended } from "@/context/innerContexts/ChatDataProvider";
+import { IMessage } from "@/lib/prisma/prisma";
 import { format } from "date-fns";
 
 interface IChatBodyLIElementProps {
   userIsMsgAuthor: boolean;
-  msg: IChatData_MessageExtended;
+  msg: IMessage;
 }
 
 export default function ChatBodyLIElement(props: IChatBodyLIElementProps) {

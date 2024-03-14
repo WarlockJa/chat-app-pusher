@@ -1,11 +1,8 @@
-import {
-  IChatData,
-  IChatData_MessageExtended,
-} from "@/context/innerContexts/ChatDataProvider";
 import { format } from "date-fns";
 import ChatBodyLIElement from "./ChatBodyLIElement";
 import ChatBodyMessageHeader from "./ChatBodyMessageHeader";
 import useIOUnreadMsgsArray from "@/hooks/ChatBody/useIOUnreadMsgsArray";
+import { IMessage, TPrisma_ChatData } from "@/lib/prisma/prisma";
 
 export default function ChatBodyUnreadMessages({
   unreadMessages,
@@ -15,12 +12,12 @@ export default function ChatBodyUnreadMessages({
   showFirstDate,
   activeRoom_chatData,
 }: {
-  unreadMessages: IChatData_MessageExtended[];
+  unreadMessages: IMessage[];
   user_id: string;
   activeRoom: string;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
   showFirstDate: Date | undefined;
-  activeRoom_chatData: IChatData;
+  activeRoom_chatData: TPrisma_ChatData;
 }) {
   // attaching IntersectionObserver to post elements via unreadMessagesRefsArray
   useIOUnreadMsgsArray({

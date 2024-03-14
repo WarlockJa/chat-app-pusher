@@ -5,12 +5,13 @@ import SubscriptionsHookWrapper from "./ChatBody/components/SubscriptionsHookWra
 import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import ChatHeader from "./ChatHeader/ChatHeader";
 import "./innercontextswrapper.scss";
+import { TPrisma_User } from "@/lib/prisma/prisma";
 
 export default function InnerContextsWrapper({
   userId,
   pusher,
 }: {
-  userId: IUserId;
+  userId: TPrisma_User;
   pusher: PusherPresence;
 }) {
   // console.log("------------Chat rerender-------------");

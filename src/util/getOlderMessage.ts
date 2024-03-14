@@ -1,4 +1,4 @@
-import { IChatData } from "@/context/innerContexts/ChatDataProvider";
+import { TPrisma_ChatData } from "@/lib/prisma/prisma";
 
 interface IIOObject {
   message_id: string;
@@ -8,7 +8,7 @@ interface IIOObject {
 interface IGetOlderMessageProps {
   first: IIOObject;
   second: IIOObject;
-  activeRoom_chatData: IChatData;
+  activeRoom_chatData: TPrisma_ChatData;
 }
 
 // this is a helper function for useIOUnreadMsgArray

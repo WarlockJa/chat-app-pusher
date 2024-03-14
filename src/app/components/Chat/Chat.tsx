@@ -4,10 +4,11 @@ import OuterContextsWrapper from "./OuterContextsWrapper/OuterContextsWrapper";
 import { TSchemaChatProps } from "@/lib/validators/chatprops/generatedTypes";
 import { schemaChatProps } from "@/lib/validators/chatprops/chatprops";
 import { z } from "zod";
+import { TPrisma_User } from "@/lib/prisma/prisma";
 
 export default function Chat(props: IChatProps) {
   // data validation
-  let userIdToken: IUserId | null = null;
+  let userIdToken: TPrisma_User | null = null;
 
   try {
     const data: TSchemaChatProps | z.ZodError = schemaChatProps.parse({
@@ -20,9 +21,6 @@ export default function Chat(props: IChatProps) {
   } catch (error) {
     // console.log(error)
   }
-
-  // TODO delete
-  // console.log(userIdToken);
 
   return (
     <UserIdProvider userIdToken={userIdToken}>

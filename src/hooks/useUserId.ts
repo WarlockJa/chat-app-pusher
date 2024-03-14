@@ -1,4 +1,5 @@
 import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
+import { TPrisma_User } from "@/lib/prisma/prisma";
 import { readLocalStorage } from "@/util/localStorageRW";
 import { useEffect, useState } from "react";
 
@@ -28,7 +29,7 @@ export default function useUserId({ storage_uuid }: IChatProps) {
       // localStorage data found
       if (localStorageUser) {
         // populating user data state
-        const userData: IUserId = {
+        const userData: TPrisma_User = {
           user_id: localStorageUser.user_id,
           user_name: localStorageUser.user_name
             ? localStorageUser.user_name

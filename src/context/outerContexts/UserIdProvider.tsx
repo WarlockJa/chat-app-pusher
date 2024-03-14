@@ -1,9 +1,10 @@
 "use client";
+import { TPrisma_User } from "@/lib/prisma/prisma";
 import { createContext, useContext, useState } from "react";
 
 interface IUserIdContext {
-  userId: IUserId | null;
-  setUserId: (newUserId: IUserId | null) => void;
+  userId: TPrisma_User | null;
+  setUserId: (newUserId: TPrisma_User | null) => void;
 }
 
 const UserIdContext = createContext<IUserIdContext | null>(null);
@@ -13,9 +14,9 @@ export function UserIdProvider({
   userIdToken,
 }: {
   children: React.ReactNode | undefined;
-  userIdToken: IUserId | null;
+  userIdToken: TPrisma_User | null;
 }) {
-  const [userId, setUserId] = useState<IUserId | null>(userIdToken);
+  const [userId, setUserId] = useState<TPrisma_User | null>(userIdToken);
 
   return (
     <UserIdContext.Provider value={{ userId, setUserId }}>

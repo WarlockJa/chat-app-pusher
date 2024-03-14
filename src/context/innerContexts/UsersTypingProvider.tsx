@@ -1,4 +1,5 @@
 "use client";
+import { TPrisma_UsersTyping } from "@/lib/prisma/prisma";
 import {
   PropsWithChildren,
   createContext,
@@ -8,20 +9,20 @@ import {
 
 export interface IUsersTypingAddRoom {
   type: "UsersTyping_addRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IUsersTypingRemoveRoom {
   type: "UsersTyping_deleteRoom";
-  room_id: string;
+  roomName: string;
 }
 export interface IUsersTypingAddTypingUser {
   type: "addTypingUser";
-  room_id: string;
+  roomName: string;
   user: string;
 }
 export interface IUsersTypingRemoveTypingUser {
   type: "removeTypingUser";
-  room_id: string;
+  roomName: string;
   user: string;
 }
 
@@ -31,55 +32,48 @@ type TUsersTypingProviderActions =
   | IUsersTypingAddTypingUser
   | IUsersTypingRemoveTypingUser;
 
-export interface IUsersTypingData {
-  users: string[];
-  room_id: string;
-}
-
 interface IUsersTypingContext {
-  usersTyping: IUsersTypingData[];
+  usersTyping: TPrisma_UsersTyping[];
   dispatchUsersTyping: (action: TUsersTypingProviderActions) => void;
-  getRoomTypingUsers: (room_id: string) => IUsersTypingData;
+  getRoomTypingUsers: (roomName: string) => TPrisma_UsersTyping;
 }
 
 const UsersTypingContext = createContext<IUsersTypingContext | null>(null);
 
 // UsersTyping context. Contains data about users currently typing in the room.
 export function UsersTypingProvider({ children }: PropsWithChildren<{}>) {
-  const initialUsersTypingData: IUsersTypingData[] = [];
+  const initialUsersTypingData: TPrisma_UsersTyping[] = [];
   const [usersTyping, dispatchUsersTyping] = useReducer(
     usersTypingReducer,
     initialUsersTypingData
   );
 
   // state actions
-  function getRoomTypingUsers(room_id: string) {
-    const roomData = usersTyping.find((room) => room.room_id === room_id);
-    const emptyRoom: IUsersTypingData = { room_id, users: [] };
+  function getRoomTypingUsers(roomName: string) {
+    const roomData = usersTyping.find((room) => room.name === roomName);
+    const emptyRoom: TPrisma_UsersTyping = { name: roomName, users: [] };
     return roomData ? roomData : emptyRoom;
   }
 
   // reducers
   function usersTypingReducer(
-    usersTyping: IUsersTypingData[],
+    usersTyping: TPrisma_UsersTyping[],
     action: TUsersTypingProviderActions
-  ): IUsersTypingData[] {
+  ): TPrisma_UsersTyping[] {
     switch (action.type) {
       case "UsersTyping_addRoom":
         return usersTyping.findIndex(
-          (room) => room.room_id === action.room_id
+          (room) => room.name === action.roomName
         ) === -1
-          ? [...usersTyping, { room_id: action.room_id, users: [] }]
+          ? [...usersTyping, { name: action.roomName, users: [] }]
           : usersTyping;
 
       case "UsersTyping_deleteRoom":
-        return [
-          ...usersTyping.filter((room) => room.room_id !== action.room_id),
-        ];
+        return [...usersTyping.filter((room) => room.name !== action.roomName)];
 
       case "addTypingUser":
         return usersTyping.map((room) =>
-          room.room_id === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 users: [
@@ -92,7 +86,7 @@ export function UsersTypingProvider({ children }: PropsWithChildren<{}>) {
 
       case "removeTypingUser":
         return usersTyping.map((room) =>
-          room.room_id === action.room_id
+          room.name === action.roomName
             ? {
                 ...room,
                 users: [...room.users.filter((user) => user !== action.user)],
