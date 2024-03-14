@@ -150,6 +150,7 @@ export default function useSubscriptions({
                 user_name: data.info.user_name,
                 user_admin: data.info.user_admin,
               },
+              lastmessage: null,
             });
           }
         });
@@ -227,6 +228,7 @@ export default function useSubscriptions({
                 type: "ChatRooms_addNewRoom",
                 room_id: `presence-${user.user_id}`,
                 owner: user,
+                lastmessage: null,
               })
             );
           }

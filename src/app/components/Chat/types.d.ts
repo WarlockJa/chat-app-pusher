@@ -36,10 +36,12 @@ interface ITriggerEventData {
   info: IUserInfo;
 }
 
+// TODO export from Prisma? and extend with state?
 interface IChatRoom {
   roomId: string;
   owner: IUserId | null;
   users: IUserId[];
+  lastmessage: Date | null;
   state: TChatDataStateLiteral;
 }
 

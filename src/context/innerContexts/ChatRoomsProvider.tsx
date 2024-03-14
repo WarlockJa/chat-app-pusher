@@ -5,13 +5,14 @@ export interface IChatRoomsSetRoomData {
   room_id: string;
   owner?: IUserId;
   state?: TChatDataStateLiteral;
+  lastmessage?: Date | null;
 }
 
-// TODO change type names to ChatRooms_***
 export interface IChatRoomsAddNewRoom {
   type: "ChatRooms_addNewRoom";
   room_id: string;
   owner: IUserId;
+  lastmessage: Date | null;
 }
 
 type TChatRoomsProviderActions =
@@ -57,12 +58,14 @@ export function ChatRoomsProvider({
       roomId: "presence-system",
       owner: null,
       users: [userId],
+      lastmessage: null,
       state: "success",
     },
     {
       roomId: `presence-${userId.user_id}`,
       owner: userId,
       users: [userId],
+      lastmessage: null,
       state: "success",
     },
   ];
@@ -112,6 +115,7 @@ export function ChatRoomsProvider({
                 roomId: action.room_id,
                 owner: action.owner,
                 users: [],
+                lastmessage: action.lastmessage,
                 state: "loading",
               },
             ]

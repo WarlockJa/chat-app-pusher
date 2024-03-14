@@ -37,9 +37,10 @@ export default function ChatRooms({
     if (activeRoom === newActiveRoom) return;
     setActiveRoom(newActiveRoom);
   };
-  // console.log("ChatRooms rerender");
   // hovered item index
   const [hoverIndex, setHoverIndex] = useState<number | undefined>(undefined);
+
+  // console.log("ChatRooms rerender");
 
   const content = roomsList
     // hiding rooms system and userId from the list
@@ -49,12 +50,11 @@ export default function ChatRooms({
         item.roomId !== "presence-system" &&
         (item.owner?.user_id !== user_id || user_admin)
     )
+    // sorting by the last message timestamp
     .sort((a, b) => {
-      const lastTimestampA = getRoomLastMessageTimestamp(a.roomId);
-      const lastTimestampB = getRoomLastMessageTimestamp(b.roomId);
-      if (!lastTimestampA) return 1;
-      if (!lastTimestampB) return -1;
-      return lastTimestampA < lastTimestampB ? 1 : -1;
+      if (!a.lastmessage) return 1;
+      if (!b.lastmessage) return -1;
+      return a.lastmessage < b.lastmessage ? 1 : -1;
     })
     .map((currentRoom, index) => {
       const unreadMessagesCount = getRoomUnreadMessagesCount(
@@ -96,9 +96,9 @@ export default function ChatRooms({
           <div className="chat__rooms--userName chat__rooms--mobileHidden">
             {owner?.user_name}
           </div>
-          {lastMsgTimestamp ? (
+          {currentRoom.lastmessage ? (
             <div className="chat__rooms--lastMsgTimestamp chat__rooms--mobileHidden">
-              {lastMsgFormatted(lastMsgTimestamp)}
+              {lastMsgFormatted(currentRoom.lastmessage)}
             </div>
           ) : null}
           {unreadMessagesCount > 0 ? (

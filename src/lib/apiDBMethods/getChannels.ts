@@ -7,15 +7,19 @@ export function getChannels({
 }) {
   fetch(`api/v1/db/channel`)
     .then((response) => response.json())
-    .then((channels: { name: string; owner: IUserId }[]) => {
-      // TODO add all channels to room data
-      channels.map((channel) => {
-        dispatchChatRooms({
-          type: "ChatRooms_addNewRoom",
-          room_id: channel.name,
-          owner: channel.owner,
+    .then(
+      (
+        channels: { name: string; owner: IUserId; lastmessage: Date | null }[]
+      ) => {
+        channels.map((channel) => {
+          dispatchChatRooms({
+            type: "ChatRooms_addNewRoom",
+            room_id: channel.name,
+            owner: channel.owner,
+            lastmessage: channel.lastmessage,
+          });
         });
-      });
-    })
+      }
+    )
     .catch((error) => console.log(error)); // TODO error porcessing?
 }
