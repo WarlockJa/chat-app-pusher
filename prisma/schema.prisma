@@ -13,7 +13,7 @@ datasource db {
 type User {
   user_id    String
   user_name  String
-  user_admin Boolean
+  user_admin Boolean?
 }
 
 type Message {
@@ -34,5 +34,5 @@ model channel {
   owner       User
   messages    Message[]
   lastaccess  UserTimestamp[]
-  lastmessage DateTime
+  lastmessage DateTime?
 }

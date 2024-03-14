@@ -1,10 +1,14 @@
 import { prisma } from "@/lib/prisma/globalForPrisma";
 import { TMessageDB } from "@/lib/prisma/prisma";
-import { schemaApiV1dbMessagesNewGET } from "@/lib/validators/db/messages/new";
+import {
+  schemaApiV1dbMessagesNewGET,
+  schemaApiV1dbMessagesNewPOST,
+} from "@/lib/validators/db/messages/new";
 import { Message } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+// fetchin unread messages for the user
 export async function GET(req: NextRequest) {
   try {
     // parsing params
@@ -77,6 +81,57 @@ export async function GET(req: NextRequest) {
     } else unreadMessages = [];
 
     return NextResponse.json(unreadMessages, { status: 200 });
+  } catch (error) {
+    // checking if error is a zod validation error
+    return error instanceof z.ZodError
+      ? NextResponse.json(error, { status: 400 })
+      : NextResponse.json(error, { status: 500 });
+  }
+}
+
+// writing a new message to a channel in the DB
+export async function POST(req: Request) {
+  try {
+    const reqBody = await req.json();
+    const data = schemaApiV1dbMessagesNewPOST.parse(reqBody);
+
+    const newMessageTimestamp = { $date: new Date() };
+
+    // upserting message to the channel -> messages array
+    const result = await prisma.$runCommandRaw({
+      update: "channel",
+      updates: [
+        {
+          q: {
+            name: data.channel_name,
+            "messages.id": { $ne: data.message_id },
+          },
+          u: {
+            $push: {
+              messages: {
+                id: data.message_id,
+                author: { user_id: data.user_id, user_name: data.user_name },
+                text: data.message_text,
+                timestamp: newMessageTimestamp,
+              },
+            },
+          },
+          upsert: true,
+        },
+        {
+          q: {
+            name: data.channel_name,
+          },
+          u: {
+            $set: {
+              lastmessage: newMessageTimestamp,
+            },
+          },
+        },
+      ],
+    });
+
+    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     // checking if error is a zod validation error
     return error instanceof z.ZodError

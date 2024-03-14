@@ -1,4 +1,7 @@
-import { regexAlphanumericWithDash } from "@/util/regExes";
+import {
+  regexAlphanumericWithDash,
+  regexStartLetterContainsLettersNumbersUnderscore,
+} from "@/util/regExes";
 import { z } from "zod";
 
 export const schemaApiV1PusherTypingPost = z.object({
@@ -15,14 +18,17 @@ export const schemaApiV1PusherTypingPost = z.object({
       message:
         "Channel name may only contains alphanumerical characters and dash",
     }),
-  // TODO add .uuid()
   author: z
     .string({
-      required_error: "UserId is required",
-      invalid_type_error: "Required type for userId is string",
+      required_error: "user_name is required",
+      invalid_type_error: "Required type for user_name is string",
     })
-    .max(36, { message: "Maximum length for userId is 36" })
-    .regex(regexAlphanumericWithDash, {
-      message: "UserId may only contains alphanumerical characters and dash",
+    .min(3, {
+      message: "user_name must be at least 3 characters long",
+    })
+    .max(36, { message: "Maximum length for user_name is 36" })
+    .regex(regexStartLetterContainsLettersNumbersUnderscore, {
+      message:
+        "user_name should start with a letter and may contain letters, digits, spaces, underscores, and dashes",
     }),
 });

@@ -13,8 +13,10 @@ export async function GET(req: NextRequest) {
       select: {
         name: true,
         owner: true,
+        lastmessage: true,
       },
     });
+    // TODO delete
     // const result = await prisma.channel.aggregateRaw({
     //   pipeline: [
     //     {
@@ -64,6 +66,7 @@ export async function POST(req: Request) {
           user_admin: data.user_admin,
         },
         lastaccess: [],
+        lastmessage: null,
         messages: [],
       },
     });
@@ -87,20 +90,20 @@ export async function DELETE(req: Request) {
     const data = schemaApiV1dbChannelDELETE.parse(reqBody);
 
     // attempting to create a collection with owner's data
-    const result = await prisma.channel.delete({
+    await prisma.channel.delete({
       where: {
         name: data.channel_name,
       },
     });
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     // checking if error is a zod validation error
     return error instanceof z.ZodError
       ? NextResponse.json(error, { status: 400 })
       : NextResponse.json(
           { message: "Collection does not exist" },
-          { status: 201 }
+          { status: 200 }
         );
   }
 }

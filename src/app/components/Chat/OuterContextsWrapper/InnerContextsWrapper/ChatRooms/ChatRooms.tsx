@@ -64,8 +64,8 @@ export default function ChatRooms({
       const owner = getRoomOwnerData(currentRoom.roomId);
       const lastMsgTimestamp = getRoomLastMessageTimestamp(currentRoom.roomId);
       // getting active room typing users data
-      const data = getRoomTypingUsers(currentRoom.roomId);
-      const roomTypingUsersString = getTypingUsersString({ data, user_name });
+      const typingUsersData = getRoomTypingUsers(currentRoom.roomId);
+      // const roomTypingUsersString = getTypingUsersString({ data, user_name });
       return (
         <li
           className={
@@ -106,10 +106,10 @@ export default function ChatRooms({
               <span>{unreadMessagesCount.toString()}</span>
             </div>
           ) : null}
-          {/* TODO add some spinner */}
-          {roomTypingUsersString ? (
+          {typingUsersData.users.length > 0 ? (
             <div className="chat__rooms--typingIndicator chat__rooms--mobileHidden">
-              {roomTypingUsersString}
+              {/* TODO add some spinner */}
+              ...typing
             </div>
           ) : null}
           {hoverIndex === index &&

@@ -1,9 +1,6 @@
 import { prisma } from "@/lib/prisma/globalForPrisma";
 import { TMessageDB } from "@/lib/prisma/prisma";
-import {
-  schemaApiV1dbMessagesHistoryGET,
-  schemaApiV1dbMessagesHistoryPOST,
-} from "@/lib/validators/db/messages/history";
+import { schemaApiV1dbMessagesHistoryGET } from "@/lib/validators/db/messages/history";
 import { Message } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -120,45 +117,6 @@ export async function GET(req: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    // checking if error is a zod validation error
-    return error instanceof z.ZodError
-      ? NextResponse.json(error, { status: 400 })
-      : NextResponse.json(error, { status: 500 });
-  }
-}
-
-// writing a message to a channel in the DB
-export async function POST(req: Request) {
-  try {
-    const reqBody = await req.json();
-    const data = schemaApiV1dbMessagesHistoryPOST.parse(reqBody);
-
-    // upserting message to the channel -> messages array
-    const result = await prisma.$runCommandRaw({
-      update: "channel",
-      updates: [
-        {
-          q: {
-            name: data.channel_name,
-            "messages.id": { $ne: data.message_id },
-          },
-          u: {
-            $push: {
-              messages: {
-                id: data.message_id,
-                author: { user_id: data.user_id, user_name: data.user_name },
-                text: data.message_text,
-                timestamp: { $date: new Date() },
-              },
-            },
-          },
-          upsert: true,
-        },
-      ],
-    });
-
-    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     // checking if error is a zod validation error
     return error instanceof z.ZodError
