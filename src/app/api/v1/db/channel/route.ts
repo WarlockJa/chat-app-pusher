@@ -16,33 +16,6 @@ export async function GET(req: NextRequest) {
         lastmessage: true,
       },
     });
-    // TODO delete
-    // const result = await prisma.channel.aggregateRaw({
-    //   pipeline: [
-    //     {
-    //       $unwind: "$messages", // Unwind the messages array to process individual messages
-    //     },
-    //     {
-    //       $sort: { "messages.timestamp": -1 }, // Sort messages by timestamp in descending order
-    //     },
-    //     {
-    //       $group: {
-    //         _id: "$_id", // Group by the channel's _id
-    //         name: { $first: "$name" }, // Get the first name (assuming it's unique)
-    //         owner: { $first: "$owner" }, // Get the first owner (assuming it's unique)
-    //         messages: { $first: "$messages" },
-    //       },
-    //     },
-    //     {
-    //       $project: {
-    //         _id: 0, // Exclude _id from the final result (optional)
-    //         name: 1,
-    //         owner: 1,
-    //         messages: { timestamp: 1 }, // Project only the lastMessageTimestamp from messages
-    //       },
-    //     },
-    //   ],
-    // });
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
@@ -101,9 +74,6 @@ export async function DELETE(req: Request) {
     // checking if error is a zod validation error
     return error instanceof z.ZodError
       ? NextResponse.json(error, { status: 400 })
-      : NextResponse.json(
-          { message: "Collection does not exist" },
-          { status: 200 }
-        );
+      : NextResponse.json(error, { status: 500 });
   }
 }

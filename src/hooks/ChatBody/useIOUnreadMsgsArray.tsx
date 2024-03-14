@@ -81,7 +81,8 @@ export default function useIOUnreadMsgsArray({
       });
       // updating lastaccess array in DB for the user with debounced last read message timestamp
       if (debouncedLastAccessUpdate) {
-        // TODO handle the unnecessary call during an optimistic updates.
+        // during optimistic new message update this call may be unnecessary
+        // but it covers scenario when new message is not immediately read by the author
         updateLastAccessTimestamp({
           channel_name: activeRoom,
           user_id,

@@ -43,3 +43,20 @@ interface IChatProps extends IInitUserId {
   storage_uuid: string;
   pageLimit?: number;
 }
+
+// Pusher event
+interface ITriggerEventData {
+  id: string;
+  info: IUserInfo;
+}
+
+// Pusher event load
+interface IUserInfo {
+  user_admin: boolean;
+  user_name: string;
+}
+
+interface ITriggerEventData {
+  id: string;
+  info: IUserInfo;
+}
