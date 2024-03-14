@@ -4,6 +4,7 @@ import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvid
 import getTypingUsersString from "@/util/getTypingUsersString";
 import Avatar from "react-avatar";
 import { generateColor } from "@/util/generateColor";
+import SpinnerDots from "@/util/spinners/SpinnerDots";
 export default function ChatHeader({
   user_name,
   user_admin,
@@ -52,7 +53,10 @@ export default function ChatHeader({
       ></div>
       {/* TODO add some spinner */}
       {usersTyping ? (
-        <div className="chatHeader--typingIndicator">{usersTyping}</div>
+        <div className="chatHeader--typingIndicator">
+          {usersTyping}&nbsp;
+          <SpinnerDots />
+        </div>
       ) : null}
     </div>
   );

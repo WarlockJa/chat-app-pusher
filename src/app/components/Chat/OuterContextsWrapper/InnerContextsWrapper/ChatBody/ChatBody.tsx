@@ -1,7 +1,7 @@
 import "./chatbody.scss";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
-import Spinner from "@/util/spinners/Spinner";
+import SpinnerCircle from "@/util/spinners/SpinnerCircle";
 import { useRef, useState } from "react";
 import ChatBodyReadMessages from "./components/ChatBodyReadMessages";
 import ChatBodyUnreadMessages from "./components/ChatBodyUnreadMessages";
@@ -83,7 +83,7 @@ export default function ChatBody({ userId }: { userId: IUserId }) {
   if (dataMessages.state === "loading") {
     chatContent = (
       <div className="chat__body--spinnerWrapper">
-        <Spinner />
+        <SpinnerCircle />
       </div>
     );
   } else if (dataMessages.state === "error") {

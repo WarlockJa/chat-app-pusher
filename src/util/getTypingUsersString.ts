@@ -22,8 +22,8 @@ export default function getTypingUsersString({
   const content =
     typingUsers !== ""
       ? data.users.length === 1
-        ? `${typingUsers} is typing...`
-        : `${typingUsers} are typing...`
+        ? `${typingUsers} is typing`
+        : `${typingUsers} are typing`
       : "";
 
   return content;

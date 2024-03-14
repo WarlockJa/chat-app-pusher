@@ -4,11 +4,11 @@ import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import Avatar from "react-avatar";
 import { generateColor } from "@/util/generateColor";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
-import getTypingUsersString from "@/util/getTypingUsersString";
 import lastMsgFormatted from "./utils/lastMsgFormatted";
 import LoadDBRoomsButton from "./components/LoadDBRoomsButton";
 import { useState } from "react";
 import DeleteRoomButton from "./components/DeleteRoomButton";
+import SpinnerDots from "@/util/spinners/SpinnerDots";
 
 export default function ChatRooms({
   user_name,
@@ -27,8 +27,7 @@ export default function ChatRooms({
     getRoomOwnerData,
     isOwnerPresent,
   } = useChatRoomsContext();
-  const { getRoomUnreadMessagesCount, getRoomLastMessageTimestamp } =
-    useChatDataContext();
+  const { getRoomUnreadMessagesCount } = useChatDataContext();
   const { getRoomTypingUsers } = useUsersTypingContext();
 
   // switching to the new room
@@ -62,9 +61,10 @@ export default function ChatRooms({
       );
       // getting room owner data
       const owner = getRoomOwnerData(currentRoom.roomId);
-      const lastMsgTimestamp = getRoomLastMessageTimestamp(currentRoom.roomId);
       // getting active room typing users data
-      const typingUsersData = getRoomTypingUsers(currentRoom.roomId);
+      const typingUsersData = getRoomTypingUsers(
+        currentRoom.roomId
+      ).users.filter((user) => user !== user_name);
       // const roomTypingUsersString = getTypingUsersString({ data, user_name });
       return (
         <li
@@ -106,10 +106,10 @@ export default function ChatRooms({
               <span>{unreadMessagesCount.toString()}</span>
             </div>
           ) : null}
-          {typingUsersData.users.length > 0 ? (
-            <div className="chat__rooms--typingIndicator chat__rooms--mobileHidden">
-              {/* TODO add some spinner */}
-              ...typing
+          {typingUsersData.length > 0 ? (
+            <div className="chat__rooms--typingIndicator">
+              <SpinnerDots />
+              <span className="chat__rooms--mobileHidden">&nbsp;typing</span>
             </div>
           ) : null}
           {hoverIndex === index &&

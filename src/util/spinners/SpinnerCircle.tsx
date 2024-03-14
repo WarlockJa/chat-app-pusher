@@ -1,5 +1,5 @@
-import "./spinner.scss";
-const Spinner = () => {
+import "./spinnercircle.scss";
+const SpinnerCircle = () => {
   return (
     <div className="lds-spinner">
       <div></div>
@@ -18,4 +18,4 @@ const Spinner = () => {
   );
 };
 
-export default Spinner;
+export default SpinnerCircle;

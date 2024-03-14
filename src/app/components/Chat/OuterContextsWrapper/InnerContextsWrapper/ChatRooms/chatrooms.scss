@@ -80,9 +80,11 @@
 
   .chat__rooms--typingIndicator {
     position: absolute;
-    right: 0.3em;
-    top: 0.3em;
+    right: 0.5em;
+    top: 0.5em;
     font-size: 0.8rem;
+    display: flex;
+    align-items: center;
   }
 
   .chat__rooms--delete {
@@ -102,6 +104,10 @@
 
     .chat__rooms--mobileHidden {
       display: initial;
+    }
+
+    .chat__rooms--typingIndicator {
+      top: 0em;
     }
   }
 }
