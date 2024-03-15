@@ -68,7 +68,7 @@ export default function useSubscriptions({
                 id: data.id,
                 text: data.message,
                 author: data.author,
-                timestamp: new Date(),
+                timestamp: new Date().toISOString(),
                 unread: true,
               },
             });

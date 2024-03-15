@@ -4,7 +4,7 @@ import {
 } from "@/context/innerContexts/ChatDataProvider";
 import { Message } from "@prisma/client";
 import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/messages/generatedTypes";
-import { IMessage } from "../prisma/prisma";
+import { IMessage, TPrismaMessage } from "../prisma/prisma";
 
 export function getUnreadMessages({
   params,
@@ -19,7 +19,7 @@ export function getUnreadMessages({
     `api/v1/db/messages/new?channel_name=${params.channel_name}&user_id=${params.user_id}`
   )
     .then((response) => response.json())
-    .then((result: Message[]) => {
+    .then((result: TPrismaMessage[]) => {
       const unreadMessages: IMessage[] = result.map((message) => ({
         ...message,
         unread: true,

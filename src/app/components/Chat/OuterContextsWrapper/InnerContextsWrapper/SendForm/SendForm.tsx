@@ -50,7 +50,7 @@ export default function SendForm({
     });
 
     // Optimistic chat message post. Adding message directly to the local ChatData context.
-    const messageTimestamp = new Date();
+    const messageTimestamp = new Date().toISOString();
     // Once received again via Pusher "message" event this message's will be filtered by id
     dispatchChatData({
       type: "addRoomMessages",

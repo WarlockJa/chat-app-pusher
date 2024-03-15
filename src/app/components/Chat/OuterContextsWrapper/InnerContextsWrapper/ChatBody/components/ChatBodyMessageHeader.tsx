@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 
 interface IChatBodyMessageHeaderProps {
-  timestamp: Date;
+  timestamp: string;
   newPost?: boolean;
 }
 

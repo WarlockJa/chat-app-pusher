@@ -16,7 +16,7 @@ export default function ChatBodyUnreadMessages({
   user_id: string;
   activeRoom: string;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
-  showFirstDate: Date | undefined;
+  showFirstDate: string | undefined;
   activeRoom_chatData: TPrisma_ChatData;
 }) {
   // attaching IntersectionObserver to post elements via unreadMessagesRefsArray

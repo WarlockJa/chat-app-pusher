@@ -6,14 +6,14 @@ export interface IChatRoomsSetRoomData {
   roomName: string;
   owner?: TPrisma_User;
   state?: TStateLiteral;
-  lastmessage?: Date | null;
+  lastmessage?: string | null;
 }
 
 export interface IChatRoomsAddNewRoom {
   type: "ChatRooms_addNewRoom";
   roomName: string;
   owner: TPrisma_User;
-  lastmessage: Date | null;
+  lastmessage: string | null;
 }
 
 type TChatRoomsProviderActions =

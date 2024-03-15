@@ -47,7 +47,7 @@ interface IChatDataContext {
   dispatchChatData: (action: TChatDataProviderActions) => void;
   getRoomChatData: (room_id: string) => TPrisma_ChatData;
   getRoomUnreadMessagesCount: (room_id: string) => number;
-  getRoomLastMessageTimestamp: (room_id: string) => Date | null;
+  getRoomLastMessageTimestamp: (room_id: string) => string | null;
   // setChatData: (
   //   newChatData:
   //     | ((prev: IChatData[] | null) => IChatData[] | null) // figuring out this type took a while
@@ -149,8 +149,8 @@ export function ChatDataProvider({
               : room
           );
       case "addRoomMessages":
-        return chatData.map((room) =>
-          room.name === action.roomName
+        return chatData.map((room) => {
+          return room.name === action.roomName
             ? {
                 ...room,
                 // filtering possible duplicates.
@@ -164,8 +164,8 @@ export function ChatDataProvider({
                   .sort((a, b) => (a.timestamp >= b.timestamp ? 1 : -1)),
                 state: "success",
               }
-            : room
-        );
+            : room;
+        });
       case "setRoomError":
         return chatData.map((room) =>
           room.name === action.roomName

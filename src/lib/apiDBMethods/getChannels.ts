@@ -13,7 +13,7 @@ export function getChannels({
         channels: {
           name: string;
           owner: TPrisma_User;
-          lastmessage: Date | null;
+          lastmessage: string | null;
         }[]
       ) => {
         channels.map((channel) => {

@@ -8,7 +8,12 @@ type TPrisma_User = Omit<User, "user_admin"> & { user_admin: boolean };
 interface IChannel extends channel {
   state: TStateLiteral;
 }
-interface IMessage extends Message {
+// replacing type Date from Prisma model with string for ISO string that it gets from the DB
+type TPrismaMessage = Omit<Message, "timestamp"> & {
+  timestamp: string;
+};
+
+interface IMessage extends TPrismaMessage {
   unread: boolean;
 }
 
@@ -18,8 +23,12 @@ interface IMessage extends Message {
 // for "presence-system" which only exist for Pusher and not in database
 type TPrisma_ChatRooms = Omit<
   IChannel,
-  "id" | "messages" | "lastaccess" | "owner"
-> & { owner: TPrisma_User | null; users: TPrisma_User[] };
+  "id" | "messages" | "lastaccess" | "owner" | "lastmessage"
+> & {
+  owner: TPrisma_User | null;
+  users: TPrisma_User[];
+  lastmessage: string | null;
+};
 
 // ChatData context type. Omitting fields not used in ChatData context
 // adding error and extended IMessage type for front-end state

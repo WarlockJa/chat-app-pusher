@@ -2,10 +2,9 @@ import {
   IChatDataAddRoomMessages,
   IChatDataSetRoomError,
 } from "@/context/innerContexts/ChatDataProvider";
-import { Message } from "@prisma/client";
 import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/messages/generatedTypes";
 import { IPaginationSetPaginationData } from "@/context/innerContexts/PaginationProvider";
-import { IMessage } from "../prisma/prisma";
+import { IMessage, TPrismaMessage } from "../prisma/prisma";
 
 // get messages from DB for channel collection
 export function getChannelHistoryMessages({
@@ -25,7 +24,7 @@ export function getChannelHistoryMessages({
     }${params.limit ? `&limit=${params.limit}` : ""}`
   )
     .then((response) => response.json())
-    .then((result: { messages: Message[]; hasMore: boolean }) => {
+    .then((result: { messages: TPrismaMessage[]; hasMore: boolean }) => {
       const messages: IMessage[] = result.messages
         ? result.messages.map((message) => ({ ...message, unread: false }))
         : [];
