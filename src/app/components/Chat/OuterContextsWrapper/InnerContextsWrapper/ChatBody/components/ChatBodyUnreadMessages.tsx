@@ -30,7 +30,6 @@ export default function ChatBodyUnreadMessages({
   // generating unread messages elements
   let previousMessageDate = "";
   return unreadMessages.map((msg, index) => {
-    const userIsMsgAuthor = msg.author.user_id === user_id;
     const currentMsgDate = format(msg.timestamp, "y,M,d");
 
     // displaying post header if date changes from previous post
@@ -63,7 +62,7 @@ export default function ChatBodyUnreadMessages({
         }
       >
         {postDate}
-        <ChatBodyLIElement msg={msg} userIsMsgAuthor={userIsMsgAuthor} />
+        <ChatBodyLIElement msg={msg} user_id={user_id} />
       </div>
     );
   });

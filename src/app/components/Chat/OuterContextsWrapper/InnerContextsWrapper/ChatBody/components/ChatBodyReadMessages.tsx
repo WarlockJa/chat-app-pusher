@@ -14,7 +14,6 @@ export default function ChatBodyReadMessages({
 }) {
   let previousMessageDate = "";
   return readMessages.map((msg, index) => {
-    const userIsMsgAuthor = msg.author.user_id === user_id;
     const currentMsgDate = format(msg.timestamp, "y,M,d");
     const postDate = previousMessageDate !== currentMsgDate;
     previousMessageDate = currentMsgDate;
@@ -26,7 +25,7 @@ export default function ChatBodyReadMessages({
         ref={index === 0 ? topReadMessageMarker : null}
       >
         {postDate ? <ChatBodyMessageHeader timestamp={msg.timestamp} /> : null}
-        <ChatBodyLIElement msg={msg} userIsMsgAuthor={userIsMsgAuthor} />
+        <ChatBodyLIElement msg={msg} user_id={user_id} />
       </div>
     );
   });

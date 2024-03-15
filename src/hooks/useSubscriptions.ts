@@ -13,6 +13,7 @@ import { usePaginationContext } from "@/context/innerContexts/PaginationProvider
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 import createChannel from "@/lib/apiDBMethods/createChannel";
 import { TPrisma_User } from "@/lib/prisma/prisma";
+import { useKnownUsers } from "@/context/innerContexts/KnownUsersProvider";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -66,11 +67,7 @@ export default function useSubscriptions({
               message: {
                 id: data.id,
                 text: data.message,
-                author: {
-                  user_id: data.user_id,
-                  user_name: data.user_name,
-                  user_admin: data.user_admin,
-                },
+                author: data.author,
                 timestamp: new Date(),
                 unread: true,
               },

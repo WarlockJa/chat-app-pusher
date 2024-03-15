@@ -33,11 +33,10 @@ export default function SendForm({
     const message_id = crypto.randomUUID();
 
     // triggering "message" event for Pusher
+    // TODO check if Pusher needs full userId token for message event
     sendMessageEvent({
       message,
-      user_id: userId.user_id,
-      user_name: userId.user_name,
-      user_admin: userId.user_admin,
+      author: userId.user_id,
       activeRoom,
       id: message_id,
     });
@@ -45,8 +44,7 @@ export default function SendForm({
     // writing message to DB
     addChannelMessage({
       message_text: message,
-      user_id: userId.user_id,
-      user_name: userId.user_name,
+      author: userId.user_id,
       channel_name: activeRoom,
       message_id,
     });
@@ -61,7 +59,7 @@ export default function SendForm({
         {
           id: message_id,
           text: message,
-          author: userId,
+          author: userId.user_id,
           timestamp: messageTimestamp,
           unread: true, // default state is unread for scroll events
         },

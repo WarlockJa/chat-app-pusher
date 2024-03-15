@@ -1,13 +1,31 @@
+import { useKnownUsers } from "@/context/innerContexts/KnownUsersProvider";
+import getChannelOwner from "@/lib/apiDBMethods/getChannelOwner";
 import { IMessage } from "@/lib/prisma/prisma";
 import { format } from "date-fns";
 
 interface IChatBodyLIElementProps {
-  userIsMsgAuthor: boolean;
+  user_id: string;
   msg: IMessage;
 }
 
-export default function ChatBodyLIElement(props: IChatBodyLIElementProps) {
-  const { userIsMsgAuthor, msg } = props;
+export default function ChatBodyLIElement({
+  user_id,
+  msg,
+}: IChatBodyLIElementProps) {
+  // finding if current user is the message author
+  const userIsMsgAuthor = msg.author === user_id;
+  // KnownUsers method to find user data by user_id
+  const { knownUsers_findKnownUser, knownUsers_addNewUser } = useKnownUsers();
+  // finding message author's data from KnownUsers context
+  const msgAuthor = knownUsers_findKnownUser(msg.author);
+  // checking if author in KnownUsers context and if not fetching author data
+  if (!msgAuthor) {
+    knownUsers_addNewUser({
+      user_id: msg.author,
+      user_admin: false,
+      user_name: "loading",
+    });
+  }
 
   return (
     <li className={`post ${userIsMsgAuthor ? "post--left" : "post--right"}`}>
@@ -16,12 +34,16 @@ export default function ChatBodyLIElement(props: IChatBodyLIElementProps) {
           userIsMsgAuthor ? "post__header--user" : "post__header--reply"
         }`}
       >
-        <span className="post__header--name">{msg.author.user_name}</span>
-        <span className="post__header--time">
-          {format(msg.timestamp, "k:mm")}
+        <span className="post__header--name">
+          {msgAuthor ? msgAuthor.user_name : msg.author}
         </span>
       </div>
       <div className="post__text">{msg.text}</div>
+      <div className="post__footer">
+        <span className="post__footer--time">
+          {format(msg.timestamp, "k:mm")}
+        </span>
+      </div>
     </li>
   );
 }

@@ -1,4 +1,5 @@
 import { PusherPresence } from "@/context/outerContexts/PusherProvider";
+import useFetchKnownUsers from "@/hooks/useFetchKnownUsers";
 import useSubscriptions from "@/hooks/useSubscriptions";
 import { TPrisma_User } from "@/lib/prisma/prisma";
 
@@ -11,6 +12,7 @@ export default function SubscriptionsHookWrapper({
 }) {
   // console.log("--------------Hooks rerender");
   useSubscriptions({ pusher, userId });
+  useFetchKnownUsers();
 
   return null;
 }

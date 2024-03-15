@@ -54,11 +54,20 @@
       }
 
       .post__header--user {
-        background-color: blue;
+        background-color: rgb(133, 162, 255);
       }
 
       .post__header--reply {
-        background-color: purple;
+        background-color: rgb(219, 107, 219);
+      }
+
+      .post__footer {
+        .post__footer--time {
+          float: right;
+          margin-right: 1em;
+          font-size: 0.8rem;
+          color: #333;
+        }
       }
     }
     .post--left {

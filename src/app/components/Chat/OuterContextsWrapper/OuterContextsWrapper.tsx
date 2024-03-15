@@ -11,6 +11,7 @@ import { UsersTypingProvider } from "@/context/innerContexts/UsersTypingProvider
 import { PaginationProvider } from "@/context/innerContexts/PaginationProvider";
 import { ScrollPositionDataProvider } from "@/context/innerContexts/ScrollPositionProvider";
 import InnerContextsWrapper from "./InnerContextsWrapper/InnerContextsWrapper";
+import { KnownUsersProvider } from "@/context/innerContexts/KnownUsersProvider";
 
 export default function OuterContextsWrapper({
   storage_uuid,
@@ -39,9 +40,11 @@ export default function OuterContextsWrapper({
       <ChatDataProvider user_id={userId.user_id}>
         <UsersTypingProvider>
           <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
-            <ScrollPositionDataProvider>
-              <InnerContextsWrapper userId={userId} pusher={pusher} />
-            </ScrollPositionDataProvider>
+            <KnownUsersProvider userId={userId}>
+              <ScrollPositionDataProvider>
+                <InnerContextsWrapper userId={userId} pusher={pusher} />
+              </ScrollPositionDataProvider>
+            </KnownUsersProvider>
           </PaginationProvider>
         </UsersTypingProvider>
       </ChatDataProvider>

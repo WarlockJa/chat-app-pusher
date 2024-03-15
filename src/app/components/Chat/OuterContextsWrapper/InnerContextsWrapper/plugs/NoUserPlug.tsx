@@ -56,10 +56,7 @@ export default function NoUserPlug({
         </div>
         <div className="chat__body">
           <ul className="chatDisplay">
-            <li
-              className="post post--left"
-              // style={{ color: `var(--clr-main-font)`, fontSize: "1.2rem" }}
-            >
+            <li className="post post--left">
               <div className={"post__header post__header--user"}>
                 <span className="post__header--name"></span>
                 <span className="post__header--time">

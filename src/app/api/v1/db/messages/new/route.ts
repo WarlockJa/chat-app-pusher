@@ -110,7 +110,7 @@ export async function POST(req: Request) {
             $push: {
               messages: {
                 id: data.message_id,
-                author: { user_id: data.user_id, user_name: data.user_name },
+                author: data.author,
                 text: data.message_text,
                 timestamp: newMessageTimestamp,
               },

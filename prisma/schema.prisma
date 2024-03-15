@@ -18,7 +18,7 @@ type User {
 
 type Message {
   id        String   @default(uuid())
-  author    User
+  author    String
   text      String
   timestamp DateTime @default(now())
 }
