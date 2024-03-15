@@ -25,6 +25,7 @@ export function KnownUsersProvider({
 
   // adding user if not already exist otherwise updating
   const knownUsers_addNewUser = (user: TPrisma_User) => {
+    console.log("KnownUser add fires");
     // checking if user with user.user_id already exists in context
     const userExists =
       knownUsers.findIndex(
@@ -59,11 +60,11 @@ export function KnownUsersProvider({
   );
 }
 
-export function useKnownUsers() {
+export function useKnownUsersContext() {
   const context = useContext(KnownUsersContext);
 
   if (!context)
-    throw new Error("useKnownUsers must be inside KnownUsersProvider");
+    throw new Error("useKnownUsersContext must be inside KnownUsersProvider");
 
   return context;
 }

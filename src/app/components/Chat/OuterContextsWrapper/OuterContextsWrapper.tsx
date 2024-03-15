@@ -37,17 +37,17 @@ export default function OuterContextsWrapper({
 
   return (
     <ChatRoomsProvider userId={userId}>
-      <ChatDataProvider user_id={userId.user_id}>
-        <UsersTypingProvider>
-          <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
-            <KnownUsersProvider userId={userId}>
+      <KnownUsersProvider userId={userId}>
+        <ChatDataProvider user_id={userId.user_id}>
+          <UsersTypingProvider>
+            <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
               <ScrollPositionDataProvider>
                 <InnerContextsWrapper userId={userId} pusher={pusher} />
               </ScrollPositionDataProvider>
-            </KnownUsersProvider>
-          </PaginationProvider>
-        </UsersTypingProvider>
-      </ChatDataProvider>
+            </PaginationProvider>
+          </UsersTypingProvider>
+        </ChatDataProvider>
+      </KnownUsersProvider>
     </ChatRoomsProvider>
   );
 }

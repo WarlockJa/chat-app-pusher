@@ -13,7 +13,7 @@ import { usePaginationContext } from "@/context/innerContexts/PaginationProvider
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 import createChannel from "@/lib/apiDBMethods/createChannel";
 import { TPrisma_User } from "@/lib/prisma/prisma";
-import { useKnownUsers } from "@/context/innerContexts/KnownUsersProvider";
+import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 
 // this hook tracks changes in roomsList and adjusts pusher subscriptions
 // according to access role of the user
@@ -35,6 +35,8 @@ export default function useSubscriptions({
   const { dispatchPagination } = usePaginationContext();
   // scroll position data
   const { dispatchScrollPosition } = useScrollPositionDataContext();
+  // known users context
+  const { knownUsers_addNewUser } = useKnownUsersContext();
   // timeouts array for typing users. Using ref because bind makes a snapshot of useState and can't access new data
   const typingUsers = useRef<ITypingUserTimeout[]>([]);
 
@@ -71,6 +73,13 @@ export default function useSubscriptions({
                 timestamp: new Date().toISOString(),
                 unread: true,
               },
+            });
+
+            // relaying message author to KnowUsers context
+            knownUsers_addNewUser({
+              user_id: data.author,
+              user_admin: false,
+              user_name: "loading",
             });
           }
         );
@@ -198,6 +207,7 @@ export default function useSubscriptions({
               channel_name: newChannel.name,
             },
             dispatchChatData,
+            knownUsers_addNewUser,
           });
 
           // getting users subscribed to the channel

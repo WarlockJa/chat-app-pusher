@@ -1,5 +1,4 @@
-import { useKnownUsers } from "@/context/innerContexts/KnownUsersProvider";
-import getChannelOwner from "@/lib/apiDBMethods/getChannelOwner";
+import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 import { IMessage } from "@/lib/prisma/prisma";
 import { format } from "date-fns";
 
@@ -15,17 +14,9 @@ export default function ChatBodyLIElement({
   // finding if current user is the message author
   const userIsMsgAuthor = msg.author === user_id;
   // KnownUsers method to find user data by user_id
-  const { knownUsers_findKnownUser, knownUsers_addNewUser } = useKnownUsers();
+  const { knownUsers_findKnownUser } = useKnownUsersContext();
   // finding message author's data from KnownUsers context
   const msgAuthor = knownUsers_findKnownUser(msg.author);
-  // checking if author in KnownUsers context and if not fetching author data
-  if (!msgAuthor) {
-    knownUsers_addNewUser({
-      user_id: msg.author,
-      user_admin: false,
-      user_name: "loading",
-    });
-  }
 
   return (
     <li className={`post ${userIsMsgAuthor ? "post--left" : "post--right"}`}>
