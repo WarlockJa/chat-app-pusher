@@ -2,11 +2,7 @@
 
 .chat__rooms {
   list-style: none;
-  background: linear-gradient(
-    270deg,
-    var(--clr-bg-main),
-    var(--clr-bg-secondary)
-  );
+  background: linear-gradient(270deg, var(--clr-bg-main), var(--clr-border));
   overflow: scroll;
   width: fit-content;
   max-width: var(--chatRooms-maxWidth);

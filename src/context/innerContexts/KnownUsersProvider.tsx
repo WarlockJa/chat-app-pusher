@@ -25,7 +25,6 @@ export function KnownUsersProvider({
 
   // adding user if not already exist otherwise updating
   const knownUsers_addNewUser = (user: TPrisma_User) => {
-    console.log("KnownUser add fires");
     // checking if user with user.user_id already exists in context
     const userExists =
       knownUsers.findIndex(
