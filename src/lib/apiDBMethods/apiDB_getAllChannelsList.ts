@@ -1,7 +1,7 @@
 import { IChatRoomsAddNewRoom } from "@/context/innerContexts/ChatRoomsProvider";
 import { TPrisma_User } from "../prisma/prisma";
 
-export function getChannels({
+export function apiDB_getAllChannelsList({
   dispatchChatRooms,
 }: {
   dispatchChatRooms: (action: IChatRoomsAddNewRoom) => void;

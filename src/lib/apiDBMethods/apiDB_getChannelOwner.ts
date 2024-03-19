@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 import { TPrisma_User } from "../prisma/prisma";
 
-export default function getChannelOwner({
+export default function apiDB_getChannelOwner({
   author,
   knownUsers_addNewUser,
 }: {

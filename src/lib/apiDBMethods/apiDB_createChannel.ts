@@ -1,8 +1,10 @@
-import { TSchemaApiV1dbChannelDELETE } from "../validators/db/channel/generatedTypes";
+import { TSchemaApiV1dbMessagesChannelPOST } from "../validators/db/channel/generatedTypes";
 
-export default function deleteChannel(body: TSchemaApiV1dbChannelDELETE) {
+export default function apiDB_createChannel(
+  body: TSchemaApiV1dbMessagesChannelPOST
+) {
   fetch("/api/v1/db/channel", {
-    method: "DELETE",
+    method: "POST",
     headers: {
       "Content-Type": "Application/json",
     },

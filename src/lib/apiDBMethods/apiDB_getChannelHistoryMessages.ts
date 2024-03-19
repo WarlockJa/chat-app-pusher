@@ -7,7 +7,7 @@ import { IPaginationSetPaginationData } from "@/context/innerContexts/Pagination
 import { IMessage, TPrismaMessage, TPrisma_User } from "../prisma/prisma";
 
 // get messages from DB for channel collection
-export function getChannelHistoryMessages({
+export function apiDB_getChannelHistoryMessages({
   params,
   dispatchChatData,
   dispatchPagination,

@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
 import "./sendform.scss";
-import { sendTypingEvent } from "@/lib/apiPusherMethods/sendTypingEvent";
-import { sendMessageEvent } from "@/lib/apiPusherMethods/sendMessageEvent";
-import { addChannelMessage } from "@/lib/apiDBMethods/addChannelMessage";
 import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import ArrowRight from "@/assets/svg/ArrowRight";
 import { TPrisma_User } from "@/lib/prisma/prisma";
+import { apiPusher_sendTypingEvent } from "@/lib/apiPusherMethods/apiPusher_sendTypingEvent";
+import { apiDB_addChannelMessage } from "@/lib/apiDBMethods/apiDB_addChannelMessage";
+import { apiPusher_sendMessageEvent } from "@/lib/apiPusherMethods/apiPusher_sendMessageEvent";
 
 export default function SendForm({
   userId,
@@ -34,7 +34,7 @@ export default function SendForm({
 
     // triggering "message" event for Pusher
     // TODO check if Pusher needs full userId token for message event
-    sendMessageEvent({
+    apiPusher_sendMessageEvent({
       message,
       author: userId.user_id,
       activeRoom,
@@ -42,7 +42,7 @@ export default function SendForm({
     });
 
     // writing message to DB
-    addChannelMessage({
+    apiDB_addChannelMessage({
       message_text: message,
       author: userId.user_id,
       channel_name: activeRoom,
@@ -82,7 +82,7 @@ export default function SendForm({
     setMessage(e.target.value);
 
     // triggering "typing" event for Pusher
-    sendTypingEvent({
+    apiPusher_sendTypingEvent({
       author: userId.user_name,
       activeRoom,
     });

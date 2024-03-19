@@ -1,6 +1,6 @@
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 import { IMessage } from "@/lib/prisma/prisma";
-import { format } from "date-fns";
+import postDateFormatted from "../utils/postDateFormatted";
 
 interface IChatBodyLIElementProps {
   user_id: string;
@@ -32,7 +32,7 @@ export default function ChatBodyLIElement({
       <div className="post__text">{msg.text}</div>
       <div className="post__footer">
         <span className="post__footer--time">
-          {format(msg.timestamp, "k:mm")}
+          {postDateFormatted(msg.timestamp)}
         </span>
       </div>
     </li>

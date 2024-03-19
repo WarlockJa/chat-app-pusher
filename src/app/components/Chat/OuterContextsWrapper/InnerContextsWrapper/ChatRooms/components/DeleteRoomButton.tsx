@@ -4,7 +4,7 @@ import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
-import deleteChannel from "@/lib/apiDBMethods/deleteChannel";
+import apiDB_deleteChannel from "@/lib/apiDBMethods/apiDB_deleteChannel";
 import React from "react";
 
 export default function DeleteRoomButton({
@@ -28,7 +28,7 @@ export default function DeleteRoomButton({
         e.stopPropagation();
         if (activeRoom === roomName) setActiveRoom(`presence-${user_id}`);
         // delete room from DB
-        deleteChannel({ channel_name: roomName });
+        apiDB_deleteChannel({ channel_name: roomName });
         // delete room from ChatData
         dispatchChatData({ type: "ChatData_deleteRoom", roomName });
         // delete room from ChatRooms

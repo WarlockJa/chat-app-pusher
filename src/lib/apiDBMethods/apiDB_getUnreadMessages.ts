@@ -5,17 +5,19 @@ import {
 import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/messages/generatedTypes";
 import { IMessage, TPrismaMessage, TPrisma_User } from "../prisma/prisma";
 
-export function getUnreadMessages({
-  params,
-  dispatchChatData,
-  knownUsers_addNewUser,
-}: {
+export interface IGetUnreadMessagesProps {
   params: TSchemaApiV1dbMessagesNewGET;
   dispatchChatData: (
     action: IChatDataAddRoomMessages | IChatDataSetRoomError
   ) => void;
   knownUsers_addNewUser: (author: TPrisma_User) => void;
-}) {
+}
+
+export function apiDB_getUnreadMessages({
+  params,
+  dispatchChatData,
+  knownUsers_addNewUser,
+}: IGetUnreadMessagesProps) {
   fetch(
     `api/v1/db/messages/new?channel_name=${params.channel_name}&user_id=${params.user_id}`
   )

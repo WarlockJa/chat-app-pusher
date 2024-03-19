@@ -1,5 +1,5 @@
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
-import { updateLastAccessTimestamp } from "@/lib/apiDBMethods/updateLastAccessTimestamp";
+import { apiDB_updateLastaccessTimestamp } from "@/lib/apiDBMethods/apiDB_updateLastAccessTimestamp";
 import { TPrisma_ChatData } from "@/lib/prisma/prisma";
 import getOlderMessage from "@/util/getOlderMessage";
 import { useEffect, useRef } from "react";
@@ -83,7 +83,7 @@ export default function useIOUnreadMsgsArray({
       if (debouncedLastAccessUpdate) {
         // during optimistic new message update this call may be unnecessary
         // but it covers scenario when new message is not immediately read by the author
-        updateLastAccessTimestamp({
+        apiDB_updateLastaccessTimestamp({
           channel_name: activeRoom,
           user_id,
           message_id: debouncedLastAccessUpdate.message_id,

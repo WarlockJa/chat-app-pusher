@@ -2,7 +2,7 @@ import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import { getChannelHistoryMessages } from "@/lib/apiDBMethods/getChannelHistoryMessages";
+import { apiDB_getChannelHistoryMessages } from "@/lib/apiDBMethods/apiDB_getChannelHistoryMessages";
 
 export default function PaginationMarker({
   paginationMarker,
@@ -29,7 +29,7 @@ export default function PaginationMarker({
     });
 
     // fetching new chat data history page
-    getChannelHistoryMessages({
+    apiDB_getChannelHistoryMessages({
       dispatchChatData,
       dispatchPagination,
       params: {

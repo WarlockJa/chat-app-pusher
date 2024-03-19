@@ -16,20 +16,24 @@ export interface IChatRoomsAddNewRoom {
   lastmessage: string | null;
 }
 
+export interface IChatRooms_addUserToRoomUsersList {
+  type: "ChatRooms_addUserToRoomUsersList";
+  user: TPrisma_User;
+  roomName: string;
+}
+
+export interface IChatRooms_removeUserFromRoomUsersList {
+  type: "ChatRooms_removeUserFromRoomUsersList";
+  user_id: string;
+  roomName: string;
+}
+
 type TChatRoomsProviderActions =
   | IChatRoomsAddNewRoom
   | { type: "ChatRooms_deleteRoom"; roomName: string }
   | IChatRoomsSetRoomData
-  | {
-      type: "ChatRooms_removeUserFromRoomUsersList";
-      user_id: string;
-      roomName: string;
-    }
-  | {
-      type: "ChatRooms_addUserToRoomUsersList";
-      user: TPrisma_User;
-      roomName: string;
-    };
+  | IChatRooms_removeUserFromRoomUsersList
+  | IChatRooms_addUserToRoomUsersList;
 
 interface IChatRoomsContext {
   activeRoom: string;

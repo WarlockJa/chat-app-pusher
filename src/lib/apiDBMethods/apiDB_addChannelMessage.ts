@@ -1,7 +1,7 @@
 import { TSchemaApiV1dbMessagesNewPOST } from "../validators/db/messages/generatedTypes";
 
 // adding message to the messages array at channel collection in DB
-export function addChannelMessage(body: TSchemaApiV1dbMessagesNewPOST) {
+export function apiDB_addChannelMessage(body: TSchemaApiV1dbMessagesNewPOST) {
   fetch("/api/v1/db/messages/new", {
     method: "POST",
     headers: {

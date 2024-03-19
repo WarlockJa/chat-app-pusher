@@ -1,5 +1,5 @@
 "use client";
-import { updateLastAccessTimestamp } from "@/lib/apiDBMethods/updateLastAccessTimestamp";
+import { apiDB_updateLastaccessTimestamp } from "@/lib/apiDBMethods/apiDB_updateLastAccessTimestamp";
 import { IMessage, TPrisma_ChatData } from "@/lib/prisma/prisma";
 import { createContext, useContext, useReducer } from "react";
 
@@ -130,7 +130,7 @@ export function ChatDataProvider({
           ) !== -1;
         // if message was optimistically added, updating lastaccess in DB
         if (isMessageOptimistic) {
-          updateLastAccessTimestamp({
+          apiDB_updateLastaccessTimestamp({
             channel_name: action.roomName,
             user_id,
             message_id: action.message.id,

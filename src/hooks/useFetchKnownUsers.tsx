@@ -2,7 +2,7 @@
 // upon change it fetches data for the added user from the DB
 "use client";
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
-import getChannelOwner from "@/lib/apiDBMethods/getChannelOwner";
+import apiDB_getChannelOwner from "@/lib/apiDBMethods/apiDB_getChannelOwner";
 import { useEffect } from "react";
 
 export default function useFetchKnownUsers() {
@@ -13,7 +13,7 @@ export default function useFetchKnownUsers() {
     knownUsers
       .filter((user) => user.user_name === "loading")
       .forEach((user) =>
-        getChannelOwner({ author: user.user_id, knownUsers_addNewUser })
+        apiDB_getChannelOwner({ author: user.user_id, knownUsers_addNewUser })
       );
   }, [knownUsers]);
 
