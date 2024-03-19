@@ -1,8 +1,8 @@
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import { apiDB_updateLastaccessTimestamp } from "@/lib/apiDBMethods/apiDB_updateLastAccessTimestamp";
 import { TPrisma_ChatData } from "@/lib/prisma/prisma";
-import getOlderMessage from "@/util/getOlderMessage";
 import { useEffect, useRef } from "react";
+import getOlderMessage from "./utils/getOlderMessage";
 
 interface IUseIntersectionObserverArrayProps {
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;

@@ -6,6 +6,7 @@ import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/messages/gene
 import { IPaginationSetPaginationData } from "@/context/innerContexts/PaginationProvider";
 import { IMessage, TPrismaMessage, TPrisma_User } from "../prisma/prisma";
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
+import getOldestTimestampFromMessagesArray from "./utils/getOldestTimestampFromMessagesArray";
 
 // get messages from DB for channel collection
 export function apiDB_getChannelHistoryMessages({
@@ -49,14 +50,10 @@ export function apiDB_getChannelHistoryMessages({
         messages,
       });
 
-      // TODO abstract to getOlderMessage?
       // finding latest message timestamp
-      const lastMessageTimestamp =
-        result.messages.length > 0
-          ? result.messages.sort((a, b) =>
-              a.timestamp < b.timestamp ? -1 : 1
-            )[result.messages.length - 1].timestamp
-          : null;
+      const lastMessageTimestamp = getOldestTimestampFromMessagesArray(
+        result.messages
+      );
 
       // updating last message time stamp in ChatRooms context
       dispatchChatRooms({

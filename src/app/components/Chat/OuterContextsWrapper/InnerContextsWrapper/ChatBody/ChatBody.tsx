@@ -5,13 +5,13 @@ import SpinnerCircle from "@/util/spinners/SpinnerCircle";
 import { useRef, useState } from "react";
 import ChatBodyReadMessages from "./components/ChatBodyReadMessages";
 import ChatBodyUnreadMessages from "./components/ChatBodyUnreadMessages";
-import { isScrolledBottom } from "@/util/scrollFunctions";
 import PaginationMarker from "./components/PaginationMarker";
 import useChatBodyScroll from "@/hooks/ChatBody/useChatBodyScroll";
 import SpinnerFlat from "@/util/spinners/SpinnerFlat";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import { useScrollPositionDataContext } from "@/context/innerContexts/ScrollPositionProvider";
 import { TPrisma_ScrollPosition, TPrisma_User } from "@/lib/prisma/prisma";
+import { isScrolledBottom } from "./utils/scrollFunctions";
 
 export default function ChatBody({ userId }: { userId: TPrisma_User }) {
   const { activeRoom } = useChatRoomsContext();

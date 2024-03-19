@@ -1,11 +1,11 @@
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import "./chatheader.scss";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
-import getTypingUsersString from "@/util/getTypingUsersString";
 import Avatar from "react-avatar";
 import { generateColor } from "@/util/generateColor";
 import SpinnerDots from "@/util/spinners/SpinnerDots";
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
+import getTypingUsersString from "./utils/getTypingUsersString";
 export default function ChatHeader({
   user_name,
   user_admin,

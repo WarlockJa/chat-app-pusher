@@ -5,6 +5,7 @@ import {
 import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/messages/generatedTypes";
 import { IMessage, TPrismaMessage, TPrisma_User } from "../prisma/prisma";
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
+import getOldestTimestampFromMessagesArray from "./utils/getOldestTimestampFromMessagesArray";
 
 export interface IGetUnreadMessagesProps {
   params: TSchemaApiV1dbMessagesNewGET;
@@ -38,14 +39,9 @@ export function apiDB_getUnreadMessages({
         messages: unreadMessages,
       });
 
-      // TODO abstract to getOlderMessage?
       // finding latest message timestamp
       const lastMessageTimestamp =
-        unreadMessages.length > 0
-          ? unreadMessages.sort((a, b) => (a.timestamp < b.timestamp ? -1 : 1))[
-              unreadMessages.length - 1
-            ].timestamp
-          : null;
+        getOldestTimestampFromMessagesArray(unreadMessages);
 
       // updating last message time stamp in ChatRooms context
       dispatchChatRooms({
