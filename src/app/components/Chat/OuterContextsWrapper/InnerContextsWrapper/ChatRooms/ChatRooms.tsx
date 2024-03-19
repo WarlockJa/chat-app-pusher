@@ -9,6 +9,7 @@ import LoadDBRoomsButton from "./components/LoadDBRoomsButton";
 import { useState } from "react";
 import DeleteRoomButton from "./components/DeleteRoomButton";
 import SpinnerDots from "@/util/spinners/SpinnerDots";
+import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 
 export default function ChatRooms({
   user_name,
@@ -20,15 +21,11 @@ export default function ChatRooms({
   user_admin: boolean;
 }) {
   // context data
-  const {
-    activeRoom,
-    setActiveRoom,
-    roomsList,
-    getRoomOwnerData,
-    isOwnerPresent,
-  } = useChatRoomsContext();
+  const { activeRoom, setActiveRoom, roomsList, isOwnerPresent } =
+    useChatRoomsContext();
   const { getRoomUnreadMessagesCount } = useChatDataContext();
   const { getRoomTypingUsers } = useUsersTypingContext();
+  const { knownUsers_findKnownUser } = useKnownUsersContext();
 
   // switching to the new room
   const handleRoomSwitch = (newActiveRoom: string) => {
@@ -58,7 +55,12 @@ export default function ChatRooms({
     .map((currentRoom, index) => {
       const unreadMessagesCount = getRoomUnreadMessagesCount(currentRoom.name);
       // getting room owner data
-      const owner = getRoomOwnerData(currentRoom.name);
+      // looking up user data from KnownUsers context in case owner data (user_name, user_admin) has changed
+      const knownRoomOwner = knownUsers_findKnownUser(
+        // owner field is null only for "presence-system" channel which we filtered out earlier
+        currentRoom.owner?.user_id!
+      );
+      const owner = knownRoomOwner ? knownRoomOwner : currentRoom.owner;
       // getting active room typing users data
       const typingUsersData = getRoomTypingUsers(currentRoom.name).users.filter(
         (user) => user !== user_name
