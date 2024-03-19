@@ -48,8 +48,8 @@ export default function ChatRooms({
     )
     // sorting by the last message timestamp
     .sort((a, b) => {
-      if (!a.lastmessage) return 1;
-      if (!b.lastmessage) return -1;
+      if (!a.lastmessage || !isOwnerPresent(a.name)) return 1;
+      if (!b.lastmessage || !isOwnerPresent(b.name)) return -1;
       return a.lastmessage < b.lastmessage ? 1 : -1;
     })
     .map((currentRoom, index) => {
@@ -66,13 +66,16 @@ export default function ChatRooms({
         (user) => user !== user_name
       );
 
+      // owner presence flag
+      const ownerPresent = isOwnerPresent(currentRoom.name);
+
       return (
         <li
-          className={
-            activeRoom === currentRoom.name
-              ? "chat__rooms--room chat__rooms--roomActive chat__rooms--avatarContainer"
-              : "chat__rooms--room chat__rooms--avatarContainer"
-          }
+          className={`chat__rooms--room chat__rooms--avatarContainer ${
+            !ownerPresent ? "chat__rooms--roomVacant" : ""
+          } ${
+            activeRoom === currentRoom.name ? "chat__rooms--roomActive" : ""
+          }`}
           key={currentRoom.name}
           onClick={() => handleRoomSwitch(currentRoom.name)}
           title={owner?.user_name}
@@ -81,7 +84,7 @@ export default function ChatRooms({
         >
           <div
             className={
-              isOwnerPresent(currentRoom.name)
+              ownerPresent
                 ? "chat__rooms--ownerPresence chat__rooms--ownerPresenceOn"
                 : "chat__rooms--ownerPresence"
             }
