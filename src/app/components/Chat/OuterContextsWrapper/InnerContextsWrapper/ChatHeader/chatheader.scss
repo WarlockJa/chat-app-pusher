@@ -34,10 +34,26 @@
 
   .chatHeader--typingIndicator {
     position: absolute;
-    right: 0.8em;
+    right: 3em;
     bottom: 0.8em;
     font-size: 0.8rem;
     display: flex;
     align-items: center;
+  }
+
+  .chat__rooms--unreadMsgsIndicator {
+    position: absolute;
+    right: 0.5em;
+    bottom: 0.5em;
+    width: 1.4rem;
+    height: 1.4rem;
+    background-color: var(--clr-indicatorOff);
+    border-radius: 50%;
+    font-size: 0.8rem;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

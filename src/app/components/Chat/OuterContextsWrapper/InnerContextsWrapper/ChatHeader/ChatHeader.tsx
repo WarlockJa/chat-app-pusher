@@ -6,6 +6,7 @@ import { generateColor } from "@/util/generateColor";
 import SpinnerDots from "@/util/spinners/SpinnerDots";
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 import getTypingUsersString from "./utils/getTypingUsersString";
+import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 export default function ChatHeader({
   user_name,
   user_admin,
@@ -15,6 +16,7 @@ export default function ChatHeader({
 }) {
   const { activeRoom } = useChatRoomsContext();
   const { getRoomTypingUsers } = useUsersTypingContext();
+  const { getRoomUnreadMessagesCount } = useChatDataContext();
   const { getRoomOwnerData, getPresentAdmin, isOwnerPresent } =
     useChatRoomsContext();
 
@@ -33,9 +35,8 @@ export default function ChatHeader({
       knownUsers_findKnownUser(owner?.user_id!)?.user_name
     : // TODO show active administrator somehow?
       getPresentAdmin(activeRoom)?.user_name;
-  // const headerUserData = user_admin
-  //   ? owner?.user_name
-  //   : getPresentAdmin(activeRoom)?.user_name;
+
+  const unreadMessagesCount = getRoomUnreadMessagesCount(activeRoom);
 
   return (
     <div className="chatHeader">
@@ -58,11 +59,15 @@ export default function ChatHeader({
             : "chatHeader__ownerPresence"
         }
       ></div>
-      {/* TODO add some spinner */}
       {usersTyping ? (
         <div className="chatHeader--typingIndicator">
           {usersTyping}&nbsp;
           <SpinnerDots />
+        </div>
+      ) : null}
+      {unreadMessagesCount > 0 ? (
+        <div className="chat__rooms--unreadMsgsIndicator">
+          <span>{unreadMessagesCount.toString()}</span>
         </div>
       ) : null}
     </div>
