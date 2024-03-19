@@ -28,12 +28,19 @@ export interface IChatRooms_removeUserFromRoomUsersList {
   roomName: string;
 }
 
+export interface IChatRooms_updateLastmessage {
+  type: "ChatRooms_updateLastmessage";
+  roomName: string;
+  lastmessage: string | null;
+}
+
 type TChatRoomsProviderActions =
   | IChatRoomsAddNewRoom
   | { type: "ChatRooms_deleteRoom"; roomName: string }
   | IChatRoomsSetRoomData
   | IChatRooms_removeUserFromRoomUsersList
-  | IChatRooms_addUserToRoomUsersList;
+  | IChatRooms_addUserToRoomUsersList
+  | IChatRooms_updateLastmessage;
 
 interface IChatRoomsContext {
   activeRoom: string;
@@ -133,6 +140,25 @@ export function ChatRoomsProvider({
             ? {
                 ...room,
                 ...action,
+              }
+            : room
+        );
+      case "ChatRooms_updateLastmessage":
+        return roomsList.map((room) =>
+          room.name === action.roomName
+            ? {
+                ...room,
+                // comparing room lastmessage with a new lastmessage timestamp
+                // saving whichever is older as room.lastmessage
+                // if both null saving null
+                lastmessage:
+                  room.lastmessage && action.lastmessage
+                    ? room.lastmessage < action.lastmessage
+                      ? action.lastmessage
+                      : room.lastmessage
+                    : action.lastmessage
+                    ? action.lastmessage
+                    : room.lastmessage,
               }
             : room
         );

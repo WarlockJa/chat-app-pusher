@@ -103,6 +103,7 @@ export function ChatDataProvider({
     chatData: TPrisma_ChatData[],
     action: TChatDataProviderActions
   ): TPrisma_ChatData[] {
+    // TODO prevent fields not in Type TS
     switch (action.type) {
       case "ChatData_addRoom":
         return chatData.findIndex((room) => room.name === action.roomName) ===

@@ -56,7 +56,12 @@ export default function useSubscriptions({
         if (room.name === "presence-system" && !user_admin) return;
 
         // binding to the Pusher "message" event
-        bindMessage({ newChannel, dispatchChatData, knownUsers_addNewUser });
+        bindMessage({
+          newChannel,
+          dispatchChatData,
+          knownUsers_addNewUser,
+          dispatchChatRooms,
+        });
 
         // binding to the Pusher "typing" event
         bindTyping({

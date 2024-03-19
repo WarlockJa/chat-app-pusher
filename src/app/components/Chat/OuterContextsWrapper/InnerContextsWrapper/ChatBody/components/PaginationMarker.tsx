@@ -1,4 +1,5 @@
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
+import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 import { usePaginationContext } from "@/context/innerContexts/PaginationProvider";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
@@ -18,6 +19,7 @@ export default function PaginationMarker({
   const { dispatchChatData } = useChatDataContext();
   const { dispatchPagination } = usePaginationContext();
   const { knownUsers_addNewUser } = useKnownUsersContext();
+  const { dispatchChatRooms } = useChatRoomsContext();
 
   // callback for the pagination marker intersection event
   const handleMarkerIntersection = () => {
@@ -37,6 +39,7 @@ export default function PaginationMarker({
         limit,
         message_id,
       },
+      dispatchChatRooms,
       knownUsers_addNewUser,
     });
   };

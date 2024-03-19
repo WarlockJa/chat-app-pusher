@@ -2,7 +2,7 @@
 
 .chat__rooms {
   list-style: none;
-  background: linear-gradient(270deg, var(--clr-bg-main), var(--clr-border));
+  background: linear-gradient(90deg, var(--clr-border), var(--clr-bg-main));
   overflow: scroll;
   width: fit-content;
   max-width: var(--chatRooms-maxWidth);
@@ -26,6 +26,11 @@
     border: 1px solid var(--clr-border);
     padding: 0.8em;
     border-radius: 0.25em;
+    transition: box-shadow 150ms ease;
+
+    &:hover {
+      box-shadow: 0 0 3px 3px var(--clr-shadow);
+    }
 
     .chat__rooms--ownerPresence {
       position: absolute;

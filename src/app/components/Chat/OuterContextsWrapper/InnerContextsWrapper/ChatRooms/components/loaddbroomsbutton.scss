@@ -13,7 +13,13 @@
     cursor: pointer;
     border: 1px solid var(--clr-border);
     padding: 0.2em 0.8em;
-    border-radius: 0.25em;
+    border-radius: 0.5em;
+    background: linear-gradient(90deg, var(--clr-border), var(--clr-shadow));
+    transition: box-shadow 150ms ease;
+
+    &:hover {
+      box-shadow: 0 0 3px 3px var(--clr-shadow);
+    }
 
     .loadDBRoomsButton--text {
       display: none;

@@ -6,12 +6,14 @@ import {
 import {
   IChatRoomsAddNewRoom,
   IChatRooms_addUserToRoomUsersList,
+  IChatRooms_updateLastmessage,
 } from "@/context/innerContexts/ChatRoomsProvider";
 import { IPaginationAddRoom } from "@/context/innerContexts/PaginationProvider";
 import { IScrollPositionAddRoom } from "@/context/innerContexts/ScrollPositionProvider";
 import { IUsersTypingAddRoom } from "@/context/innerContexts/UsersTypingProvider";
 import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import apiDB_createChannel from "@/lib/apiDBMethods/apiDB_createChannel";
+import apiDB_getChannelLastmessage from "@/lib/apiDBMethods/apiDB_getChannelLastmessage";
 import { apiDB_getUnreadMessages } from "@/lib/apiDBMethods/apiDB_getUnreadMessages";
 import { TPrisma_User } from "@/lib/prisma/prisma";
 import { PresenceChannel } from "pusher-js";
@@ -27,7 +29,10 @@ interface IBindPusherSubscriptionSucceededProps {
   dispatchPagination: (action: IPaginationAddRoom) => void;
   dispatchScrollPosition: (action: IScrollPositionAddRoom) => void;
   dispatchChatRooms: (
-    action: IChatRoomsAddNewRoom | IChatRooms_addUserToRoomUsersList
+    action:
+      | IChatRoomsAddNewRoom
+      | IChatRooms_addUserToRoomUsersList
+      | IChatRooms_updateLastmessage
   ) => void;
   knownUsers_addNewUser: (user: TPrisma_User) => void;
 }
@@ -79,6 +84,7 @@ export default function bindPusherSubscriptionSucceeded({
         channel_name: newChannel.name,
       },
       dispatchChatData,
+      dispatchChatRooms,
       knownUsers_addNewUser,
     });
 
@@ -102,14 +108,18 @@ export default function bindPusherSubscriptionSucceeded({
 
     // administrator only. Adding rooms to roomsList based on the list of users subscribed to presence-system
     if (newChannel.name === "presence-system") {
-      initialLoadUsersChannel_users.map((user) =>
+      initialLoadUsersChannel_users.map((user) => {
+        // creating new room in ChatRooms context
         dispatchChatRooms({
           type: "ChatRooms_addNewRoom",
           roomName: `presence-${user.user_id}`,
           owner: user,
           lastmessage: null,
-        })
-      );
+        });
+
+        // fetching last message timestamp from DB to display in ChatRooms
+        apiDB_getChannelLastmessage({ owner: user.user_id, dispatchChatRooms });
+      });
     }
   });
 }

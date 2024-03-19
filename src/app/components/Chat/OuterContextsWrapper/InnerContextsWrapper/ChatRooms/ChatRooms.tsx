@@ -65,6 +65,7 @@ export default function ChatRooms({
       const typingUsersData = getRoomTypingUsers(currentRoom.name).users.filter(
         (user) => user !== user_name
       );
+
       return (
         <li
           className={
