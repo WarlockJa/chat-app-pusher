@@ -114,7 +114,7 @@ export default function ChatRooms({
           {hoverIndex === index &&
             user_admin &&
             currentRoom.users.length === 1 &&
-            !currentRoom.owner?.user_admin && (
+            !owner?.user_admin && (
               <DeleteRoomButton roomName={currentRoom.name} user_id={user_id} />
             )}
         </li>
