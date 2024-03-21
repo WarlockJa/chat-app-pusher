@@ -6,7 +6,7 @@ import { generateColor } from "@/util/generateColor";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 import lastMsgFormatted from "./utils/lastMsgFormatted";
 import LoadDBRoomsButton from "./components/LoadDBRoomsButton/LoadDBRoomsButton";
-import { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import DeleteRoomButton from "./components/DeleteRoomButton/DeleteRoomButton";
 import SpinnerDots from "@/util/spinners/SpinnerDots";
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
@@ -91,7 +91,7 @@ export default function ChatRooms({
       previousRoomOwnerPresent.current = ownerPresent;
 
       return (
-        <>
+        <Fragment key={currentRoom.name}>
           {startOffline && <OfflineDivider />}
           <li
             className={`chat__rooms--room chat__rooms--avatarContainer ${
@@ -99,7 +99,6 @@ export default function ChatRooms({
             } ${
               activeRoom === currentRoom.name ? "chat__rooms--roomActive" : ""
             }`}
-            key={currentRoom.name}
             onClick={() => handleRoomSwitch(currentRoom.name)}
             title={owner?.user_name}
             onMouseEnter={() => setHoverIndex(index)}
@@ -148,7 +147,7 @@ export default function ChatRooms({
                 />
               )}
           </li>
-        </>
+        </Fragment>
       );
     });
   return (

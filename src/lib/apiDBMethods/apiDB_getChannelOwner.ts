@@ -8,7 +8,15 @@ export default function apiDB_getChannelOwner({
   author: string;
   dispatchKnownUsers: (action: IKnownUsersAddUser) => void;
 }) {
-  fetch(`api/v1/db/channel/owner?channel_name=presence-${author}`)
+  fetch(
+    `api/v1/db/channel/owner?channel_name=presence-${author}`
+    // , {
+    //   method: "GET",
+    //   headers: {
+    //     "PusherChat-AccessToken": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+    //   },
+    // }
+  )
     .then((response) => response.json())
     .then((result: User | null) => {
       dispatchKnownUsers({
