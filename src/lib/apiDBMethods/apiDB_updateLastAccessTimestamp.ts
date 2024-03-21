@@ -7,6 +7,10 @@ export function apiDB_updateLastaccessTimestamp(
 ) {
   fetch("/api/v1/db/messages/lastaccess", {
     method: "POST",
+    headers: {
+      "Content-Type": "Application/json",
+      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+    },
     body: JSON.stringify(body),
   });
 }

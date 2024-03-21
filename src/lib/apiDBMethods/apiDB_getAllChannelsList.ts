@@ -9,7 +9,12 @@ export function apiDB_getAllChannelsList({
   dispatchChatRooms: (action: IChatRoomsAddNewRoom) => void;
   dispatchKnownUsers: (action: IKnownUsersAddUser) => void;
 }) {
-  fetch(`api/v1/db/channel`)
+  fetch(`api/v1/db/channel`, {
+    method: "GET",
+    headers: {
+      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+    },
+  })
     .then((response) => response.json())
     .then(
       (

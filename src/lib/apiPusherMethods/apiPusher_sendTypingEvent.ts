@@ -5,6 +5,7 @@ export function apiPusher_sendTypingEvent(body: TSchemaApiV1PusherTypingPost) {
     method: "POST",
     headers: {
       "Content-Type": "Application/json",
+      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
     },
     body: JSON.stringify(body),
   });

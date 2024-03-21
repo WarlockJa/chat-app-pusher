@@ -6,6 +6,7 @@ export function apiDB_addChannelMessage(body: TSchemaApiV1dbMessagesNewPOST) {
     method: "POST",
     headers: {
       "Content-Type": "Application/json",
+      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
     },
     body: JSON.stringify(body),
   })

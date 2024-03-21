@@ -24,7 +24,13 @@ export function apiDB_getUnreadMessages({
   dispatchKnownUsers,
 }: IGetUnreadMessagesProps) {
   fetch(
-    `api/v1/db/messages/new?channel_name=${params.channel_name}&user_id=${params.user_id}`
+    `api/v1/db/messages/new?channel_name=${params.channel_name}&user_id=${params.user_id}`,
+    {
+      method: "GET",
+      headers: {
+        "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+      },
+    }
   )
     .then((response) => response.json())
     .then((result: TPrismaMessage[]) => {

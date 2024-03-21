@@ -8,15 +8,12 @@ export default function apiDB_getChannelLastmessage({
   dispatchChatRooms: (action: IChatRooms_updateLastmessage) => void;
 }) {
   const channel_name = `presence-${owner}`;
-  fetch(
-    `api/v1/db/channel/lastmessage?channel_name=${channel_name}`
-    // , {
-    //   method: "GET",
-    //   headers: {
-    //     "PusherChat-AccessToken": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
-    //   },
-    // }
-  )
+  fetch(`api/v1/db/channel/lastmessage?channel_name=${channel_name}`, {
+    method: "GET",
+    headers: {
+      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+    },
+  })
     .then((response) => response.json())
     .then((result: string | null) => {
       dispatchChatRooms({

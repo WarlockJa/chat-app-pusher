@@ -5,6 +5,7 @@ export default function apiDB_deleteChannel(body: TSchemaApiV1dbChannelDELETE) {
     method: "DELETE",
     headers: {
       "Content-Type": "Application/json",
+      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
     },
     body: JSON.stringify(body),
   }).catch((error: Error) => {

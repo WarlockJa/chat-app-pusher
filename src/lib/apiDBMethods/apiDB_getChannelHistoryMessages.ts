@@ -28,7 +28,13 @@ export function apiDB_getChannelHistoryMessages({
   fetch(
     `/api/v1/db/messages/history?channel_name=${params.channel_name}${
       params.message_id ? `&message_id=${params.message_id}` : ""
-    }${params.limit ? `&limit=${params.limit}` : ""}`
+    }${params.limit ? `&limit=${params.limit}` : ""}`,
+    {
+      method: "GET",
+      headers: {
+        "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+      },
+    }
   )
     .then((response) => response.json())
     .then((result: { messages: TPrismaMessage[]; hasMore: boolean }) => {

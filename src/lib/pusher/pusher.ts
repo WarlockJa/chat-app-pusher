@@ -25,6 +25,7 @@ export const pusherClient = ({
     auth: {
       headers: {
         "Content-Type": "application/json",
+        "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
       },
       params: {
         user_id,

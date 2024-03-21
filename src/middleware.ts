@@ -1,41 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// the list of all allowed origins
-// const allowedOrigins = ["http://localhost:3000"];
-const allowedOrigins = ["https://google.com"];
-const corsOptions = {
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
-
+// protecting routes from access from outside of the app
+// NEXT_PUBLIC_API_ACCESS_TOKEN environmental variable is used to verify that
+// request is launched from the app front-end and passed inside of the custom
+// header "pusher-chat-signature"
+// in this middleware all routes for /api/v1 are covered
 export function middleware(request: NextRequest) {
   // Check the origin from the request
-  const origin = request.headers.get("origin") ?? "";
-  const isAllowedOrigin = allowedOrigins.includes(origin);
+  const signature = request.headers.get("pusher-chat-signature") ?? "";
+  const isAllowed = signature === process.env.NEXT_PUBLIC_API_ACCESS_TOKEN;
 
-  // Handle preflighted requests
-  const isPreflight = request.method === "OPTIONS";
+  console.log("Signature: ", signature);
 
-  if (isPreflight) {
-    const preflightHeaders = {
-      ...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
-      ...corsOptions,
-    };
-    return NextResponse.json({}, { headers: preflightHeaders });
-  }
-
-  // Handle simple requests
-  const response = NextResponse.next();
-
-  if (isAllowedOrigin) {
-    response.headers.set("Access-Control-Allow-Origin", origin);
-  }
-
-  Object.entries(corsOptions).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
-
-  return response;
+  return isAllowed
+    ? NextResponse.next()
+    : NextResponse.json(
+        { success: false, message: "Signature not found or incorrect" },
+        { status: 403 }
+      );
 }
 
 // specify the path regex to apply the middleware to
