@@ -5,11 +5,12 @@ import Avatar from "react-avatar";
 import { generateColor } from "@/util/generateColor";
 import { useUsersTypingContext } from "@/context/innerContexts/UsersTypingProvider";
 import lastMsgFormatted from "./utils/lastMsgFormatted";
-import LoadDBRoomsButton from "./components/LoadDBRoomsButton";
-import { useState } from "react";
-import DeleteRoomButton from "./components/DeleteRoomButton";
+import LoadDBRoomsButton from "./components/LoadDBRoomsButton/LoadDBRoomsButton";
+import { useRef, useState } from "react";
+import DeleteRoomButton from "./components/DeleteRoomButton/DeleteRoomButton";
 import SpinnerDots from "@/util/spinners/SpinnerDots";
 import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
+import OfflineDivider from "./components/OfflineDivider/OfflineDivider";
 
 export default function ChatRooms({
   user_name,
@@ -26,6 +27,8 @@ export default function ChatRooms({
   const { getRoomUnreadMessagesCount } = useChatDataContext();
   const { getRoomTypingUsers } = useUsersTypingContext();
   const { knownUsers_findKnownUser } = useKnownUsersContext();
+  // previous room in the list owner present flag
+  const previousRoomOwnerPresent = useRef<boolean | null>(null);
 
   // switching to the new room
   const handleRoomSwitch = (newActiveRoom: string) => {
@@ -78,59 +81,74 @@ export default function ChatRooms({
       // owner presence flag
       const ownerPresent = isOwnerPresent(currentRoom.name);
 
+      // checking begining of offline users
+      let startOffline = false;
+      if (previousRoomOwnerPresent.current === true) {
+        if (!ownerPresent) {
+          startOffline = true;
+        }
+      }
+      previousRoomOwnerPresent.current = ownerPresent;
+
       return (
-        <li
-          className={`chat__rooms--room chat__rooms--avatarContainer ${
-            !ownerPresent ? "chat__rooms--roomVacant" : ""
-          } ${
-            activeRoom === currentRoom.name ? "chat__rooms--roomActive" : ""
-          }`}
-          key={currentRoom.name}
-          onClick={() => handleRoomSwitch(currentRoom.name)}
-          title={owner?.user_name}
-          onMouseEnter={() => setHoverIndex(index)}
-          onMouseLeave={() => setHoverIndex(undefined)}
-        >
-          <div
-            className={
-              ownerPresent
-                ? "chat__rooms--ownerPresence chat__rooms--ownerPresenceOn"
-                : "chat__rooms--ownerPresence"
-            }
-          ></div>
-          <Avatar
-            name={owner?.user_name}
-            round
-            size="2em"
-            textSizeRatio={2}
-            color={generateColor(owner?.user_name)}
-          />
-          <div className="chat__rooms--userName chat__rooms--mobileHidden">
-            {owner?.user_name}
-          </div>
-          {currentRoom.lastmessage ? (
-            <div className="chat__rooms--lastMsgTimestamp chat__rooms--mobileHidden">
-              {lastMsgFormatted(currentRoom.lastmessage)}
+        <>
+          {startOffline && <OfflineDivider />}
+          <li
+            className={`chat__rooms--room chat__rooms--avatarContainer ${
+              !ownerPresent ? "chat__rooms--roomVacant" : ""
+            } ${
+              activeRoom === currentRoom.name ? "chat__rooms--roomActive" : ""
+            }`}
+            key={currentRoom.name}
+            onClick={() => handleRoomSwitch(currentRoom.name)}
+            title={owner?.user_name}
+            onMouseEnter={() => setHoverIndex(index)}
+            onMouseLeave={() => setHoverIndex(undefined)}
+          >
+            <div
+              className={
+                ownerPresent
+                  ? "chat__rooms--ownerPresence chat__rooms--ownerPresenceOn"
+                  : "chat__rooms--ownerPresence"
+              }
+            ></div>
+            <Avatar
+              name={owner?.user_name}
+              round
+              size="2em"
+              textSizeRatio={2}
+              color={generateColor(owner?.user_name)}
+            />
+            <div className="chat__rooms--userName chat__rooms--mobileHidden">
+              {owner?.user_name}
             </div>
-          ) : null}
-          {unreadMessagesCount > 0 ? (
-            <div className="chat__rooms--unreadMsgsIndicator">
-              <span>{unreadMessagesCount.toString()}</span>
-            </div>
-          ) : null}
-          {typingUsersData.length > 0 ? (
-            <div className="chat__rooms--typingIndicator">
-              <SpinnerDots />
-              <span className="chat__rooms--mobileHidden">&nbsp;typing</span>
-            </div>
-          ) : null}
-          {hoverIndex === index &&
-            user_admin &&
-            currentRoom.users.length === 1 &&
-            !owner?.user_admin && (
-              <DeleteRoomButton roomName={currentRoom.name} user_id={user_id} />
-            )}
-        </li>
+            {currentRoom.lastmessage ? (
+              <div className="chat__rooms--lastMsgTimestamp chat__rooms--mobileHidden">
+                {lastMsgFormatted(currentRoom.lastmessage)}
+              </div>
+            ) : null}
+            {unreadMessagesCount > 0 ? (
+              <div className="chat__rooms--unreadMsgsIndicator">
+                <span>{unreadMessagesCount.toString()}</span>
+              </div>
+            ) : null}
+            {typingUsersData.length > 0 ? (
+              <div className="chat__rooms--typingIndicator">
+                <SpinnerDots />
+                <span className="chat__rooms--mobileHidden">&nbsp;typing</span>
+              </div>
+            ) : null}
+            {hoverIndex === index &&
+              user_admin &&
+              currentRoom.users.length === 1 &&
+              !owner?.user_admin && (
+                <DeleteRoomButton
+                  roomName={currentRoom.name}
+                  user_id={user_id}
+                />
+              )}
+          </li>
+        </>
       );
     });
   return (
