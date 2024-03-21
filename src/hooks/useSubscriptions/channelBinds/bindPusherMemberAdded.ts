@@ -2,6 +2,7 @@ import {
   IChatRoomsAddNewRoom,
   IChatRooms_addUserToRoomUsersList,
 } from "@/context/innerContexts/ChatRoomsProvider";
+import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
 import { TPrisma_User } from "@/lib/prisma/prisma";
 import { PresenceChannel } from "pusher-js";
 
@@ -10,11 +11,13 @@ interface IBindPusherMemeberAddedProps {
   dispatchChatRooms: (
     action: IChatRoomsAddNewRoom | IChatRooms_addUserToRoomUsersList
   ) => void;
+  dispatchKnownUsers: (action: IKnownUsersAddUser) => void;
 }
 
 export default function bindPusherMemberAdded({
   newChannel,
   dispatchChatRooms,
+  dispatchKnownUsers,
 }: IBindPusherMemeberAddedProps) {
   newChannel.bind("pusher:member_added", (data: ITriggerEventData) => {
     // a new member added to the channel
@@ -44,6 +47,16 @@ export default function bindPusherMemberAdded({
           user_admin: data.info.user_admin,
         },
         lastmessage: null,
+      });
+
+      // adding channel owner data to KnownUsers context
+      dispatchKnownUsers({
+        type: "KnownUsers_addKnownUser",
+        user: {
+          user_id: data.id,
+          user_admin: data.info.user_admin,
+          user_name: data.info.user_name,
+        },
       });
     }
   });

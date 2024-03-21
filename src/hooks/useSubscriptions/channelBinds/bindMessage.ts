@@ -1,6 +1,6 @@
 import { IChatDataAddRoomMessage } from "@/context/innerContexts/ChatDataProvider";
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
-import { TPrisma_User } from "@/lib/prisma/prisma";
+import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
 import { TSchemaApiV1PusherMessagePost } from "@/lib/validators/pusher/generatedTypes";
 import { PresenceChannel } from "pusher-js";
 
@@ -8,14 +8,14 @@ interface IBindMessageProps {
   newChannel: PresenceChannel;
   dispatchChatData: (action: IChatDataAddRoomMessage) => void;
   dispatchChatRooms: (action: IChatRooms_updateLastmessage) => void;
-  knownUsers_addNewUser: (user: TPrisma_User) => void;
+  dispatchKnownUsers: (action: IKnownUsersAddUser) => void;
 }
 
 export default function bindMessage({
   newChannel,
   dispatchChatData,
   dispatchChatRooms,
-  knownUsers_addNewUser,
+  dispatchKnownUsers,
 }: IBindMessageProps) {
   newChannel.bind(
     "message",
@@ -42,10 +42,13 @@ export default function bindMessage({
       });
 
       // relaying message author to KnowUsers context
-      knownUsers_addNewUser({
-        user_id: data.author,
-        user_admin: false,
-        user_name: "loading",
+      dispatchKnownUsers({
+        type: "KnownUsers_addKnownUser",
+        user: {
+          user_id: data.author,
+          user_admin: false,
+          user_name: "loading",
+        },
       });
     }
   );

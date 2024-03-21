@@ -7,13 +7,13 @@ import { useEffect } from "react";
 
 export default function useFetchKnownUsers() {
   // known users in context
-  const { knownUsers, knownUsers_addNewUser } = useKnownUsersContext();
+  const { knownUsers, dispatchKnownUsers } = useKnownUsersContext();
 
   useEffect(() => {
     knownUsers
       .filter((user) => user.user_name === "loading")
       .forEach((user) =>
-        apiDB_getChannelOwner({ author: user.user_id, knownUsers_addNewUser })
+        apiDB_getChannelOwner({ author: user.user_id, dispatchKnownUsers })
       );
   }, [knownUsers]);
 

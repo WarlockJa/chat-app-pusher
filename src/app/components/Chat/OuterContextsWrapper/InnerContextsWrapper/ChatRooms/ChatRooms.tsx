@@ -46,10 +46,19 @@ export default function ChatRooms({
         item.name !== "presence-system" &&
         (item.owner?.user_id !== user_id || user_admin)
     )
-    // sorting by the last message timestamp
     .sort((a, b) => {
-      if (!a.lastmessage || !isOwnerPresent(a.name)) return 1;
-      if (!b.lastmessage || !isOwnerPresent(b.name)) return -1;
+      // sorting by the last message timestamp
+      if (!a.lastmessage) return -1;
+      if (!b.lastmessage) return 1;
+      return a.lastmessage > b.lastmessage ? 1 : -1;
+    })
+    .sort((a, b) => {
+      // sorting again by user online status
+      if (!isOwnerPresent(a.name)) return 1;
+      if (!isOwnerPresent(b.name)) return -1;
+
+      if (!a.lastmessage) return 1;
+      if (!b.lastmessage) return -1;
       return a.lastmessage < b.lastmessage ? 1 : -1;
     })
     .map((currentRoom, index) => {

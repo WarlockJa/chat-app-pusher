@@ -3,9 +3,10 @@ import {
   IChatDataSetRoomError,
 } from "@/context/innerContexts/ChatDataProvider";
 import { TSchemaApiV1dbMessagesNewGET } from "../validators/db/messages/generatedTypes";
-import { IMessage, TPrismaMessage, TPrisma_User } from "../prisma/prisma";
+import { IMessage, TPrismaMessage } from "../prisma/prisma";
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
 import getOldestTimestampFromMessagesArray from "./utils/getOldestTimestampFromMessagesArray";
+import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
 
 export interface IGetUnreadMessagesProps {
   params: TSchemaApiV1dbMessagesNewGET;
@@ -13,14 +14,14 @@ export interface IGetUnreadMessagesProps {
     action: IChatDataAddRoomMessages | IChatDataSetRoomError
   ) => void;
   dispatchChatRooms: (action: IChatRooms_updateLastmessage) => void;
-  knownUsers_addNewUser: (author: TPrisma_User) => void;
+  dispatchKnownUsers: (action: IKnownUsersAddUser) => void;
 }
 
 export function apiDB_getUnreadMessages({
   params,
   dispatchChatData,
   dispatchChatRooms,
-  knownUsers_addNewUser,
+  dispatchKnownUsers,
 }: IGetUnreadMessagesProps) {
   fetch(
     `api/v1/db/messages/new?channel_name=${params.channel_name}&user_id=${params.user_id}`
@@ -52,10 +53,13 @@ export function apiDB_getUnreadMessages({
 
       // relaying messages author to KnowUsers context
       unreadMessages.forEach((message) =>
-        knownUsers_addNewUser({
-          user_id: message.author,
-          user_admin: false,
-          user_name: "loading",
+        dispatchKnownUsers({
+          type: "KnownUsers_addKnownUser",
+          user: {
+            user_id: message.author,
+            user_admin: false,
+            user_name: "loading",
+          },
         })
       );
     })

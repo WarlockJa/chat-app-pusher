@@ -35,7 +35,7 @@ export default function useSubscriptions({
   // scroll position data
   const { dispatchScrollPosition } = useScrollPositionDataContext();
   // known users context
-  const { knownUsers_addNewUser } = useKnownUsersContext();
+  const { dispatchKnownUsers } = useKnownUsersContext();
   // timeouts array for typing users. Using ref because bind makes a snapshot of useState and can't access new data
   const typingUsers = useRef<ITypingUserTimeout[]>([]);
 
@@ -59,7 +59,7 @@ export default function useSubscriptions({
         bindMessage({
           newChannel,
           dispatchChatData,
-          knownUsers_addNewUser,
+          dispatchKnownUsers,
           dispatchChatRooms,
         });
 
@@ -73,7 +73,11 @@ export default function useSubscriptions({
         // member_added and member_removed binds used to update number of users on the channel
         // i.e. allows to monitor if admin/user is present
         // binding to the Pusher "pusher:member_added" event
-        bindPusherMemberAdded({ newChannel, dispatchChatRooms });
+        bindPusherMemberAdded({
+          newChannel,
+          dispatchChatRooms,
+          dispatchKnownUsers,
+        });
 
         // binding to the Pusher "pusher:member_removed" event
         bindPusherMemberRemoved({ newChannel, dispatchChatRooms });
@@ -87,7 +91,7 @@ export default function useSubscriptions({
           dispatchPagination,
           dispatchScrollPosition,
           dispatchUsersTyping,
-          knownUsers_addNewUser,
+          dispatchKnownUsers,
           pusher,
           userId,
         });

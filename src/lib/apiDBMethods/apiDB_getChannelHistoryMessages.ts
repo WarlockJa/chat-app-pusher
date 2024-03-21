@@ -4,9 +4,10 @@ import {
 } from "@/context/innerContexts/ChatDataProvider";
 import { TSchemaApiV1dbMessagesHistoryGET } from "../validators/db/messages/generatedTypes";
 import { IPaginationSetPaginationData } from "@/context/innerContexts/PaginationProvider";
-import { IMessage, TPrismaMessage, TPrisma_User } from "../prisma/prisma";
+import { IMessage, TPrismaMessage } from "../prisma/prisma";
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
 import getOldestTimestampFromMessagesArray from "./utils/getOldestTimestampFromMessagesArray";
+import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
 
 // get messages from DB for channel collection
 export function apiDB_getChannelHistoryMessages({
@@ -14,7 +15,7 @@ export function apiDB_getChannelHistoryMessages({
   dispatchChatData,
   dispatchPagination,
   dispatchChatRooms,
-  knownUsers_addNewUser,
+  dispatchKnownUsers,
 }: {
   params: TSchemaApiV1dbMessagesHistoryGET;
   dispatchChatData: (
@@ -22,7 +23,7 @@ export function apiDB_getChannelHistoryMessages({
   ) => void;
   dispatchChatRooms: (action: IChatRooms_updateLastmessage) => void;
   dispatchPagination: (action: IPaginationSetPaginationData) => void;
-  knownUsers_addNewUser: (author: TPrisma_User) => void;
+  dispatchKnownUsers: (action: IKnownUsersAddUser) => void;
 }) {
   fetch(
     `/api/v1/db/messages/history?channel_name=${params.channel_name}${
@@ -64,10 +65,13 @@ export function apiDB_getChannelHistoryMessages({
 
       // relaying messages author to KnowUsers context
       messages.forEach((message) =>
-        knownUsers_addNewUser({
-          user_id: message.author,
-          user_admin: false,
-          user_name: "loading",
+        dispatchKnownUsers({
+          type: "KnownUsers_addKnownUser",
+          user: {
+            user_id: message.author,
+            user_admin: false,
+            user_name: "loading",
+          },
         })
       );
     })

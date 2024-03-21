@@ -18,7 +18,7 @@ export default function PaginationMarker({
 }) {
   const { dispatchChatData } = useChatDataContext();
   const { dispatchPagination } = usePaginationContext();
-  const { knownUsers_addNewUser } = useKnownUsersContext();
+  const { dispatchKnownUsers } = useKnownUsersContext();
   const { dispatchChatRooms } = useChatRoomsContext();
 
   // callback for the pagination marker intersection event
@@ -40,7 +40,7 @@ export default function PaginationMarker({
         message_id,
       },
       dispatchChatRooms,
-      knownUsers_addNewUser,
+      dispatchKnownUsers,
     });
   };
 

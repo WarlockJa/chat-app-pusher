@@ -47,7 +47,9 @@ export default function ChatHeader({
         textSizeRatio={2}
         color={generateColor(headerUserData)}
       />
-      <p className="chatHeader--roomOwnerName">{headerUserData}</p>
+      <p className="chatHeader--roomOwnerName">
+        {headerUserData ? headerUserData : "Offline"}
+      </p>
       <div
         className={
           user_admin

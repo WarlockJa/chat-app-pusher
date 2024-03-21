@@ -8,6 +8,7 @@ import {
   IChatRooms_addUserToRoomUsersList,
   IChatRooms_updateLastmessage,
 } from "@/context/innerContexts/ChatRoomsProvider";
+import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
 import { IPaginationAddRoom } from "@/context/innerContexts/PaginationProvider";
 import { IScrollPositionAddRoom } from "@/context/innerContexts/ScrollPositionProvider";
 import { IUsersTypingAddRoom } from "@/context/innerContexts/UsersTypingProvider";
@@ -34,7 +35,7 @@ interface IBindPusherSubscriptionSucceededProps {
       | IChatRooms_addUserToRoomUsersList
       | IChatRooms_updateLastmessage
   ) => void;
-  knownUsers_addNewUser: (user: TPrisma_User) => void;
+  dispatchKnownUsers: (action: IKnownUsersAddUser) => void;
 }
 
 export default function bindPusherSubscriptionSucceeded({
@@ -46,7 +47,7 @@ export default function bindPusherSubscriptionSucceeded({
   dispatchPagination,
   dispatchScrollPosition,
   dispatchChatRooms,
-  knownUsers_addNewUser,
+  dispatchKnownUsers,
 }: IBindPusherSubscriptionSucceededProps) {
   newChannel.bind("pusher:subscription_succeeded", () => {
     // creating a collection in DB with user data if does not exist
@@ -85,7 +86,7 @@ export default function bindPusherSubscriptionSucceeded({
       },
       dispatchChatData,
       dispatchChatRooms,
-      knownUsers_addNewUser,
+      dispatchKnownUsers,
     });
 
     // getting users subscribed to the channel
@@ -119,6 +120,9 @@ export default function bindPusherSubscriptionSucceeded({
 
         // fetching last message timestamp from DB to display in ChatRooms
         apiDB_getChannelLastmessage({ owner: user.user_id, dispatchChatRooms });
+
+        // adding connected users' data to KnownUsers context
+        dispatchKnownUsers({ type: "KnownUsers_addKnownUser", user });
       });
     }
   });

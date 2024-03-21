@@ -3,16 +3,22 @@ import { useState } from "react";
 import "./loaddbroomsbutton.scss";
 import PlusCircle from "@/assets/svg/PlusCircle";
 import { apiDB_getAllChannelsList } from "@/lib/apiDBMethods/apiDB_getAllChannelsList";
+import { useKnownUsersContext } from "@/context/innerContexts/KnownUsersProvider";
 
 export default function LoadDBRoomsButton() {
   const [showButton, setShowButton] = useState(true);
   const { dispatchChatRooms } = useChatRoomsContext();
+  const { dispatchKnownUsers } = useKnownUsersContext();
+
   return showButton ? (
     <div className="buttonWrrapper">
       <button
         className="loadDBRoomsButton"
         onClick={() => {
-          apiDB_getAllChannelsList({ dispatchChatRooms });
+          apiDB_getAllChannelsList({
+            dispatchChatRooms,
+            dispatchKnownUsers,
+          });
           setShowButton(false);
         }}
       >
