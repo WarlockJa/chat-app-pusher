@@ -1,21 +1,35 @@
 import { pusherServer } from "@/lib/pusher/pusher";
 import { schemaApiV1PusherAuthPOST } from "@/lib/validators/pusher/auth";
+import decipherSignature from "@/util/crypto/decipherSignature";
 import { NextRequest, NextResponse } from "next/server";
 import { PresenceChannelData } from "pusher";
 
 // creating presence channel based on the name of the user
 export async function POST(req: NextRequest) {
-  const data = await req.text();
-
-  // TODO test. cleanup more like it
-  // console.log(data);
-  // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
-
-  const [socket_id, channel_name, user_id, user_admin, user_name] = data
-    .split("&")
-    .map((str) => decodeURIComponent(str.split("=")[1]));
+  // API endpoint protection
+  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+  const isAllowed =
+    decipherSignature({
+      signature: encryptedHeader,
+      key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+    }) === process.env.NEXT_PUBLIC_API_SIGNATURE_KEY;
+  if (!isAllowed)
+    return NextResponse.json("Signature is missing or incorrect", {
+      status: 403,
+      statusText: "Unauthorized access",
+    });
 
   try {
+    const data = await req.text();
+
+    // TODO test. cleanup more like it
+    // console.log(data);
+    // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
+
+    const [socket_id, channel_name, user_id, user_admin, user_name] = data
+      .split("&")
+      .map((str) => decodeURIComponent(str.split("=")[1]));
+
     // data validation
     const validatedData = schemaApiV1PusherAuthPOST.parse({
       socket_id,

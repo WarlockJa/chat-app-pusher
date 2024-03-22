@@ -1,4 +1,5 @@
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
+import generateSignature from "@/util/crypto/generateSignature";
 
 export default function apiDB_getChannelLastmessage({
   owner,
@@ -11,7 +12,9 @@ export default function apiDB_getChannelLastmessage({
   fetch(`api/v1/db/channel/lastmessage?channel_name=${channel_name}`, {
     method: "GET",
     headers: {
-      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+      "pusher-chat-signature": generateSignature({
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      }),
     },
   })
     .then((response) => response.json())

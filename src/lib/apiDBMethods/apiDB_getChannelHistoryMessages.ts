@@ -8,6 +8,7 @@ import { IMessage, TPrismaMessage } from "../prisma/prisma";
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
 import getOldestTimestampFromMessagesArray from "./utils/getOldestTimestampFromMessagesArray";
 import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
+import generateSignature from "@/util/crypto/generateSignature";
 
 // get messages from DB for channel collection
 export function apiDB_getChannelHistoryMessages({
@@ -32,7 +33,9 @@ export function apiDB_getChannelHistoryMessages({
     {
       method: "GET",
       headers: {
-        "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+        "pusher-chat-signature": generateSignature({
+          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+        }),
       },
     }
   )

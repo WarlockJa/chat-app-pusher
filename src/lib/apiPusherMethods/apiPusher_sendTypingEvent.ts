@@ -1,3 +1,4 @@
+import generateSignature from "@/util/crypto/generateSignature";
 import { TSchemaApiV1PusherTypingPost } from "../validators/pusher/generatedTypes";
 
 export function apiPusher_sendTypingEvent(body: TSchemaApiV1PusherTypingPost) {
@@ -5,7 +6,9 @@ export function apiPusher_sendTypingEvent(body: TSchemaApiV1PusherTypingPost) {
     method: "POST",
     headers: {
       "Content-Type": "Application/json",
-      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+      "pusher-chat-signature": generateSignature({
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      }),
     },
     body: JSON.stringify(body),
   });

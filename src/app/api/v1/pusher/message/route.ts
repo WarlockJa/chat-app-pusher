@@ -2,8 +2,22 @@ import { pusherServer } from "@/lib/pusher/pusher";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
+import decipherSignature from "@/util/crypto/decipherSignature";
 
 export async function POST(req: Request) {
+  // API endpoint protection
+  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+  const isAllowed =
+    decipherSignature({
+      signature: encryptedHeader,
+      key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+    }) === process.env.NEXT_PUBLIC_API_SIGNATURE_KEY;
+  if (!isAllowed)
+    return NextResponse.json("Signature is missing or incorrect", {
+      status: 403,
+      statusText: "Unauthorized access",
+    });
+
   try {
     const reqBody = await req.json();
     // vaidating request body

@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
+import generateSignature from "@/util/crypto/generateSignature";
 
 export default function apiDB_getChannelOwner({
   author,
@@ -11,7 +12,9 @@ export default function apiDB_getChannelOwner({
   fetch(`api/v1/db/channel/owner?channel_name=presence-${author}`, {
     method: "GET",
     headers: {
-      "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+      "pusher-chat-signature": generateSignature({
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      }),
     },
   })
     .then((response) => response.json())

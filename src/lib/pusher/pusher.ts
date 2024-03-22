@@ -1,3 +1,4 @@
+import generateSignature from "@/util/crypto/generateSignature";
 import PusherServer from "pusher";
 import PusherClient from "pusher-js";
 
@@ -25,7 +26,10 @@ export const pusherClient = ({
     auth: {
       headers: {
         "Content-Type": "application/json",
-        "pusher-chat-signature": process.env.NEXT_PUBLIC_API_ACCESS_TOKEN!,
+        // API endpoints protection
+        "pusher-chat-signature": generateSignature({
+          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+        }),
       },
       params: {
         user_id,
