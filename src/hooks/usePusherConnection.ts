@@ -30,7 +30,6 @@ export default function usePusherConnection() {
       }) as PusherPresence;
       setPusher(pusherInstance);
     } catch (error) {
-      // TODO check for zod of pusher error
       console.log(error);
       throw new Error(JSON.stringify(error));
     }

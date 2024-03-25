@@ -36,7 +36,14 @@ export const schemaApiV1dbChannelPOST = z.object({
       message:
         "user_name should start with a letter and may contain letters, digits, spaces, underscores, and dashes",
     }),
-  user_admin: z.coerce.boolean(),
+  user_admin: z.union([
+    z
+      .string()
+      .toLowerCase()
+      .transform((x) => x === "true")
+      .pipe(z.boolean()),
+    z.boolean(),
+  ]),
   channel_name: z
     .string({
       required_error: "ActiveRoom is required",

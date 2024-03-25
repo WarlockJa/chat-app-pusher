@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
     const data = await req.text();
 
     // TODO test. cleanup more like it
-    // console.log(data);
     // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
 
     const [socket_id, channel_name, user_id, user_admin, user_name] = data

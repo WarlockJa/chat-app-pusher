@@ -1,4 +1,4 @@
-import { IChatData } from "@/context/innerContexts/ChatDataProvider";
+import { IChatData } from "@/assets/context/innerContexts/ChatDataProvider";
 import getOlderMessage from "@/util/getOlderMessage";
 import { describe, expect, it } from "vitest";
 

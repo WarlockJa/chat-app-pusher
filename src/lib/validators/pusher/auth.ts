@@ -8,7 +8,14 @@ export const schemaApiV1PusherAuthPOST = z
     user_id: z
       .string({ required_error: "user_id is required" })
       .uuid({ message: "user_id must be UUIDv4" }),
-    user_admin: z.coerce.boolean(),
+    user_admin: z.union([
+      z
+        .string()
+        .toLowerCase()
+        .transform((x) => x === "true")
+        .pipe(z.boolean()),
+      z.boolean(),
+    ]),
     user_name: z
       .string({
         required_error: "user_name is required",

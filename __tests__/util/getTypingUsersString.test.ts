@@ -1,9 +1,8 @@
-import { IUsersTypingData } from "@/context/innerContexts/UsersTypingProvider";
-import getTypingUsersString from "@/util/getTypingUsersString";
+import getTypingUsersString from "@/app/components/Chat/OuterContextsWrapper/InnerContextsWrapper/ChatHeader/utils/getTypingUsersString";
 import { describe, expect, it } from "vitest";
 
-const testTypingUsersData: IUsersTypingData = {
-  room_id: "test room id",
+const testTypingUsersData = {
+  name: "test room id",
   users: ["user 1", "user 2", "user 3"],
 };
 
@@ -81,8 +80,8 @@ describe("Testing getTypingUsersString function", () => {
   it("Gets an empty users array inside TypingUsers data and returns an empty string", () => {
     const testUserName = "user 1";
 
-    const testData: IUsersTypingData = {
-      room_id: "test room id",
+    const testData = {
+      name: "test room id",
       users: [],
     };
 
