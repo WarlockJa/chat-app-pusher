@@ -1,34 +1,34 @@
-import { IChatData } from "@/assets/context/innerContexts/ChatDataProvider";
-import getOlderMessage from "@/util/getOlderMessage";
+import getOlderMessage from "@/hooks/ChatBody/utils/getOlderMessage";
+import { TPrisma_ChatData } from "@/lib/prisma/prisma";
 import { describe, expect, it } from "vitest";
 
 // tested function takes two Intersection Observer Objects containing message_id
 // these two message_id found in ChatData Object and compared.
 // the IIOObject with the older message_id is returned
 
-const testRoomChatData: IChatData = {
-  room_id: "test room id",
+const testRoomChatData: TPrisma_ChatData = {
+  name: "test room id",
   state: "success",
   messages: [
     {
       id: "test message id 1",
       author: "test author 1",
       text: "text",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
       unread: false,
     },
     {
       id: "test message id 2",
       author: "test author 2",
       text: "text",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3),
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
       unread: false,
     },
     {
       id: "test message id 3",
       author: "test author 1",
       text: "text",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
       unread: false,
     },
   ],

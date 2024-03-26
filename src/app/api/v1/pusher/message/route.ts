@@ -1,8 +1,8 @@
-import { pusherServer } from "@/lib/pusher/pusher";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
 import decipherSignature from "@/util/crypto/decipherSignature";
+import { pusherServer } from "@/lib/apiPusherMethods/pusher";
 
 export async function POST(req: Request) {
   // API endpoint protection

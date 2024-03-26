@@ -10,7 +10,7 @@ describe("Testing getTypingUsersString function", () => {
   it("Gets valid data and valid user_name and returns a string of typing users", () => {
     const testUserName = "user 3";
 
-    const expectedResult = "user 1, user 2 are typing...";
+    const expectedResult = "user 1, user 2 are typing";
 
     const result = getTypingUsersString({
       data: testTypingUsersData,
@@ -23,7 +23,7 @@ describe("Testing getTypingUsersString function", () => {
   it("Gets invalid user_name and returns a string with all users", () => {
     const testUserName = "user udefined";
 
-    const expectedResult = "user 1, user 2, user 3 are typing...";
+    const expectedResult = "user 1, user 2, user 3 are typing";
 
     const result = getTypingUsersString({
       data: testTypingUsersData,
@@ -36,7 +36,7 @@ describe("Testing getTypingUsersString function", () => {
   it("Gets a null user_name and returns a string with all users", () => {
     const testUserName = null;
 
-    const expectedResult = "user 1, user 2, user 3 are typing...";
+    const expectedResult = "user 1, user 2, user 3 are typing";
 
     const result = getTypingUsersString({
       data: testTypingUsersData,

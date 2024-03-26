@@ -3,7 +3,7 @@ import {
   usePusherContext,
 } from "@/context/outerContexts/PusherProvider";
 import { useUserIdContext } from "@/context/outerContexts/UserIdProvider";
-import { pusherClient } from "@/lib/pusher/pusher";
+import { pusherClient } from "@/lib/apiPusherMethods/pusher";
 import { useEffect } from "react";
 
 // establishing pusher connection

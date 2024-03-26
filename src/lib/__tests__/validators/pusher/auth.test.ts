@@ -11,14 +11,14 @@ describe("Validating schemaPusherAuthPOST", () => {
     const params = {
       socket_id: "socket_id",
       channel_name: "channel_name",
-      user_id: "abc123",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       user_admin: "false",
       user_name: "abc123",
     };
     const expectedResult = {
       socket_id: "socket_id",
       channel_name: "channel_name",
-      user_id: "abc123",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       user_admin: false,
       user_name: "abc123",
     };
@@ -31,14 +31,14 @@ describe("Validating schemaPusherAuthPOST", () => {
     const params = {
       socket_id: "socket_id",
       channel_name: "channel_name",
-      user_id: "abc123",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       user_admin: "0",
       user_name: "abc123",
     };
     const expectedResult = {
       socket_id: "socket_id",
       channel_name: "channel_name",
-      user_id: "abc123",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       user_admin: false,
       user_name: "abc123",
     };
@@ -51,14 +51,14 @@ describe("Validating schemaPusherAuthPOST", () => {
     const params = {
       socket_id: "socket_id",
       channel_name: "channel_name",
-      user_id: "abc123",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       user_admin: "true",
       user_name: "abc123",
     };
     const expectedResult = {
       socket_id: "socket_id",
       channel_name: "channel_name",
-      user_id: "abc123",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       user_admin: true,
       user_name: "abc123",
     };
@@ -77,7 +77,7 @@ describe("Validating schemaPusherAuthPOST", () => {
   it("should throw an error when given a params object without channel_name", () => {
     const params = {
       socket_id: "socket_id",
-      user_id: "abc123",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       user_admin: "0",
       user_name: "abc123",
     };
@@ -98,11 +98,11 @@ describe("Validating schemaPusherAuthPOST", () => {
     }).toThrow();
   });
 
-  it("should throw an error when given a params object with special characters for user_id", () => {
+  it("should throw an error when given a params object with user_id no UUIDv4", () => {
     const params = {
       socket_id: "socket_id",
+      user_id: "abc123",
       channel_name: "channel_name",
-      user_id: "abc@123",
       user_admin: "0",
       user_name: "abc123",
     };
@@ -111,27 +111,41 @@ describe("Validating schemaPusherAuthPOST", () => {
     }).toThrow();
   });
 
-  it("should throw an error when given a params object with a user_id longer than 36 characters", () => {
+  it("should throw an error when given a params object without user_name", () => {
     const params = {
       socket_id: "socket_id",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       channel_name: "channel_name",
-      user_id: "a".repeat(37),
       user_admin: "0",
-      user_name: "abc123",
     };
     expect(() => {
       testSchemaPusherAuthPost(params);
     }).toThrow();
   });
 
-  it("should throw an error when given a params object with an empty string for user_id", () => {
+  it("should throw an error when given a params object with user_name shorter than 3 characters", () => {
     const params = {
       socket_id: "socket_id",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
       channel_name: "channel_name",
-      user_id: "",
       user_admin: "0",
-      user_name: "abc123",
+      user_name: "ab",
     };
-    expect(() => testSchemaPusherAuthPost(params)).toThrow();
+    expect(() => {
+      testSchemaPusherAuthPost(params);
+    }).toThrow();
+  });
+
+  it("should throw an error when given a params object with user_name longer than 36 characters", () => {
+    const params = {
+      socket_id: "socket_id",
+      user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d4",
+      channel_name: "channel_name",
+      user_admin: "0",
+      user_name: "a".repeat(37),
+    };
+    expect(() => {
+      testSchemaPusherAuthPost(params);
+    }).toThrow();
   });
 });

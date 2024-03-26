@@ -1,11 +1,17 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/__mocks__/globalForPrisma";
 import { GET } from "@/app/api/v1/db/messages/history/route";
 import { JsonObject } from "@prisma/client/runtime/library";
+import generateSignature from "@/util/crypto/generateSignature";
+import { loadEnvConfig } from "@next/env";
 
 // testing history GET with mocks for NextRequest and Prisma MongoDB call
 describe("Running GET request", () => {
+  beforeEach(() => {
+    loadEnvConfig(process.cwd());
+  });
+
   afterEach(() => {
     vi.resetAllMocks();
   });
@@ -33,6 +39,11 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}`,
         {
           method: "GET",
+          headers: {
+            "pusher-chat-signature": generateSignature({
+              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+            }),
+          },
         }
       ),
       {}
@@ -108,6 +119,11 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}`,
         {
           method: "GET",
+          headers: {
+            "pusher-chat-signature": generateSignature({
+              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+            }),
+          },
         }
       ),
       {}
@@ -190,6 +206,11 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}`,
         {
           method: "GET",
+          headers: {
+            "pusher-chat-signature": generateSignature({
+              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+            }),
+          },
         }
       ),
       {}
@@ -219,6 +240,11 @@ describe("Running GET request", () => {
     const nextReq = new NextRequest(
       new Request(`http://localhost:3000/api/v1/db/history`, {
         method: "GET",
+        headers: {
+          "pusher-chat-signature": generateSignature({
+            key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+          }),
+        },
       }),
       {}
     );
@@ -243,6 +269,11 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}&test=test`,
         {
           method: "GET",
+          headers: {
+            "pusher-chat-signature": generateSignature({
+              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+            }),
+          },
         }
       ),
       {}
@@ -319,6 +350,11 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}`,
         {
           method: "GET",
+          headers: {
+            "pusher-chat-signature": generateSignature({
+              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+            }),
+          },
         }
       ),
       {}

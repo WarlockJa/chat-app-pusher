@@ -1,4 +1,4 @@
-import { pusherServer } from "@/lib/pusher/pusher";
+import { pusherServer } from "@/lib/apiPusherMethods/pusher";
 import { schemaApiV1PusherAuthPOST } from "@/lib/validators/pusher/auth";
 import decipherSignature from "@/util/crypto/decipherSignature";
 import { NextRequest, NextResponse } from "next/server";

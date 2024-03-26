@@ -142,6 +142,9 @@ export default function ChatTestUsersWrapper() {
               onMouseOver={() => {
                 setValue({ ...value, option: 0 });
               }}
+              onClick={() => {
+                setValue({ ...value, option: 0 });
+              }}
             >
               Anonymous User
             </button>
@@ -176,6 +179,12 @@ export default function ChatTestUsersWrapper() {
                   option: 1,
                 })
               }
+              onClick={() =>
+                setValue({
+                  ...value,
+                  option: 1,
+                })
+              }
             >
               Registered User
             </button>
@@ -205,6 +214,12 @@ export default function ChatTestUsersWrapper() {
               className="chatWrapper--submitButton"
               type="submit"
               onMouseOver={() =>
+                setValue({
+                  ...value,
+                  option: 2,
+                })
+              }
+              onClick={() =>
                 setValue({
                   ...value,
                   option: 2,

@@ -1,4 +1,7 @@
-import { isScrolledBottom, isScrolledTop } from "@/util/scrollFunctions";
+import {
+  isScrolledBottom,
+  isScrolledTop,
+} from "@/app/components/Chat/OuterContextsWrapper/InnerContextsWrapper/ChatBody/utils/scrollFunctions";
 import { describe, expect, it } from "vitest";
 
 describe("Testing util scroll functions", () => {
@@ -33,7 +36,7 @@ describe("Testing util scroll functions", () => {
       // @ts-expect-error
       const result = isScrolledBottom(mockTestElement);
 
-      expect(result).toBe(undefined);
+      expect(result).toBe(false);
     });
   });
 
