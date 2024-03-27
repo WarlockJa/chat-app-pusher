@@ -3,6 +3,8 @@ import { useRef, useState } from "react";
 import "./chattestuserswrapper.scss";
 import Chat from "@/app/components/Chat/Chat";
 import { deleteLocalStorage } from "@/util/localStorageRW";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
+import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 
 const USERS: IInitUserId[] = [
   {},
@@ -120,141 +122,161 @@ export default function ChatTestUsersWrapper() {
       pageLimit={10}
     />
   ) : (
-    <form className="chatWrapper" onSubmit={handleSubmit}>
-      <h1 className="chatWrapper--header">Support Chat</h1>
-      <p>
-        This is a testing suite for a Pusher Support Chat component. Utilizing
-        Pusher for web sockets events allows this chat to be deployed on a
-        serverless hosting that does not support web sockets naturally.
-      </p>
-      <div className="divider"></div>
-      <p>To proceed to the chat select user role</p>
-      <div
-        className="selectWrapper"
-        ref={selectWrapperRef}
-        onScroll={handleScroll}
+    <>
+      {/* <button
+        onClick={() => {
+          const timestampData = new Date().toISOString();
+          const signature = generateSignature({
+            key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+          });
+          console.log(timestampData);
+
+          const result = decipherSignature({
+            key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+            signature,
+          });
+
+          console.log(result);
+        }}
       >
-        <div className="scrollBox">
-          <div className="selectWrapper__item">
-            <button
-              className="chatWrapper--submitButton"
-              type="submit"
-              onMouseOver={() => {
-                setValue({ ...value, option: 0 });
-              }}
-              onClick={() => {
-                setValue({ ...value, option: 0 });
-              }}
-            >
-              Anonymous User
-            </button>
-            <div className="selectWrapper__item--confingWrapper">
-              <label htmlFor="anonymousUserDelete">
-                Clear previous user data
-              </label>
-              <input
-                type="checkbox"
-                name="anonymousUserDelete"
-                id="anonymousUserDelete"
-                checked={value.inputs.anononymousUser}
-                onChange={(e) =>
-                  setValue({
-                    ...value,
-                    inputs: {
-                      ...value.inputs,
-                      anononymousUser: e.target.checked,
-                    },
-                  })
-                }
-              />
+        TEST CRYPTO
+      </button> */}
+      <form className="chatWrapper" onSubmit={handleSubmit}>
+        <h1 className="chatWrapper--header">Support Chat</h1>
+        <p>
+          This is a testing suite for a Pusher Support Chat component. Utilizing
+          Pusher for web sockets events allows this chat to be deployed on a
+          serverless hosting that does not support web sockets naturally.
+        </p>
+        <div className="divider"></div>
+        <p>To proceed to the chat select user role</p>
+        <div
+          className="selectWrapper"
+          ref={selectWrapperRef}
+          onScroll={handleScroll}
+        >
+          <div className="scrollBox">
+            <div className="selectWrapper__item">
+              <button
+                className="chatWrapper--submitButton"
+                type="submit"
+                onMouseOver={() => {
+                  setValue({ ...value, option: 0 });
+                }}
+                onClick={() => {
+                  setValue({ ...value, option: 0 });
+                }}
+              >
+                Anonymous User
+              </button>
+              <div className="selectWrapper__item--confingWrapper">
+                <label htmlFor="anonymousUserDelete">
+                  Clear previous user data
+                </label>
+                <input
+                  type="checkbox"
+                  name="anonymousUserDelete"
+                  id="anonymousUserDelete"
+                  checked={value.inputs.anononymousUser}
+                  onChange={(e) =>
+                    setValue({
+                      ...value,
+                      inputs: {
+                        ...value.inputs,
+                        anononymousUser: e.target.checked,
+                      },
+                    })
+                  }
+                />
+              </div>
             </div>
-          </div>
-          <div className="selectWrapper__item">
-            <button
-              className="chatWrapper--submitButton"
-              type="submit"
-              onMouseOver={() =>
-                setValue({
-                  ...value,
-                  option: 1,
-                })
-              }
-              onClick={() =>
-                setValue({
-                  ...value,
-                  option: 1,
-                })
-              }
-            >
-              Registered User
-            </button>
-            <div className="selectWrapper__item--confingWrapper">
-              <label htmlFor="registeredUserAdmin">
-                Grant administrator rights
-              </label>
-              <input
-                type="checkbox"
-                name="registeredUserAdmin"
-                id="registeredUserAdmin"
-                checked={value.inputs.registeredUser}
-                onChange={(e) =>
+            <div className="selectWrapper__item">
+              <button
+                className="chatWrapper--submitButton"
+                type="submit"
+                onMouseOver={() =>
                   setValue({
                     ...value,
-                    inputs: {
-                      ...value.inputs,
-                      registeredUser: e.target.checked,
-                    },
+                    option: 1,
                   })
                 }
-              />
+                onClick={() =>
+                  setValue({
+                    ...value,
+                    option: 1,
+                  })
+                }
+              >
+                Registered User
+              </button>
+              <div className="selectWrapper__item--confingWrapper">
+                <label htmlFor="registeredUserAdmin">
+                  Grant administrator rights
+                </label>
+                <input
+                  type="checkbox"
+                  name="registeredUserAdmin"
+                  id="registeredUserAdmin"
+                  checked={value.inputs.registeredUser}
+                  onChange={(e) =>
+                    setValue({
+                      ...value,
+                      inputs: {
+                        ...value.inputs,
+                        registeredUser: e.target.checked,
+                      },
+                    })
+                  }
+                />
+              </div>
             </div>
-          </div>
-          <div className="selectWrapper__item">
-            <button
-              className="chatWrapper--submitButton"
-              type="submit"
-              onMouseOver={() =>
-                setValue({
-                  ...value,
-                  option: 2,
-                })
-              }
-              onClick={() =>
-                setValue({
-                  ...value,
-                  option: 2,
-                })
-              }
-            >
-              Administrator
-            </button>
-            <div className="selectWrapper__item--confingWrapper">
-              <label htmlFor="administratorNumberTwo">
-                Login as &quot;Administrator Two&quot;
-              </label>
-              <input
-                type="checkbox"
-                name="administratorNumberTwo"
-                id="administratorNumberTwo"
-                checked={value.inputs.administrator}
-                onChange={(e) =>
+            <div className="selectWrapper__item">
+              <button
+                className="chatWrapper--submitButton"
+                type="submit"
+                onMouseOver={() =>
                   setValue({
                     ...value,
-                    inputs: {
-                      ...value.inputs,
-                      administrator: e.target.checked,
-                    },
+                    option: 2,
                   })
                 }
-              />
+                onClick={() =>
+                  setValue({
+                    ...value,
+                    option: 2,
+                  })
+                }
+              >
+                Administrator
+              </button>
+              <div className="selectWrapper__item--confingWrapper">
+                <label htmlFor="administratorNumberTwo">
+                  Login as &quot;Administrator Two&quot;
+                </label>
+                <input
+                  type="checkbox"
+                  name="administratorNumberTwo"
+                  id="administratorNumberTwo"
+                  checked={value.inputs.administrator}
+                  onChange={(e) =>
+                    setValue({
+                      ...value,
+                      inputs: {
+                        ...value.inputs,
+                        administrator: e.target.checked,
+                      },
+                    })
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="divider"></div>
-      <p className={`chatWrapper--description animatedText${value.option}`}>
-        {description}
-      </p>
-    </form>
+        <div className="divider"></div>
+        <p className={`chatWrapper--description animatedText${value.option}`}>
+          {description}
+        </p>
+      </form>
+    </>
   );
 }

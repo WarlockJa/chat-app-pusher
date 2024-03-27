@@ -1,7 +1,7 @@
 import { IChatRoomsAddNewRoom } from "@/context/innerContexts/ChatRoomsProvider";
 import { TPrisma_User } from "../prisma/prisma";
 import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 
 export function apiDB_getAllChannelsList({
   dispatchChatRooms,

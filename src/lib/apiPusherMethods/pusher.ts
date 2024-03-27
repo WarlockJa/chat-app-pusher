@@ -1,4 +1,4 @@
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import PusherServer from "pusher";
 import PusherClient from "pusher-js";
 

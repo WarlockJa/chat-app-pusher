@@ -1,5 +1,5 @@
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 
 export default function apiDB_getChannelLastmessage({
   owner,

@@ -1,9 +1,10 @@
+import { API_DELAY_MS } from "@/lib/globalSettings";
 import { prisma } from "@/lib/prisma/globalForPrisma";
 import {
   schemaApiV1dbChannelDELETE,
   schemaApiV1dbChannelPOST,
 } from "@/lib/validators/db/channel/channel";
-import decipherSignature from "@/util/crypto/decipherSignature";
+import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -12,10 +13,12 @@ export async function GET(req: NextRequest) {
   // API endpoint protection
   const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
   const isAllowed =
-    decipherSignature({
-      signature: encryptedHeader,
-      key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-    }) === process.env.NEXT_PUBLIC_API_SIGNATURE_KEY;
+    new Date(
+      decipherSignature({
+        signature: encryptedHeader,
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      })
+    ) > new Date(Date.now() - API_DELAY_MS);
   if (!isAllowed)
     return NextResponse.json("Signature is missing or incorrect", {
       status: 403,
@@ -45,10 +48,12 @@ export async function POST(req: Request) {
   // API endpoint protection
   const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
   const isAllowed =
-    decipherSignature({
-      signature: encryptedHeader,
-      key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-    }) === process.env.NEXT_PUBLIC_API_SIGNATURE_KEY;
+    new Date(
+      decipherSignature({
+        signature: encryptedHeader,
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      })
+    ) > new Date(Date.now() - API_DELAY_MS);
   if (!isAllowed)
     return NextResponse.json("Signature is missing or incorrect", {
       status: 403,
@@ -137,10 +142,12 @@ export async function DELETE(req: Request) {
   // API endpoint protection
   const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
   const isAllowed =
-    decipherSignature({
-      signature: encryptedHeader,
-      key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-    }) === process.env.NEXT_PUBLIC_API_SIGNATURE_KEY;
+    new Date(
+      decipherSignature({
+        signature: encryptedHeader,
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      })
+    ) > new Date(Date.now() - API_DELAY_MS);
   if (!isAllowed)
     return NextResponse.json("Signature is missing or incorrect", {
       status: 403,
@@ -151,7 +158,7 @@ export async function DELETE(req: Request) {
     const reqBody = await req.json();
     const data = schemaApiV1dbChannelDELETE.parse(reqBody);
 
-    // attempting to create a collection with owner's data
+    // attempting to delete a collection
     await prisma.channel.delete({
       where: {
         name: data.channel_name,

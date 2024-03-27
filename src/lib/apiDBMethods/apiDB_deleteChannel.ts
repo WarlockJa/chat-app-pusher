@@ -1,4 +1,4 @@
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import { TSchemaApiV1dbChannelDELETE } from "../validators/db/channel/generatedTypes";
 
 export default function apiDB_deleteChannel(body: TSchemaApiV1dbChannelDELETE) {

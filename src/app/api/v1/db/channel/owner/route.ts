@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma/globalForPrisma";
 import { schemaApiV1dbChannelOwnerGET } from "@/lib/validators/db/channel/owner/owner";
-import decipherSignature from "@/util/crypto/decipherSignature";
+import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 

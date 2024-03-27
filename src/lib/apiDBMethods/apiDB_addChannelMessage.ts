@@ -1,4 +1,4 @@
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import { TSchemaApiV1dbMessagesNewPOST } from "../validators/db/messages/generatedTypes";
 
 // adding message to the messages array at channel collection in DB

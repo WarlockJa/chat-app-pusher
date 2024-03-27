@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 
 export default function apiDB_getChannelOwner({
   author,

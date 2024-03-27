@@ -1,4 +1,4 @@
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import { TSchemaApiV1dbMessagesLastaccessPOST } from "../validators/db/messages/generatedTypes";
 
 // updates user timestamp at lastaccess array for channel collection in DB

@@ -1,6 +1,7 @@
+import { API_DELAY_MS } from "@/lib/globalSettings";
 import { prisma } from "@/lib/prisma/globalForPrisma";
 import { schemaApiV1dbMessagesLastaccessPOST } from "@/lib/validators/db/messages/lastaccess";
-import decipherSignature from "@/util/crypto/decipherSignature";
+import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -16,10 +17,12 @@ export async function POST(req: Request) {
   // API endpoint protection
   const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
   const isAllowed =
-    decipherSignature({
-      signature: encryptedHeader,
-      key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-    }) === process.env.NEXT_PUBLIC_API_SIGNATURE_KEY;
+    new Date(
+      decipherSignature({
+        signature: encryptedHeader,
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      })
+    ) > new Date(Date.now() - API_DELAY_MS);
   if (!isAllowed)
     return NextResponse.json("Signature is missing or incorrect", {
       status: 403,

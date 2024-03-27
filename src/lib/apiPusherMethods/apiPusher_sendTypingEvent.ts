@@ -1,4 +1,4 @@
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import { TSchemaApiV1PusherTypingPost } from "../validators/pusher/generatedTypes";
 
 export function apiPusher_sendTypingEvent(body: TSchemaApiV1PusherTypingPost) {

@@ -7,7 +7,7 @@ import { IMessage, TPrismaMessage } from "../prisma/prisma";
 import { IChatRooms_updateLastmessage } from "@/context/innerContexts/ChatRoomsProvider";
 import getOldestTimestampFromMessagesArray from "./utils/getOldestTimestampFromMessagesArray";
 import { IKnownUsersAddUser } from "@/context/innerContexts/KnownUsersProvider";
-import generateSignature from "@/util/crypto/generateSignature";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 
 export interface IGetUnreadMessagesProps {
   params: TSchemaApiV1dbMessagesNewGET;
