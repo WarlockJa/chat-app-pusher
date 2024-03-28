@@ -6,7 +6,6 @@ import { deleteLocalStorage } from "@/util/localStorageRW";
 import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 import apiDB_getChannelOwner from "@/lib/apiDBMethods/apiDB_getChannelOwner";
-import apiAuth_Authenticate from "@/lib/apiAuthMethods/apiAuth_Authenticate";
 
 const USERS: IInitUserId[] = [
   {},
