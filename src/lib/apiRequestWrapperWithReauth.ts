@@ -1,6 +1,6 @@
 interface IApiRequestWrapperWithReauthProps {
   api: string;
-  args: any;
+  args?: any;
   callback?: (fetchResult: any) => void;
   accessToken: IAccessToken;
 }

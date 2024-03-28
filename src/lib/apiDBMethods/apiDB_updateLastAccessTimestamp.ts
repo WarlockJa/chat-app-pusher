@@ -16,11 +16,12 @@ export function apiDB_updateLastaccessTimestamp({
     api: "/api/v1/db/messages/lastaccess",
     args: {
       method: "POST",
-      headers: {
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
-      },
+      // TODO delete
+      // headers: {
+      //   "pusher-chat-signature": generateSignature({
+      //     key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      //   }),
+      // },
       body: JSON.stringify(body),
     },
     accessToken,

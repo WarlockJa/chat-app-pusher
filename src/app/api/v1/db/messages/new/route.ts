@@ -12,20 +12,21 @@ import { z } from "zod";
 
 // fetchin unread messages for the user
 export async function GET(req: NextRequest) {
-  // API endpoint protection
-  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  const isAllowed =
-    new Date(
-      decipherSignature({
-        signature: encryptedHeader,
-        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-      })
-    ) > new Date(Date.now() - API_DELAY_MS);
-  if (!isAllowed)
-    return NextResponse.json("Signature is missing or incorrect", {
-      status: 403,
-      statusText: "Unauthorized access",
-    });
+  // TODO made obsolete by jwt delete after test
+  // // API endpoint protection
+  // const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+  // const isAllowed =
+  //   new Date(
+  //     decipherSignature({
+  //       signature: encryptedHeader,
+  //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+  //     })
+  //   ) > new Date(Date.now() - API_DELAY_MS);
+  // if (!isAllowed)
+  //   return NextResponse.json("Signature is missing or incorrect", {
+  //     status: 403,
+  //     statusText: "Unauthorized access",
+  //   });
 
   try {
     // parsing params
@@ -108,20 +109,21 @@ export async function GET(req: NextRequest) {
 
 // writing a new message to a channel in the DB
 export async function POST(req: Request) {
-  // API endpoint protection
-  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  const isAllowed =
-    new Date(
-      decipherSignature({
-        signature: encryptedHeader,
-        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-      })
-    ) > new Date(Date.now() - API_DELAY_MS);
-  if (!isAllowed)
-    return NextResponse.json("Signature is missing or incorrect", {
-      status: 403,
-      statusText: "Unauthorized access",
-    });
+  // TODO made obsolete by jwt delete after test
+  // // API endpoint protection
+  // const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+  // const isAllowed =
+  //   new Date(
+  //     decipherSignature({
+  //       signature: encryptedHeader,
+  //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+  //     })
+  //   ) > new Date(Date.now() - API_DELAY_MS);
+  // if (!isAllowed)
+  //   return NextResponse.json("Signature is missing or incorrect", {
+  //     status: 403,
+  //     statusText: "Unauthorized access",
+  //   });
 
   try {
     const reqBody = await req.json();

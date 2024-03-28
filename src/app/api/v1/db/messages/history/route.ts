@@ -9,20 +9,21 @@ import { z } from "zod";
 
 // fetching a page of messages from DB
 export async function GET(req: NextRequest) {
-  // API endpoint protection
-  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  const isAllowed =
-    new Date(
-      decipherSignature({
-        signature: encryptedHeader,
-        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-      })
-    ) > new Date(Date.now() - API_DELAY_MS);
-  if (!isAllowed)
-    return NextResponse.json("Signature is missing or incorrect", {
-      status: 403,
-      statusText: "Unauthorized access",
-    });
+  // TODO made obsolete by jwt delete after test
+  // // API endpoint protection
+  // const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+  // const isAllowed =
+  //   new Date(
+  //     decipherSignature({
+  //       signature: encryptedHeader,
+  //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+  //     })
+  //   ) > new Date(Date.now() - API_DELAY_MS);
+  // if (!isAllowed)
+  //   return NextResponse.json("Signature is missing or incorrect", {
+  //     status: 403,
+  //     statusText: "Unauthorized access",
+  //   });
 
   try {
     const url = new URL(req.url);

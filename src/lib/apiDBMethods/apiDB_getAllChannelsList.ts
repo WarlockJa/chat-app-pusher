@@ -39,14 +39,15 @@ export function apiDB_getAllChannelsList({
   // wrapping request in reauth wrapper
   apiRequestWrapperWithReauth({
     api: "api/v1/db/channel",
-    args: {
-      method: "GET",
-      headers: {
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
-      },
-    },
+    // TODO delete
+    // args: {
+    //   method: "GET",
+    //   headers: {
+    //     "pusher-chat-signature": generateSignature({
+    //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+    //     }),
+    //   },
+    // },
     accessToken,
     callback,
   });

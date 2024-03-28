@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
 
   if (!session) {
     // user not authenticated
-    return NextResponse.json(null, {
+    return NextResponse.json("authentication required", {
       status: 401,
       statusText: "authentication required",
     });

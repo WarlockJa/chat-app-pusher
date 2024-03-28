@@ -82,14 +82,15 @@ export function apiDB_getChannelHistoryMessages({
     api: `/api/v1/db/messages/history?channel_name=${params.channel_name}${
       params.message_id ? `&message_id=${params.message_id}` : ""
     }${params.limit ? `&limit=${params.limit}` : ""}`,
-    args: {
-      method: "GET",
-      headers: {
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
-      },
-    },
+    // TODO delete
+    // args: {
+    //   method: "GET",
+    //   headers: {
+    //     "pusher-chat-signature": generateSignature({
+    //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+    //     }),
+    //   },
+    // },
     accessToken,
     callback,
   });

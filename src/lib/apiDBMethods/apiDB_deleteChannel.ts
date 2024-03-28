@@ -16,9 +16,10 @@ export default function apiDB_deleteChannel({
       method: "DELETE",
       headers: {
         "Content-Type": "Application/json",
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
+        // TODO delete
+        // "pusher-chat-signature": generateSignature({
+        //   key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+        // }),
       },
       body: JSON.stringify(body),
     },

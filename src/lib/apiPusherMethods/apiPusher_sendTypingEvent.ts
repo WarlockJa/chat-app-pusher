@@ -14,12 +14,13 @@ export function apiPusher_sendTypingEvent({
     api: "/api/v1/pusher/typing",
     args: {
       method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
-      },
+      // TODO delete
+      // headers: {
+      //   "Content-Type": "Application/json",
+      //   "pusher-chat-signature": generateSignature({
+      //     key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      //   }),
+      // },
       body: JSON.stringify(body),
     },
     accessToken,

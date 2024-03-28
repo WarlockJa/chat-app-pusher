@@ -14,11 +14,12 @@ export function apiPusher_sendMessageEvent({
     api: "/api/v1/pusher/message",
     args: {
       method: "POST",
-      headers: {
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
-      },
+      // TODO delete
+      // headers: {
+      //   "pusher-chat-signature": generateSignature({
+      //     key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      //   }),
+      // },
       body: JSON.stringify(body),
     },
     accessToken,

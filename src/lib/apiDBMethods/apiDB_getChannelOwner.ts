@@ -26,14 +26,15 @@ export default function apiDB_getChannelOwner({
   // wrapping request in reauth wrapper
   apiRequestWrapperWithReauth({
     api: `api/v1/db/channel/owner?channel_name=presence-${author}`,
-    args: {
-      method: "GET",
-      headers: {
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
-      },
-    },
+    // TODO delete
+    // args: {
+    //   method: "GET",
+    //   headers: {
+    //     "pusher-chat-signature": generateSignature({
+    //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+    //     }),
+    //   },
+    // },
     accessToken,
     callback,
   });

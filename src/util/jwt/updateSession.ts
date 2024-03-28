@@ -7,7 +7,7 @@ export async function updateSession(request: NextRequest) {
   const session = request.cookies.get("pusher-chat")?.value;
   if (!session) {
     console.log(session);
-    return NextResponse.json(null, {
+    return NextResponse.json("authentication required", {
       status: 401,
       statusText: "authentication required",
     });
