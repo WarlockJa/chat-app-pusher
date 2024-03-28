@@ -7,6 +7,7 @@ import { IMessage, TPrisma_ChatData } from "@/lib/prisma/prisma";
 export default function ChatBodyUnreadMessages({
   unreadMessages,
   user_id,
+  user_admin,
   activeRoom,
   unreadMessagesRefsArray,
   showFirstDate,
@@ -14,6 +15,7 @@ export default function ChatBodyUnreadMessages({
 }: {
   unreadMessages: IMessage[];
   user_id: string;
+  user_admin: boolean;
   activeRoom: string;
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
   showFirstDate: string | undefined;
@@ -24,6 +26,7 @@ export default function ChatBodyUnreadMessages({
     activeRoom,
     unreadMessagesRefsArray,
     user_id,
+    user_admin,
     activeRoom_chatData,
   });
 

@@ -35,18 +35,24 @@ export default function SendForm({
     // triggering "message" event for Pusher
     // TODO check if Pusher needs full userId token for message event
     apiPusher_sendMessageEvent({
-      message,
-      author: userId.user_id,
-      activeRoom,
-      id: message_id,
+      body: {
+        message,
+        author: userId.user_id,
+        activeRoom,
+        id: message_id,
+      },
+      accessToken: { user_id: userId.user_id, user_admin: userId.user_admin },
     });
 
     // writing message to DB
     apiDB_addChannelMessage({
-      message_text: message,
-      author: userId.user_id,
-      channel_name: activeRoom,
-      message_id,
+      body: {
+        message_text: message,
+        author: userId.user_id,
+        channel_name: activeRoom,
+        message_id,
+      },
+      accessToken: { user_id: userId.user_id, user_admin: userId.user_admin },
     });
 
     // Optimistic chat message post. Adding message directly to the local ChatData context.
@@ -83,8 +89,11 @@ export default function SendForm({
 
     // triggering "typing" event for Pusher
     apiPusher_sendTypingEvent({
-      author: userId.user_name,
-      activeRoom,
+      body: {
+        author: userId.user_name,
+        activeRoom,
+      },
+      accessToken: { user_id: userId.user_id, user_admin: userId.user_admin },
     });
   };
 

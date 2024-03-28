@@ -12,6 +12,7 @@ export const schemaApiV1dbChannelOwnerGET = z.object({
     })
     .max(45)
     .regex(regexAlphanumericWithDash, {
-      message: "UserId may only contains alphanumerical characters and dash",
+      message:
+        "channel_name may only contains alphanumerical characters and dash",
     }),
 });

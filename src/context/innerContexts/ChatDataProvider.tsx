@@ -62,9 +62,11 @@ const ChatDataContext = createContext<IChatDataContext | null>(null);
 export function ChatDataProvider({
   children,
   user_id,
+  user_admin,
 }: {
   children: React.ReactNode | undefined;
   user_id: string;
+  user_admin: boolean;
 }) {
   const initialStateChatData: TPrisma_ChatData[] = [];
   const [chatData, dispatchChatData] = useReducer(
@@ -131,9 +133,15 @@ export function ChatDataProvider({
         // if message was optimistically added, updating lastaccess in DB
         if (isMessageOptimistic) {
           apiDB_updateLastaccessTimestamp({
-            channel_name: action.roomName,
-            user_id,
-            message_id: action.message.id,
+            body: {
+              channel_name: action.roomName,
+              user_id,
+              message_id: action.message.id,
+            },
+            accessToken: {
+              user_id,
+              user_admin,
+            },
           });
 
           return chatData;

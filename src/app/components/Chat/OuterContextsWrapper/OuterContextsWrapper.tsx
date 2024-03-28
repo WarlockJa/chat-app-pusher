@@ -38,7 +38,10 @@ export default function OuterContextsWrapper({
   return (
     <ChatRoomsProvider userId={userId}>
       <KnownUsersProvider userId={userId}>
-        <ChatDataProvider user_id={userId.user_id}>
+        <ChatDataProvider
+          user_id={userId.user_id}
+          user_admin={userId.user_admin}
+        >
           <UsersTypingProvider>
             <PaginationProvider pageLimit={pageLimit ? pageLimit : 30}>
               <ScrollPositionDataProvider>

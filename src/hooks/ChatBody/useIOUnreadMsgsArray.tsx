@@ -8,6 +8,7 @@ interface IUseIntersectionObserverArrayProps {
   unreadMessagesRefsArray: React.MutableRefObject<HTMLDivElement[]>;
   activeRoom: string;
   user_id: string;
+  user_admin: boolean;
   activeRoom_chatData: TPrisma_ChatData;
 }
 
@@ -15,6 +16,7 @@ export default function useIOUnreadMsgsArray({
   unreadMessagesRefsArray,
   activeRoom,
   user_id,
+  user_admin,
   activeRoom_chatData,
 }: IUseIntersectionObserverArrayProps) {
   // observer.
@@ -84,9 +86,15 @@ export default function useIOUnreadMsgsArray({
         // during optimistic new message update this call may be unnecessary
         // but it covers scenario when new message is not immediately read by the author
         apiDB_updateLastaccessTimestamp({
-          channel_name: activeRoom,
-          user_id,
-          message_id: debouncedLastAccessUpdate.message_id,
+          body: {
+            channel_name: activeRoom,
+            user_id,
+            message_id: debouncedLastAccessUpdate.message_id,
+          },
+          accessToken: {
+            user_id,
+            user_admin,
+          },
         });
       }
     };

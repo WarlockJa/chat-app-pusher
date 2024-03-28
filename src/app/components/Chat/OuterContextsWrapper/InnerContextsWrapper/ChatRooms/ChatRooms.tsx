@@ -144,6 +144,7 @@ export default function ChatRooms({
                 <DeleteRoomButton
                   roomName={currentRoom.name}
                   user_id={user_id}
+                  user_admin={user_admin}
                 />
               )}
           </li>

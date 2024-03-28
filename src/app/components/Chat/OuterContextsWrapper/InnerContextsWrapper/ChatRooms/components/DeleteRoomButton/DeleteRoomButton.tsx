@@ -10,9 +10,11 @@ import React from "react";
 export default function DeleteRoomButton({
   roomName,
   user_id,
+  user_admin,
 }: {
   roomName: string;
   user_id: string;
+  user_admin: boolean;
 }) {
   const { dispatchChatData } = useChatDataContext();
   const { dispatchChatRooms, activeRoom, setActiveRoom } =
@@ -28,7 +30,10 @@ export default function DeleteRoomButton({
         e.stopPropagation();
         if (activeRoom === roomName) setActiveRoom(`presence-${user_id}`);
         // delete room from DB
-        apiDB_deleteChannel({ channel_name: roomName });
+        apiDB_deleteChannel({
+          body: { channel_name: roomName },
+          accessToken: { user_id, user_admin },
+        });
         // delete room from ChatData
         dispatchChatData({ type: "ChatData_deleteRoom", roomName });
         // delete room from ChatRooms

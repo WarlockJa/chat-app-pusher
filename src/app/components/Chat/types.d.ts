@@ -12,6 +12,11 @@ interface IInitUserId {
   user_admin?: boolean;
 }
 
+interface IAccessToken {
+  user_id: string | undefined;
+  user_admin: boolean | undefined;
+}
+
 // pusher.channel("channel-name").members.members
 interface IChannelMembers {
   [user_id: string]: {

@@ -54,10 +54,13 @@ export default function bindPusherSubscriptionSucceeded({
     if (newChannel.name !== "presence-system") {
       // attempting to create a new channel in DB with owner data
       apiDB_createChannel({
-        user_id: userId.user_id,
-        user_name: userId.user_name,
-        user_admin: userId.user_admin,
-        channel_name: newChannel.name,
+        body: {
+          user_id: userId.user_id,
+          user_name: userId.user_name,
+          user_admin: userId.user_admin,
+          channel_name: newChannel.name,
+        },
+        accessToken: { user_id: userId.user_id, user_admin: userId.user_admin },
       });
     }
     // creating rooms in contexts
@@ -87,6 +90,10 @@ export default function bindPusherSubscriptionSucceeded({
       dispatchChatData,
       dispatchChatRooms,
       dispatchKnownUsers,
+      accessToken: {
+        user_id: userId.user_id,
+        user_admin: userId.user_admin,
+      },
     });
 
     // getting users subscribed to the channel
@@ -119,7 +126,14 @@ export default function bindPusherSubscriptionSucceeded({
         });
 
         // fetching last message timestamp from DB to display in ChatRooms
-        apiDB_getChannelLastmessage({ owner: user.user_id, dispatchChatRooms });
+        apiDB_getChannelLastmessage({
+          owner: user.user_id,
+          dispatchChatRooms,
+          accessToken: {
+            user_id: userId.user_id,
+            user_admin: userId.user_admin,
+          },
+        });
 
         // adding connected users' data to KnownUsers context
         dispatchKnownUsers({ type: "KnownUsers_addKnownUser", user });

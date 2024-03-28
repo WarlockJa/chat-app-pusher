@@ -5,6 +5,8 @@ import Chat from "@/app/components/Chat/Chat";
 import { deleteLocalStorage } from "@/util/localStorageRW";
 import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
+import apiDB_getChannelOwner from "@/lib/apiDBMethods/apiDB_getChannelOwner";
+import apiAuth_Authenticate from "@/lib/apiAuthMethods/apiAuth_Authenticate";
 
 const USERS: IInitUserId[] = [
   {},
@@ -123,23 +125,30 @@ export default function ChatTestUsersWrapper() {
     />
   ) : (
     <>
+      {/* TODO delete */}
       {/* <button
         onClick={() => {
-          const timestampData = new Date().toISOString();
-          const signature = generateSignature({
-            key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+          apiDB_getChannelOwner({
+            author: "7f6bf857-1f52-40f6-b7c7-399b9b6702d1",
+            accessToken: {
+              user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d1",
+              user_admin: true,
+            },
+            dispatchKnownUsers: console.log(),
           });
-          console.log(timestampData);
-
-          const result = decipherSignature({
-            key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-            signature,
-          });
-
-          console.log(result);
         }}
       >
-        TEST CRYPTO
+        TEST
+      </button>
+      <button
+        onClick={() => {
+          apiAuth_Authenticate({
+            user_id: "7f6bf857-1f52-40f6-b7c7-399b9b6702d1",
+            user_admin: false,
+          });
+        }}
+      >
+        Authenticate
       </button> */}
       <form className="chatWrapper" onSubmit={handleSubmit}>
         <h1 className="chatWrapper--header">Support Chat</h1>

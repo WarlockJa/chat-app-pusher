@@ -123,6 +123,7 @@ export default function ChatBody({ userId }: { userId: TPrisma_User }) {
         <ChatBodyUnreadMessages
           unreadMessages={unreadMessages}
           user_id={userId.user_id}
+          user_admin={userId.user_admin}
           activeRoom={activeRoom}
           unreadMessagesRefsArray={unreadMessagesRefsArray}
           showFirstDate={showFirstDate}
