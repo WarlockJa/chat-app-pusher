@@ -1,10 +1,26 @@
+import { API_DELAY_MS } from "@/lib/globalSettings";
 import { schemaApiV1AuthPOST } from "@/lib/validators/auth/auth";
+import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 import { authenticate } from "@/util/jwt/authenticate";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 export async function POST(req: NextRequest) {
-  // TODO move api protection here
+  // API endpoint protection
+  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+  const isAllowed =
+    new Date(
+      decipherSignature({
+        signature: encryptedHeader,
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      })
+    ) > new Date(Date.now() - API_DELAY_MS);
+  if (!isAllowed)
+    return NextResponse.json("Signature is missing or incorrect", {
+      status: 403,
+      statusText: "Unauthorized access",
+    });
+
   try {
     const reqBody = await req.json();
     // data validation

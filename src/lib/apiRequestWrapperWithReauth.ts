@@ -1,3 +1,5 @@
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
+
 interface IApiRequestWrapperWithReauthProps {
   api: string;
   args?: any;
@@ -21,6 +23,10 @@ export default async function apiRequestWrapperWithReauth({
       method: "POST",
       headers: {
         "Content-Type": "Application/json",
+        // API endpoints protection
+        "pusher-chat-signature": generateSignature({
+          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+        }),
       },
       body: JSON.stringify({
         user_id: accessToken.user_id,
@@ -34,6 +40,7 @@ export default async function apiRequestWrapperWithReauth({
     const result = await response.json();
     callback && callback(result);
   } else {
+    console.log(response);
     throw new Error(JSON.stringify(response));
   }
 }

@@ -19,7 +19,6 @@ export const pusherClient = ({
   user_admin?: boolean;
   user_name?: string;
 }) =>
-  // TODO check if can be moved behind accessToken protection
   new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
     cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     authEndpoint: "/api/v1/pusher/auth",

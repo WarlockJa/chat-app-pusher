@@ -6,6 +6,8 @@ import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import ChatHeader from "./ChatHeader/ChatHeader";
 import "./innercontextswrapper.scss";
 import { TPrisma_User } from "@/lib/prisma/prisma";
+import { useEffect } from "react";
+import apiAuth_authenticate from "@/lib/apiAuthMethods/apiAuth_authenticate";
 
 export default function InnerContextsWrapper({
   userId,
@@ -15,6 +17,14 @@ export default function InnerContextsWrapper({
   pusher: PusherPresence;
 }) {
   // console.log("------------Chat rerender-------------");
+
+  // authenticating with back-end to avoid 401 errors
+  useEffect(() => {
+    apiAuth_authenticate({
+      user_id: userId.user_id,
+      user_admin: userId.user_admin,
+    });
+  }, []);
 
   return (
     <div className="chat">

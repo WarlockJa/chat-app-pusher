@@ -1,31 +1,13 @@
-import { API_DELAY_MS } from "@/lib/globalSettings";
 import { prisma } from "@/lib/prisma/globalForPrisma";
 import {
   schemaApiV1dbChannelDELETE,
   schemaApiV1dbChannelPOST,
 } from "@/lib/validators/db/channel/channel";
-import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // fetching channels data
 export async function GET(req: NextRequest) {
-  // TODO made obsolete by jwt delete after test
-  // // API endpoint protection
-  // const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  // const isAllowed =
-  //   new Date(
-  //     decipherSignature({
-  //       signature: encryptedHeader,
-  //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-  //     })
-  //   ) > new Date(Date.now() - API_DELAY_MS);
-  // if (!isAllowed)
-  //   return NextResponse.json("Signature is missing or incorrect", {
-  //     status: 403,
-  //     statusText: "Unauthorized access",
-  //   });
-
   try {
     const result = await prisma.channel.findMany({
       select: {
@@ -46,22 +28,6 @@ export async function GET(req: NextRequest) {
 // if collection found and owner's data is different then updating DB data
 // otherwise do nothing
 export async function POST(req: Request) {
-  // TODO made obsolete by jwt delete after test
-  // // API endpoint protection
-  // const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  // const isAllowed =
-  //   new Date(
-  //     decipherSignature({
-  //       signature: encryptedHeader,
-  //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-  //     })
-  //   ) > new Date(Date.now() - API_DELAY_MS);
-  // if (!isAllowed)
-  //   return NextResponse.json("Signature is missing or incorrect", {
-  //     status: 403,
-  //     statusText: "Unauthorized access",
-  //   });
-
   try {
     const reqBody = await req.json();
     const data = schemaApiV1dbChannelPOST.parse(reqBody);
@@ -141,22 +107,6 @@ export async function POST(req: Request) {
 
 // deleting collection in DB
 export async function DELETE(req: Request) {
-  // TODO made obsolete by jwt delete after test
-  // // API endpoint protection
-  // const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  // const isAllowed =
-  //   new Date(
-  //     decipherSignature({
-  //       signature: encryptedHeader,
-  //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-  //     })
-  //   ) > new Date(Date.now() - API_DELAY_MS);
-  // if (!isAllowed)
-  //   return NextResponse.json("Signature is missing or incorrect", {
-  //     status: 403,
-  //     statusText: "Unauthorized access",
-  //   });
-
   try {
     const reqBody = await req.json();
     const data = schemaApiV1dbChannelDELETE.parse(reqBody);

@@ -1,4 +1,3 @@
-import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 import { TSchemaApiV1dbMessagesNewPOST } from "../validators/db/messages/generatedTypes";
 import apiRequestWrapperWithReauth from "../apiRequestWrapperWithReauth";
 
@@ -17,30 +16,9 @@ export function apiDB_addChannelMessage({
       method: "POST",
       headers: {
         "Content-Type": "Application/json",
-        // TODO delete
-        // "pusher-chat-signature": generateSignature({
-        //   key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        // }),
       },
       body: JSON.stringify(body),
     },
     accessToken,
   });
-
-  // TODO delete
-  // fetch("/api/v1/db/messages/new", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "Application/json",
-  //     "pusher-chat-signature": generateSignature({
-  //       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-  //     }),
-  //   },
-  //   body: JSON.stringify(body),
-  // })
-  //   .then((response) => response.json())
-  //   // TODO test error handling
-  //   .catch((error: Error) => {
-  //     throw new Error(error.message);
-  //   });
 }
