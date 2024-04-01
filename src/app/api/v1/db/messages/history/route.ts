@@ -6,6 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // fetching a page of messages from DB
+// jwt protected route
+// role access: [owner, admin]
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);

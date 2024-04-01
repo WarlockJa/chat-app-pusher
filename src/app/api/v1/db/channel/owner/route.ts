@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // fetching channel's owner data data
+// jwt protected route
+// role access: [user]
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);

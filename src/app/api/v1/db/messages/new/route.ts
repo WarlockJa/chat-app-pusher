@@ -9,6 +9,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // fetchin unread messages for the user
+// jwt protected route
+// role access: [owner, admin]
 export async function GET(req: NextRequest) {
   try {
     // parsing params
@@ -90,6 +92,8 @@ export async function GET(req: NextRequest) {
 }
 
 // writing a new message to a channel in the DB
+// jwt protected route
+// role access: [owner, admin]
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();

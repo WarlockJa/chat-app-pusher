@@ -38,7 +38,7 @@ export default function SendForm({
       body: {
         message,
         author: userId.user_id,
-        activeRoom,
+        channel_name: activeRoom,
         id: message_id,
       },
       accessToken: { user_id: userId.user_id, user_admin: userId.user_admin },
@@ -91,7 +91,7 @@ export default function SendForm({
     apiPusher_sendTypingEvent({
       body: {
         author: userId.user_name,
-        activeRoom,
+        channel_name: activeRoom,
       },
       accessToken: { user_id: userId.user_id, user_admin: userId.user_admin },
     });

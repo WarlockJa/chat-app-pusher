@@ -5,13 +5,13 @@ import {
 import { z } from "zod";
 
 export const schemaApiV1PusherTypingPost = z.object({
-  activeRoom: z
+  channel_name: z
     .string({
-      required_error: "ActiveRoom is required",
-      invalid_type_error: "Required type for activeRoom is string",
+      required_error: "Channel name is required",
+      invalid_type_error: "Required type for channel name is string",
     })
     .startsWith("presence-", {
-      message: "ActiveRoom must start with 'presence-'",
+      message: "Channel name must start with 'presence-'",
     })
     .max(45)
     .regex(regexAlphanumericWithDash, {

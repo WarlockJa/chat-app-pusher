@@ -6,6 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { PresenceChannelData } from "pusher";
 
 // creating presence channel based on the name of the user
+// jwt unprotected route. protected by signature
+// role access: [user]
 export async function POST(req: NextRequest) {
   // API endpoint protection
   const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";

@@ -5,6 +5,9 @@ import { authenticate } from "@/util/jwt/authenticate";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+// user authentication end-point
+// jwt unprotected route. protected by signature
+// role access: [user]
 export async function POST(req: NextRequest) {
   // API endpoint protection
   const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";

@@ -11,13 +11,13 @@ export const schemaApiV1PusherMessagePost = z.object({
     .string()
     .min(1)
     .max(400, { message: "Message exceeds 400 characters" }),
-  activeRoom: z
+  channel_name: z
     .string({
-      required_error: "ActiveRoom is required",
-      invalid_type_error: "Required type for activeRoom is string",
+      required_error: "Channel name is required",
+      invalid_type_error: "Required type for channel name is string",
     })
     .startsWith("presence-", {
-      message: "ActiveRoom must start with 'presence-'",
+      message: "Channel name must start with 'presence-'",
     })
     .max(45)
     .regex(regexAlphanumericWithDash, {
@@ -25,6 +25,6 @@ export const schemaApiV1PusherMessagePost = z.object({
         "Channel name may only contains alphanumerical characters and dash",
     }),
   author: z
-    .string({ required_error: "user_id is required" })
-    .uuid({ message: "user_id must be UUIDv4" }),
+    .string({ required_error: "Author is required" })
+    .uuid({ message: "Author must be UUIDv4" }),
 });

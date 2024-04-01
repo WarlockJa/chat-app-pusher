@@ -3,7 +3,9 @@ import { schemaApiV1dbChannelLastmessageGET } from "@/lib/validators/db/channel/
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-// fetching channel's owner data data
+// fetching channel's lastmessage timestamp
+// jwt protected route
+// role access: [owner, admin]
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);

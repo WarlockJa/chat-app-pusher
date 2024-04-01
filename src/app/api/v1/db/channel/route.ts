@@ -6,7 +6,9 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-// fetching channels data
+// fetching all channels data
+// jwt protected route
+// role access: [admin]
 export async function GET(req: NextRequest) {
   try {
     const result = await prisma.channel.findMany({
@@ -27,6 +29,8 @@ export async function GET(req: NextRequest) {
 // if no collection found creating new collection in DB with initial data
 // if collection found and owner's data is different then updating DB data
 // otherwise do nothing
+// jwt protected route
+// role access: [user]
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
@@ -106,6 +110,8 @@ export async function POST(req: Request) {
 }
 
 // deleting collection in DB
+// jwt protected route
+// role access: [admin]
 export async function DELETE(req: Request) {
   try {
     const reqBody = await req.json();

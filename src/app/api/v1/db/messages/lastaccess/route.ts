@@ -11,6 +11,8 @@ type TTimestampResponse =
     ]
   | [];
 // updating last access array for a channel in DB
+// jwt protected route
+// role access: [owner, admin]
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();

@@ -3,13 +3,16 @@ import { z } from "zod";
 import { schemaApiV1PusherMessagePost } from "@/lib/validators/pusher/message";
 import { pusherServer } from "@/lib/apiPusherMethods/pusher";
 
+// sending "message" event via Pusher
+// jwt protected route
+// role access: [owner, admin]
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
     // vaidating request body
     const data = schemaApiV1PusherMessagePost.parse(reqBody);
 
-    pusherServer.trigger(data.activeRoom, "message", {
+    pusherServer.trigger(data.channel_name, "message", {
       message: data.message,
       author: data.author,
       id: data.id,

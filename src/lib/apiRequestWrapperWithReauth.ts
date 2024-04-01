@@ -40,7 +40,7 @@ export default async function apiRequestWrapperWithReauth({
     const result = await response.json();
     callback && callback(result);
   } else {
-    console.log(response);
+    // console.log(response);
     throw new Error(JSON.stringify(response));
   }
 }

@@ -65,3 +65,17 @@ interface ITriggerEventData {
   id: string;
   info: IUserInfo;
 }
+
+// jwt session data
+interface ISession {
+  userToken: IAccessToken;
+  expires: string;
+  iat: number;
+  exp: number;
+}
+
+// route data object
+interface IRouteData {
+  path: string;
+  method: string;
+}
