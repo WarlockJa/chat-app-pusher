@@ -3,8 +3,8 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/__mocks__/globalForPrisma";
 import { GET } from "@/app/api/v1/db/messages/history/route";
 import { JsonObject } from "@prisma/client/runtime/library";
-import generateSignature from "@/util/crypto/generateSignature";
 import { loadEnvConfig } from "@next/env";
+import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
 
 // testing history GET with mocks for NextRequest and Prisma MongoDB call
 describe("Running GET request", () => {

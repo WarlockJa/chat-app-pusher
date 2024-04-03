@@ -125,7 +125,7 @@ The idea behind this project is to create a Support Web Chat that would be indep
 4. UserID and Pusher connection data stored in Outer Contexts
 5. Inner Contexts are initialised based on UserID and Pusher connection data. Inner Contexts are separated for code readability. Each of them stores a slice of data in form of an array with the room id and context specific data. The Inner Contexts are:
 
-- ChatData: contains data array with messages for the room.
+- ChatData: contains data array with room messages.
 - ChatRooms: contains room meta information: owner data, list of currently subscribed users, last message timestamp.
 - Pagination: contains data in regards to remaining history pages for the room. PaginationMarker element added to the top of messages in ChatBody if Pagination context for the room has hasMore flag set to true. When PaginationMarker element is scrolled into view new history page is loaded.
 - ScrollPosition: contains information about current scroll position for the room. Based on this data various scroll events (scroll to the new message, scroll to the last scroll position on room change...) are processed.
@@ -137,7 +137,17 @@ The idea behind this project is to create a Support Web Chat that would be indep
 
 ### Back-end Protection
 
-Back-end api endpoints are made with Next.JS. Endpoints are protected from unauthorised access by sending encrypted signature based on enviromental variable NEXT_PUBLIC_API_SIGNATURE_KEY that is shared between front-end and back-end. In this case - same repo. Api endpoints process requests only if a valid "pusher-chat-signature" header passed with the request. Cryptography algorithm used is aes-256-cbc.
+Next.js is used to create the back-end API endpoints for this web application. These endpoints employ a two-fold security approach for access control.
+
+#### Authentication Protection
+
+Authentication routes are shielded from unauthorized access by implementing a mechanism that verifies an encrypted signature. This signature is generated using the environment variable NEXT_PUBLIC_API_SIGNATURE_KEY, which is shared between the front-end and back-end (in this case, residing within the same code repository).
+
+API authentication endpoints specifically process requests that include a valid "pusher-chat-signature" header. The cryptographic algorithm used for this signature generation is AES-256-CBC.
+
+#### Authorization with JWT
+
+For all other endpoints, access is restricted through JWT (JSON Web Token) authentication verification. JWT is also leveraged to implement role-based access control for these endpoints.
 
 ### Built with
 
