@@ -10,19 +10,22 @@ import { z } from "zod";
 // role access: [user]
 export async function POST(req: NextRequest) {
   // API endpoint protection
-  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  const isAllowed =
-    new Date(
-      decipherSignature({
-        signature: encryptedHeader,
-        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-      })
-    ) > new Date(Date.now() - API_DELAY_MS);
-  if (!isAllowed)
+  try {
+    const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+    const isAllowed =
+      new Date(
+        decipherSignature({
+          signature: encryptedHeader,
+          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+        })
+      ) > new Date(Date.now() - API_DELAY_MS);
+    if (!isAllowed) throw new Error();
+  } catch (error) {
     return NextResponse.json("Signature is missing or incorrect", {
       status: 403,
       statusText: "Unauthorized access",
     });
+  }
 
   try {
     const reqBody = await req.json();

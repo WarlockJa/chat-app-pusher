@@ -1,4 +1,4 @@
-import { POST } from "@/app/api/v1/db/messages/history/route";
+import { POST } from "@/app/api/v1/db/messages/new/route";
 import { prisma } from "@/lib/__mocks__/globalForPrisma";
 import { NextRequest } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -20,17 +20,19 @@ describe("Running POST request", () => {
   });
 
   it("adding new message to the exsiting room in the DB returns JSON response with status code 200", async () => {
+    // await apiAuth_authenticate(mockUser);
+
     // recreating NextRequest
     const nextReq = new NextRequest(
-      new Request("http://localhost:3000/api/v1/db/messages/history", {
+      new Request("http://localhost:3000/api/v1/db/messages/new", {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
         },
         body: JSON.stringify({
-          user_id: "abc123",
+          author: "4765440c-6d54-48fc-b8ec-d8fab8a75502",
           message_id: "4765440c-6d54-48fc-b8ec-d8fab8a75503",
-          channel_name: "presence-abc123",
+          channel_name: "presence-4765440c-6d54-48fc-b8ec-d8fab8a75502",
           message_text: "message",
         }),
       }),
@@ -54,15 +56,15 @@ describe("Running POST request", () => {
   it("adding new message to the room not found in the DB returns JSON response with status code 200", async () => {
     // recreating NextRequest
     const nextReq = new NextRequest(
-      new Request("http://localhost:3000/api/v1/db/messages/history", {
+      new Request("http://localhost:3000/api/v1/db/messages/new", {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
         },
         body: JSON.stringify({
-          user_id: "abc123",
+          author: "4765440c-6d54-48fc-b8ec-d8fab8a75502",
           message_id: "4765440c-6d54-48fc-b8ec-d8fab8a75503",
-          channel_name: "presence-abc123",
+          channel_name: "presence-4765440c-6d54-48fc-b8ec-d8fab8a75502",
           message_text: "message",
         }),
       }),
@@ -98,15 +100,15 @@ describe("Running POST request", () => {
   it("imitating DB down return error response with status code 500", async () => {
     // recreating NextRequest
     const nextReq = new NextRequest(
-      new Request("http://localhost:3000/api/v1/db/messages/history", {
+      new Request("http://localhost:3000/api/v1/db/messages/new", {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
         },
         body: JSON.stringify({
-          user_id: "abc123",
+          author: "4765440c-6d54-48fc-b8ec-d8fab8a75502",
           message_id: "4765440c-6d54-48fc-b8ec-d8fab8a75503",
-          channel_name: "presence-abc123",
+          channel_name: "presence-4765440c-6d54-48fc-b8ec-d8fab8a75502",
           message_text: "message",
         }),
       }),

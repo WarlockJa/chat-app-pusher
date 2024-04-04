@@ -29,7 +29,7 @@ describe("Running GET request", () => {
   it("successful call to the DB with existing documents return JSON response with status code 200", async () => {
     // request parameters
     const params = {
-      channel_name: "presence-abc123",
+      channel_name: "presence-4765440c-6d54-48fc-b8ec-d8fab8a75502",
       message_id: "4765440c-6d54-48fc-b8ec-d8fab8a75503",
       limit: 2,
     };
@@ -39,11 +39,6 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}`,
         {
           method: "GET",
-          headers: {
-            "pusher-chat-signature": generateSignature({
-              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-            }),
-          },
         }
       ),
       {}
@@ -111,7 +106,7 @@ describe("Running GET request", () => {
   it("successful call to the DB without optional parameters return JSON response with status code 200", async () => {
     // request parameters
     const params = {
-      channel_name: "presence-abc123",
+      channel_name: "presence-4765440c-6d54-48fc-b8ec-d8fab8a75502",
     };
     // recreating NextRequest
     const nextReq = new NextRequest(
@@ -119,11 +114,6 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}`,
         {
           method: "GET",
-          headers: {
-            "pusher-chat-signature": generateSignature({
-              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-            }),
-          },
         }
       ),
       {}
@@ -206,11 +196,6 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}`,
         {
           method: "GET",
-          headers: {
-            "pusher-chat-signature": generateSignature({
-              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-            }),
-          },
         }
       ),
       {}
@@ -258,7 +243,7 @@ describe("Running GET request", () => {
   it("should receive valid request with additional parameters and return successful response with status code 200", async () => {
     // request parameters
     const params = {
-      channel_name: "presence-abc123",
+      channel_name: "presence-4765440c-6d54-48fc-b8ec-d8fab8a75502",
       message_id: "4765440c-6d54-48fc-b8ec-d8fab8a75503",
       limit: 2,
       test: "test",
@@ -269,11 +254,6 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}&test=test`,
         {
           method: "GET",
-          headers: {
-            "pusher-chat-signature": generateSignature({
-              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-            }),
-          },
         }
       ),
       {}
@@ -340,7 +320,7 @@ describe("Running GET request", () => {
 
   it("imitating DB down return error response with status code 500", async () => {
     const params = {
-      channel_name: "presence-abc123",
+      channel_name: "presence-4765440c-6d54-48fc-b8ec-d8fab8a75502",
       message_id: "4765440c-6d54-48fc-b8ec-d8fab8a75503",
       limit: 2,
     };
@@ -350,11 +330,6 @@ describe("Running GET request", () => {
         `http://localhost:3000/api/v1/db/history?channel_name=${params.channel_name}&message_id=${params.message_id}&limit=${params.limit}`,
         {
           method: "GET",
-          headers: {
-            "pusher-chat-signature": generateSignature({
-              key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-            }),
-          },
         }
       ),
       {}

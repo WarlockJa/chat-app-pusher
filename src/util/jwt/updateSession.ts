@@ -6,7 +6,6 @@ import { JWT_EXPIRATION_S } from "@/lib/globalSettings";
 export async function updateSession(request: NextRequest) {
   const session = request.cookies.get("pusher-chat")?.value;
   if (!session) {
-    console.log(session);
     return NextResponse.json("authentication required", {
       status: 401,
       statusText: "authentication required",

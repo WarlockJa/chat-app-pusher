@@ -28,8 +28,8 @@ export const schemaApiV1dbMessagesNewPOST = z.object({
     })
     .uuid({ message: "Message ID must be UUIDv4" }),
   author: z
-    .string({ required_error: "user_id is required" })
-    .uuid({ message: "user_id must be UUIDv4" }),
+    .string({ required_error: "author is required" })
+    .uuid({ message: "author must be UUIDv4" }),
   message_text: z
     .string()
     .min(1, { message: "Message must be at least 1 character long" })
