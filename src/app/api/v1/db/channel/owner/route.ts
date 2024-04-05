@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     const data = schemaApiV1dbChannelOwnerGET.parse({
       channel_name,
     });
+
     const result = await prisma.channel.findUnique({
       where: {
         name: data.channel_name,
@@ -24,7 +25,9 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(result?.owner, { status: 200 });
+    return result
+      ? NextResponse.json(result.owner, { status: 200 })
+      : NextResponse.json(null, { status: 404 });
   } catch (error) {
     // checking if error is a zod validation error
     return error instanceof z.ZodError

@@ -24,7 +24,9 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(result?.lastmessage, { status: 200 });
+    return result
+      ? NextResponse.json(result?.lastmessage, { status: 200 })
+      : NextResponse.json(null, { status: 404 });
   } catch (error) {
     // checking if error is a zod validation error
     return error instanceof z.ZodError

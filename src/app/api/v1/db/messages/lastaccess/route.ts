@@ -72,6 +72,8 @@ export async function POST(req: Request) {
       ],
     });
 
+    console.log(result);
+
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     // checking if error is a zod validation error
