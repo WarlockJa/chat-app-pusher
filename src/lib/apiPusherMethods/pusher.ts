@@ -26,12 +26,11 @@ export const pusherClient = ({
     auth: {
       headers: {
         "Content-Type": "application/json",
-        // API endpoints protection
-        "pusher-chat-signature": generateSignature({
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        }),
       },
       params: {
+        signature: generateSignature({
+          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+        }),
         user_id,
         user_admin,
         user_name: user_name ? user_name : user_id,

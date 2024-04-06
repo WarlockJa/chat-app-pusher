@@ -9,26 +9,24 @@ import { z } from "zod";
 // jwt unprotected route. protected by signature
 // role access: [user]
 export async function POST(req: NextRequest) {
-  // API endpoint protection
-  try {
-    const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-    const isAllowed =
-      new Date(
-        decipherSignature({
-          signature: encryptedHeader,
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        })
-      ) > new Date(Date.now() - API_DELAY_MS);
-    if (!isAllowed) throw new Error();
-  } catch (error) {
-    return NextResponse.json("Signature is missing or incorrect", {
-      status: 403,
-      statusText: "Unauthorized access",
-    });
-  }
-
   try {
     const reqBody = await req.json();
+    // API endpoint protection
+    try {
+      const isAllowed =
+        new Date(
+          decipherSignature({
+            signature: reqBody.signature,
+            key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+          })
+        ) > new Date(Date.now() - API_DELAY_MS);
+      if (!isAllowed) throw new Error();
+    } catch (error) {
+      return NextResponse.json("Signature is missing or incorrect", {
+        status: 403,
+        statusText: "Unauthorized access",
+      });
+    }
     // data validation
     const data = schemaApiV1AuthPOST.parse(reqBody);
 

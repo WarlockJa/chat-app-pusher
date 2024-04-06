@@ -47,7 +47,7 @@ describe("Testing auth route POST request", () => {
 
   it("should authenticate user with valid credentials", async () => {
     // calling real function generateSignature with test NEXT_PUBLIC_API_SIGNATURE_KEY
-    const mockSignatureHeader = generateSignature({
+    const mockSignature = generateSignature({
       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
     });
     // recreating NextRequest
@@ -56,9 +56,8 @@ describe("Testing auth route POST request", () => {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
-          "pusher-chat-signature": mockSignatureHeader,
         },
-        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=${mock_user_name}`,
+        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=${mock_user_name}&signature=${mockSignature}`,
       }),
       {}
     );
@@ -69,16 +68,16 @@ describe("Testing auth route POST request", () => {
 
     const response = await POST(nextReq);
 
+    expect(response.status).toBe(200);
     expect(pusherServer.authorizeChannel).toBeCalledWith(
       mock_socket_id,
       mock_channel_name,
       mockPresenceData
     );
-    expect(response.status).toBe(200);
   });
 
   it("should return a validation error", async () => {
-    const mockSignatureHeader = generateSignature({
+    const mockSignature = generateSignature({
       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
     });
     // recreating NextRequest
@@ -87,9 +86,8 @@ describe("Testing auth route POST request", () => {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
-          "pusher-chat-signature": mockSignatureHeader,
         },
-        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=`,
+        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=&signature=${mockSignature}`,
       }),
       {}
     );
@@ -104,7 +102,7 @@ describe("Testing auth route POST request", () => {
 
     // changing system time in order to generate an expired signature
     vi.setSystemTime(expiredDate);
-    const mockSignatureHeader = generateSignature({
+    const mockSignature = generateSignature({
       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
     });
 
@@ -117,9 +115,8 @@ describe("Testing auth route POST request", () => {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
-          "pusher-chat-signature": mockSignatureHeader,
         },
-        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=${mock_user_name}`,
+        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=${mock_user_name}&signature=${mockSignature}`,
       }),
       {}
     );
@@ -152,7 +149,7 @@ describe("Testing auth route POST request", () => {
   });
 
   it("should return a 500 error when pusher service is down", async () => {
-    const mockSignatureHeader = generateSignature({
+    const mockSignature = generateSignature({
       key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
     });
     // recreating NextRequest
@@ -161,9 +158,8 @@ describe("Testing auth route POST request", () => {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
-          "pusher-chat-signature": mockSignatureHeader,
         },
-        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=${mock_user_name}`,
+        body: `socket_id=${mock_socket_id}&channel_name=${mock_channel_name}&user_id=${mock_user_id}&user_admin=${mock_user_admin}&user_name=${mock_user_name}&signature=${mockSignature}`,
       }),
       {}
     );

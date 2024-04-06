@@ -10,33 +10,33 @@ import { z } from "zod";
 // jwt unprotected route. protected by signature
 // role access: [user]
 export async function POST(req: NextRequest) {
-  // API endpoint protection
-  try {
-    const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-    const isAllowed =
-      new Date(
-        decipherSignature({
-          signature: encryptedHeader,
-          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-        })
-      ) > new Date(Date.now() - API_DELAY_MS);
-    if (!isAllowed) throw new Error();
-  } catch (error) {
-    return NextResponse.json("Signature is missing or incorrect", {
-      status: 403,
-      statusText: "Unauthorized access",
-    });
-  }
-
   try {
     const data = await req.text();
 
     // TODO test. cleanup more like it
     // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
 
-    const [socket_id, channel_name, user_id, user_admin, user_name] = data
-      .split("&")
-      .map((str) => decodeURIComponent(str.split("=")[1]));
+    const [socket_id, channel_name, user_id, user_admin, user_name, signature] =
+      data.split("&").map((str) => decodeURIComponent(str.split("=")[1]));
+
+    // API endpoint protection
+    try {
+      console.log("TEST: ", data);
+      const isAllowed =
+        new Date(
+          decipherSignature({
+            signature,
+            key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+          })
+        ) > new Date(Date.now() - API_DELAY_MS);
+
+      if (!isAllowed) throw new Error();
+    } catch (error) {
+      return NextResponse.json("Signature is missing or incorrect", {
+        status: 403,
+        statusText: "Unauthorized access",
+      });
+    }
 
     // data validation
     const validatedData = schemaApiV1PusherAuthPOST.parse({

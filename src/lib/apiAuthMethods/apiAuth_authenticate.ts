@@ -9,14 +9,13 @@ export default function apiAuth_authenticate({
     method: "POST",
     headers: {
       "Content-Type": "Application/json",
-      // API endpoints protection
-      "pusher-chat-signature": generateSignature({
-        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-      }),
     },
     body: JSON.stringify({
       user_id: user_id,
       user_admin: user_admin,
+      signature: generateSignature({
+        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+      }),
     }),
   }).catch((error) => {
     throw new Error(error);

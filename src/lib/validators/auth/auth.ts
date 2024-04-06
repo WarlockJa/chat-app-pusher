@@ -13,5 +13,6 @@ export const schemaApiV1AuthPOST = z
         .pipe(z.boolean()),
       z.boolean(),
     ]),
+    signature: z.string(),
   })
   .strict();
