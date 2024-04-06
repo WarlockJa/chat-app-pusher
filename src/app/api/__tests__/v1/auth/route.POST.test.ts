@@ -1,5 +1,6 @@
 import { POST } from "@/app/api/v1/auth/route";
 import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
+import { authenticate } from "@/util/jwt/authenticate";
 import { loadEnvConfig } from "@next/env";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -145,5 +146,22 @@ describe("Testing auth route POST request", () => {
     const response = await POST(nextReq);
 
     expect(response.status).toBe(403);
+  });
+
+  it("should return a 500 error when body is missing", async () => {
+    // recreating NextRequest
+    const nextReq = new NextRequest(
+      new Request("http://localhost:3000/api/v1/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+      }),
+      {}
+    );
+
+    const response = await POST(nextReq);
+
+    expect(response.status).toBe(500);
   });
 });

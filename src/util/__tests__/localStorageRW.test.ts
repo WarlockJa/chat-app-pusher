@@ -1,4 +1,8 @@
-import { readLocalStorage, writeLocalStorage } from "@/util/localStorageRW";
+import {
+  deleteLocalStorage,
+  readLocalStorage,
+  writeLocalStorage,
+} from "@/util/localStorageRW";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const TESTStorageUUID = "TESTstorageUUID-0813c685-ebcc-4aef-9d95-e7b171ce2c59";
@@ -105,6 +109,29 @@ describe("LocalStorage tests", () => {
       });
 
       expect(result).toBe(undefined);
+      expect(setItemSpy).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("deleteLocalStorage tests", () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, "removeItem");
+
+    afterEach(() => {
+      setItemSpy.mockClear();
+    });
+
+    it("should delete local storage item with storage_uuid name", async () => {
+      deleteLocalStorage({
+        storage_uuid: TESTStorageUUID,
+      });
+
+      expect(setItemSpy).toHaveBeenCalledOnce();
+      expect(setItemSpy).toHaveBeenCalledWith(TESTStorageUUID);
+    });
+
+    it("should do nothing when storage_uuid is undefined", async () => {
+      deleteLocalStorage({ storage_uuid: undefined });
+
       expect(setItemSpy).toHaveBeenCalledTimes(0);
     });
   });

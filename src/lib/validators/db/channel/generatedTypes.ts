@@ -8,6 +8,6 @@ export type TSchemaApiV1dbChannelDELETE = z.infer<
   typeof schemaApiV1dbChannelDELETE
 >;
 
-export type TSchemaApiV1dbMessagesChannelPOST = z.infer<
+export type TSchemaApiV1dbChannelPOST = z.infer<
   typeof schemaApiV1dbChannelPOST
 >;

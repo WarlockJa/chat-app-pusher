@@ -67,6 +67,33 @@ describe("Running GET request", () => {
     expect(prisma.channel.aggregateRaw).toHaveBeenCalledOnce();
   });
 
+  it("fetching zero unread messages from the exsiting room in the DB returns JSON response with status code 200", async () => {
+    // recreating NextRequest
+    const nextReq = new NextRequest(
+      new Request(
+        `http://localhost:3000/api/v1/db/messages/new?channel_name=${mock_channel_name}&user_id=${mock_user_id}`
+      ),
+      {}
+    );
+
+    // mongodb response format
+    const mockDBResult_aggregateRaw: TMessageDB[] = [];
+
+    const mockApiResult: any = [];
+
+    // searching for the existing room in DB
+    prisma.channel.aggregateRaw.mockResolvedValue(
+      mockDBResult_aggregateRaw as unknown as JsonObject
+    );
+
+    const response = await GET(nextReq);
+    const result = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(result).toEqual(mockApiResult);
+    expect(prisma.channel.aggregateRaw).toHaveBeenCalledOnce();
+  });
+
   it("passing invalid params returns JSON response with status code 400", async () => {
     // recreating NextRequest
     const nextReq = new NextRequest(

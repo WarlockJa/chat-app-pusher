@@ -1,11 +1,11 @@
-import { TSchemaApiV1dbMessagesChannelPOST } from "../validators/db/channel/generatedTypes";
+import { TSchemaApiV1dbChannelPOST } from "../validators/db/channel/generatedTypes";
 import apiRequestWrapperWithReauth from "../apiRequestWrapperWithReauth";
 
 export default function apiDB_createChannel({
   body,
   accessToken,
 }: {
-  body: TSchemaApiV1dbMessagesChannelPOST;
+  body: TSchemaApiV1dbChannelPOST;
   accessToken: IAccessToken;
 }) {
   // wrapping request in reauth wrapper

@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
 
     // API endpoint protection
     try {
-      console.log("TEST: ", data);
       const isAllowed =
         new Date(
           decipherSignature({
