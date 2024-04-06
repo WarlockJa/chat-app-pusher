@@ -125,7 +125,8 @@ export default function ChatTestUsersWrapper() {
       <p>
         This is a testing suite for a Pusher Support Chat component. By using
         Pusher for websocket events, this chat application can be deployed on
-        serverless hosting platforms that don't natively support websockets.
+        serverless hosting platforms that don&apos;t natively support
+        websockets.
       </p>
       <div className="divider"></div>
       <p>To proceed to the chat select a user role</p>
