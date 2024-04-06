@@ -123,7 +123,8 @@ export default function ChatTestUsersWrapper() {
     />
   ) : (
     <>
-      <button
+      {/* TODO delete */}
+      {/* <button
         onClick={() =>
           new Promise((resolve, reject) => {
             resolve(
@@ -144,7 +145,7 @@ export default function ChatTestUsersWrapper() {
         }
       >
         TEST
-      </button>
+      </button> */}
       <form className="chatWrapper" onSubmit={handleSubmit}>
         <h1 className="chatWrapper--header">Support Chat</h1>
         <p>
