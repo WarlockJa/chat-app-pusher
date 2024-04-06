@@ -40,7 +40,7 @@ export default function InnerContextsWrapper({
           user_admin={userId.user_admin}
         />
         <ChatBody userId={userId} />
-        <SendForm userId={userId} pusher={pusher} />
+        <SendForm userId={userId} />
       </div>
     </div>
   );

@@ -16,6 +16,7 @@
     border-radius: 0.5em;
     background: linear-gradient(90deg, var(--clr-border), var(--clr-shadow));
     transition: box-shadow 150ms ease;
+    color: var(--clr-main-font);
 
     &:hover {
       box-shadow: 0 0 3px 3px var(--clr-shadow);

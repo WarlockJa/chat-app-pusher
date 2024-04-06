@@ -128,7 +128,6 @@ export default function useChatBodyScroll({
         // Scenario 5 (SAME ROOM + NEW HISTORY PAGE)
         previousTopMsgRef.current.scrollIntoView();
 
-        // TODO adjust offset ONLY if date changes
         const offsetScroll = 45;
 
         // scrolling to offset post header height

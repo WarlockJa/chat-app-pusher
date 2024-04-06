@@ -2,7 +2,6 @@ import { TSchemaApiV1dbMessagesLastaccessPOST } from "../validators/db/messages/
 import apiRequestWrapperWithReauth from "../apiRequestWrapperWithReauth";
 
 // updates user timestamp at lastaccess array for channel collection in DB
-// TODO make route channel instead of messages PUT
 export function apiDB_updateLastaccessTimestamp({
   body,
   accessToken,

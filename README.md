@@ -9,6 +9,7 @@ This is a Support Web Chat project build with the idea of independence from host
   - [Life Cycle](#life-cycle)
   - [Back-end Protection](#backend-protection)
   - [Built with](#built-with)
+  - [Future Development](#future-development)
 - [Author](#author)
 
 ## Overview
@@ -141,7 +142,7 @@ Next.js is used to create the back-end API endpoints for this web application. T
 
 #### Authentication Protection
 
-Authentication routes are shielded from unauthorized access by implementing a mechanism that verifies an encrypted signature. This signature is generated using the environment variable NEXT_PUBLIC_API_SIGNATURE_KEY, which is shared between the front-end and back-end (in this case, residing within the same code repository).
+Authentication routes are shielded from unauthorised access by implementing a mechanism that verifies an encrypted signature. This signature is generated using the environment variable NEXT_PUBLIC_API_SIGNATURE_KEY, which is shared between the front-end and back-end (in this case, residing within the same code repository).
 
 API authentication endpoints specifically process requests that include a valid "pusher-chat-signature" header. The cryptographic algorithm used for this signature generation is AES-256-CBC.
 
@@ -154,6 +155,15 @@ For all other endpoints, access is restricted through JWT (JSON Web Token) authe
 Support Web Chat is made with Next.JS, Pusher, TypeScript, SCSS, Prisma. Data validation - Zod. Testing - Vitest.
 
 If you have questions or ideas your feedback and contributions are welcome!
+
+### Future Development
+
+Additional features to add:
+
+- "Away" status
+- Session termination for a user on an inactivity timeout
+- "Message has been seen" status indicator
+- Design and CSS features
 
 ## Author
 

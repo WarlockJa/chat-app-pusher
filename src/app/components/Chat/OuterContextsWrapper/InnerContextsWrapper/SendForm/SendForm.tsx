@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import "./sendform.scss";
-import { PusherPresence } from "@/context/outerContexts/PusherProvider";
 import { useChatRoomsContext } from "@/context/innerContexts/ChatRoomsProvider";
 import { useChatDataContext } from "@/context/innerContexts/ChatDataProvider";
 import ArrowRight from "@/assets/svg/ArrowRight";
@@ -10,13 +9,7 @@ import { apiPusher_sendTypingEvent } from "@/lib/apiPusherMethods/apiPusher_send
 import { apiDB_addChannelMessage } from "@/lib/apiDBMethods/apiDB_addChannelMessage";
 import { apiPusher_sendMessageEvent } from "@/lib/apiPusherMethods/apiPusher_sendMessageEvent";
 
-export default function SendForm({
-  userId,
-  pusher,
-}: {
-  userId: TPrisma_User;
-  pusher: PusherPresence;
-}) {
+export default function SendForm({ userId }: { userId: TPrisma_User }) {
   // console.log("SendForm rerender");
 
   const { activeRoom } = useChatRoomsContext();
@@ -33,7 +26,6 @@ export default function SendForm({
     const message_id = crypto.randomUUID();
 
     // triggering "message" event for Pusher
-    // TODO check if Pusher needs full userId token for message event
     apiPusher_sendMessageEvent({
       body: {
         message,
@@ -98,76 +90,23 @@ export default function SendForm({
   };
 
   return (
-    <>
-      <form className="sendForm" onSubmit={(e) => handleSubmit(e)}>
-        <input
-          className="sendForm__input"
-          type="text"
-          name="message"
-          id="chat-input"
-          value={message}
-          maxLength={400}
-          onChange={(e) => handleChange(e)}
-        />
-        <button
-          className="sendForm__button"
-          type="submit"
-          disabled={message === ""}
-        >
-          <ArrowRight />
-        </button>
-      </form>
-      {/* <button
-        onClick={
-          // () => console.log(userId.user_admin ? "is admin" : "not admin")
-          // () => {
-          //   const data = pusher.channel("presence-system");
-          //   const members = Object.keys(data.members.members);
-          //   const me = pusher.channel("presence-system").members.me;
-          //   console.log(me);
-          // }
-          // () =>
-          //   fetch("/api/v1/pusher/system")
-          //     .then((response) => response.json())
-          //     .then((result) => console.log(result))
-          // () => {
-          //   console.log(
-          //     Object.entries(
-          //       pusher.channel(`presence-${userId.user_id}`).members
-          //         .members as IChannelMembers
-          //     ).map(([user_id, user_info]) => ({
-          //       user_id,
-          //       user_name: user_info.user_name,
-          //       user_admin: user_info.user_admin,
-          //     }))
-          //   );
-          // }
-          // () =>
-          //   updateLastAccessTimestamp({
-          //     user_id: userId.user_id,
-          //     channel_name: "presence-WJ",
-          //   })
-          // () => {
-          //   fetch(
-          //     `api/v1/db/messages/history?channel_name=presence-WJ&user_id=WJ`
-          //   )
-          //     .then((response) => response.json())
-          //     .then((result) => console.log(result));
-          // }
-          // () => {
-          //   fetch(
-          //     `api/v1/db/messages/new?channel_name=presence-Mike&user_id=Mike`
-          //   )
-          //     .then((response) => response.json())
-          //     .then((result) => console.log(result));
-          // }
-          () => {
-            console.log();
-          }
-        }
+    <form className="sendForm" onSubmit={(e) => handleSubmit(e)}>
+      <input
+        className="sendForm__input"
+        type="text"
+        name="message"
+        id="chat-input"
+        value={message}
+        maxLength={400}
+        onChange={(e) => handleChange(e)}
+      />
+      <button
+        className="sendForm__button"
+        type="submit"
+        disabled={message === ""}
       >
-        TEST
-      </button> */}
-    </>
+        <ArrowRight />
+      </button>
+    </form>
   );
 }

@@ -13,9 +13,7 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.text();
 
-    // TODO test. cleanup more like it
-    // 'socket_id=176381.10063472&channel_name=presence-WJ&user_id=WJ'
-
+    // WARNING passed fields are position sensitive
     const [socket_id, channel_name, user_id, user_admin, user_name, signature] =
       data.split("&").map((str) => decodeURIComponent(str.split("=")[1]));
 
@@ -59,12 +57,6 @@ export async function POST(req: NextRequest) {
       presenceData
     );
 
-    // console.log(authResponse);
-    // {
-    //   channel_data: '{"user_id":"WJ","user_admin":true}',
-    //   auth:
-    //     '4550f02015d4f306974a:4aa2000f6a3a419c77b767306dba046f44864ddd25bf40c85677f3faae514e3d'
-    // }
     return NextResponse.json(authResponse);
   } catch (error) {
     // checking if error is a zod validation error

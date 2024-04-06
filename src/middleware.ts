@@ -23,9 +23,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // TODO make better matcher? https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
-  // Matcher ignoring `/_next/` and `/api/`
-  // matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
   matcher: [
     "/api/v1/db/:path*",
     "/api/v1/pusher/message/:path*",
