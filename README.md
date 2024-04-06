@@ -14,7 +14,7 @@ This is a Support Web Chat project build with the idea of independence from host
 
 ## Overview
 
-Support Web Chat saves you the hassle of figuring out whether your hosting provider supports websockets and/or your DB has real-time events support. With Support Web Chat you can pick any resources you want and it will work there. Powered by the [Pusher](https://pusher.com/) Support Web Chat creates an easy developer experience while providing rich set of features, such as: user roles separation, paginated chat history, typing and new messages detection, and encrupted api endpoints protection.
+Support Web Chat saves you the hassle of figuring out whether your hosting provider supports websockets and/or your DB has real-time events support. With Support Web Chat you can pick any resources you want and it will work there. Powered by the [Pusher](https://pusher.com/) Support Web Chat creates an easy developer experience while providing rich set of features, such as: paginated chat history, typing and new messages detection, jwt access roles separation, and encrypted api endpoints protection.
 
 ![](./src/assets/readme/chatAdministrator.png)
 
@@ -164,6 +164,7 @@ Additional features to add:
 - Session termination for a user on an inactivity timeout
 - "Message has been seen" status indicator
 - Design and CSS features
+- Add internationalisation
 
 ## Author
 

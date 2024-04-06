@@ -100,16 +100,16 @@ export default function ChatTestUsersWrapper() {
   switch (value.option) {
     case 1:
       description =
-        "Registered User. For this user Chat component receives full UserId token with user_id, user_name, and user_admin (false). Registered user is subscribed to a channel, with limited functionality, that can be accessed by an administrator. Registered user's data stored strictly in memory.";
+        "For this user, the Chat component receives a full user ID token containing user_id, user_name, and user_admin (false). Registered users can access specific channels with limited functionalities. Their data is stored only in memory.";
       break;
     case 2:
       description =
-        "Administrator. For this user Chat component receives full UserId token with user_id, user_name, and user_admin (true). Administrators have full access to users' chat rooms. Administrator's data stored strictly in memory.";
+        "For this user, the Chat component receives a full user ID token containing user_id, user_name, and user_admin (true). Administrators have full access to all chat rooms. Their data is stored only in memory.";
       break;
 
     default:
       description =
-        "Anonymous User. This option allows for an unregistered user to initiate chat session. For this user Chat component asks for a name and generates random uuid. Anonymous user data persisted in local storage. Anonymous user cannot be an administrator.";
+        "This allows unregistered users to initiate a chat session. The Chat component prompts for a name and generates a random user ID. Anonymous user data is stored locally. Anonymous users cannot be administrators.";
       break;
   }
 
@@ -123,12 +123,12 @@ export default function ChatTestUsersWrapper() {
     <form className="chatWrapper" onSubmit={handleSubmit}>
       <h1 className="chatWrapper--header">Support Chat</h1>
       <p>
-        This is a testing suite for a Pusher Support Chat component. Utilizing
-        Pusher for web sockets events allows this chat to be deployed on a
-        serverless hosting that does not support web sockets naturally.
+        This is a testing suite for a Pusher Support Chat component. By using
+        Pusher for websocket events, this chat application can be deployed on
+        serverless hosting platforms that don't natively support websockets.
       </p>
       <div className="divider"></div>
-      <p>To proceed to the chat select user role</p>
+      <p>To proceed to the chat select a user role</p>
       <div
         className="selectWrapper"
         ref={selectWrapperRef}
