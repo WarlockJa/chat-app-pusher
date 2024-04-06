@@ -46,8 +46,9 @@ describe("Testing auth route POST request", () => {
         if (
           user.user_id !== mockValidUser.user_id ||
           user.user_admin !== mockValidUser.user_admin
-        )
+        ) {
           throw new Error();
+        }
         return Promise<void>;
       },
     };

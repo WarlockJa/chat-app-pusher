@@ -4,25 +4,29 @@ import { schemaApiV1PusherAuthPOST } from "@/lib/validators/pusher/auth";
 import decipherSignature from "@/util/crypto/aes-cbc/decipherSignature";
 import { NextRequest, NextResponse } from "next/server";
 import { PresenceChannelData } from "pusher";
+import { z } from "zod";
 
 // creating presence channel based on the name of the user
 // jwt unprotected route. protected by signature
 // role access: [user]
 export async function POST(req: NextRequest) {
   // API endpoint protection
-  const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
-  const isAllowed =
-    new Date(
-      decipherSignature({
-        signature: encryptedHeader,
-        key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
-      })
-    ) > new Date(Date.now() - API_DELAY_MS);
-  if (!isAllowed)
+  try {
+    const encryptedHeader = req.headers.get("pusher-chat-signature") ?? "";
+    const isAllowed =
+      new Date(
+        decipherSignature({
+          signature: encryptedHeader,
+          key: process.env.NEXT_PUBLIC_API_SIGNATURE_KEY!,
+        })
+      ) > new Date(Date.now() - API_DELAY_MS);
+    if (!isAllowed) throw new Error();
+  } catch (error) {
     return NextResponse.json("Signature is missing or incorrect", {
       status: 403,
       statusText: "Unauthorized access",
     });
+  }
 
   try {
     const data = await req.text();
@@ -64,6 +68,9 @@ export async function POST(req: NextRequest) {
     // }
     return NextResponse.json(authResponse);
   } catch (error) {
-    return NextResponse.json(error);
+    // checking if error is a zod validation error
+    return error instanceof z.ZodError
+      ? NextResponse.json(error, { status: 400 })
+      : NextResponse.json(error, { status: 500 });
   }
 }
