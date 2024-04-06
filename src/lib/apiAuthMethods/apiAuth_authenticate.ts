@@ -1,10 +1,10 @@
 import generateSignature from "@/util/crypto/aes-cbc/generateSignature";
-import { TSchemaApiV1AuthPost } from "../validators/auth/generatedTypes";
+import { TSchemaApiV1AuthPostOmitSignature } from "../validators/auth/generatedTypes";
 
 export default function apiAuth_authenticate({
   user_admin,
   user_id,
-}: TSchemaApiV1AuthPost) {
+}: TSchemaApiV1AuthPostOmitSignature) {
   fetch("/api/v1/auth", {
     method: "POST",
     headers: {

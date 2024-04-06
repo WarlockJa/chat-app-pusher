@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     pusherServer.trigger(data.channel_name, "message", {
       message: data.message,
       author: data.author,
-      id: data.id,
+      message_id: data.message_id,
     });
 
     return NextResponse.json({ statusText: "OK", status: 200 });

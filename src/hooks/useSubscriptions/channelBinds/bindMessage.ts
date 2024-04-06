@@ -26,7 +26,7 @@ export default function bindMessage({
         type: "addRoomMessage",
         roomName: newChannel.name,
         message: {
-          id: data.id,
+          id: data.message_id,
           text: data.message,
           author: data.author,
           timestamp: messageTimestamp,

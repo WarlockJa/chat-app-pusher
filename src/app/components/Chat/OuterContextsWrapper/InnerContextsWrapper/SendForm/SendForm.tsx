@@ -39,7 +39,7 @@ export default function SendForm({
         message,
         author: userId.user_id,
         channel_name: activeRoom,
-        id: message_id,
+        message_id,
       },
       accessToken: { user_id: userId.user_id, user_admin: userId.user_admin },
     });

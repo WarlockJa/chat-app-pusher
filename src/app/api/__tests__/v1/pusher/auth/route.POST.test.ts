@@ -25,7 +25,7 @@ const mockPresenceData = {
   },
 };
 
-describe("Testing auth route POST request", () => {
+describe("Testing pusher auth route POST request", () => {
   beforeEach(() => {
     loadEnvConfig(process.cwd());
     vi.useFakeTimers();
